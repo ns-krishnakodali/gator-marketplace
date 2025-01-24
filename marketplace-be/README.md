@@ -1,4 +1,4 @@
-# Gator Marketplace Backend Service
+# Gator Marketplace BE
 
 This repository contains the backend service for the Gator Marketplace application. It is built using the [Gin Web Framework](https://gin-gonic.com/), providing APIs for the application's functionality. \
 
