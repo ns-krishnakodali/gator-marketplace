@@ -35,13 +35,6 @@ Thumbs.db
 .idea/
 *.iml
 
-# Go-related
-*.test
-*.mod
-*.sum
-/pkg/
-/.cache/
-
 # Debugging-related
 debug/
 *.prof
