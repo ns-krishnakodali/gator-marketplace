@@ -1,0 +1,31 @@
+name: Check Commit Message Format
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  check_commit_message:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Get the latest commit message (excluding merges)
+        id: commit_message
+        run: |
+          git fetch --prune --unshallow
+          COMMIT_MSG=$(git log --no-merges -1 --pretty=%B)
+          echo "commit_message=$COMMIT_MSG" >> $GITHUB_ENV
+          echo "Commit message: $COMMIT_MSG"
+
+      - name: Validate commit message format
+        run: |
+          echo "Validating commit message: ${{ env.commit_message }}"
+          if [[ ! "${{ env.commit_message }}" =~ ^(fix|feat|fix!|feat!|docs|chore|build|refactor|test|ci|perf): ]]; then
+            echo "Commit message does not follow the required format."
+            exit 1
+          else
+            echo "Commit message is valid."
+          fi
