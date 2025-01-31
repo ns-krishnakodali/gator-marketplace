@@ -3,15 +3,19 @@ package main
 import (
 	"net/http"
 
+	"marketplace-be/database"
+
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	database.InitDatabase()
+
 	router := gin.Default()
 
-	router.GET("/ping", func(c *gin.Context) {
+	router.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
-			"message": "Test Response",
+			"message": "Server up and running!",
 		})
 	})
 
