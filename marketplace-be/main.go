@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 
+	"marketplace-be/auth"
 	"marketplace-be/database"
 
 	"github.com/gin-gonic/gin"
@@ -13,8 +14,11 @@ func main() {
 
 	router := gin.Default()
 
-	router.GET("/health", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
+	protected := router.Group("/")
+	protected.Use(auth.AuthMiddleware())
+
+	router.GET("/health", func(context *gin.Context) {
+		context.JSON(http.StatusOK, gin.H{
 			"message": "Server up and running!",
 		})
 	})
