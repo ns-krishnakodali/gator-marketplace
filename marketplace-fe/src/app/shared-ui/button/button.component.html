@@ -1,0 +1,28 @@
+
+<button
+        mat-raised-button
+        [type]="buttonType"
+        [color]="buttonColor"
+        [disabled]="disabled"
+        (click)="onClickHandler()">
+  {{ buttonText }}
+</button>
+
+<!-- Render Input -->
+<!-- <mat-form-field *ngIf="elementType === 'input'" appearance="outline">
+  <mat-label>{{ inputLabel }}</mat-label>
+  <input matInput 
+         [type]="inputType" 
+         [(ngModel)]="inputValue" 
+         [placeholder]="inputPlaceholder" 
+         [required]="required">
+</mat-form-field> -->
+
+@if(elementType === 'text') {
+    <p>
+        [style.fontSize]="fontSize"
+        [style.color]="textColor">
+       {{ textContent }}
+     </p>
+     
+}
