@@ -40,7 +40,7 @@ ALTER ROLE <USER> SET default_transaction_isolation TO 'read committed';
 ALTER ROLE <USER> SET timezone TO 'UTC';
 CREATE DATABASE <DB>;
 GRANT ALL PRIVILEGES ON DATABASE <DB> TO <USER>;
-\c EXAMPLE_DB postgres
+\c <DB> postgres
 GRANT ALL ON SCHEMA public TO <USER>;
 ```
 
@@ -49,6 +49,8 @@ GRANT ALL ON SCHEMA public TO <USER>;
 Create a `.env` file (if not already present) and add the following variables:
 
 ```plaintext
+JWT_SECRET=<your_generated_secret_key>
+
 DATABASE_USER=USER
 DATABASE_PASSWORD=PASSWORD
 DATABASE_NAME=DB
@@ -57,6 +59,12 @@ DATABASE_HOST=localhost
 ```
 
 - Replace `USER`, `PASSWORD`, and `DB` with the values used during the PostgreSQL database setup.
+- Generate a secure `JWT_SECRET` using the following command:
+  
+  ```bash
+  openssl rand -base64 32
+  ```
+
 - Ensure `.env` is properly configured before running the application.
 
 ### 5. Run the Application
