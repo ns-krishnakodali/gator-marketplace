@@ -1,11 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-text',
-  imports: [],
+  standalone: true,
   templateUrl: './text.component.html',
-  styleUrl: './text.component.css'
+  styleUrls: ['./text.component.css'],
 })
 export class TextComponent {
-
+  @Input() textContent: string = "";
+  @Input() fontSize: string = "16px";
+  @Input() textColor: string = "black";
 }

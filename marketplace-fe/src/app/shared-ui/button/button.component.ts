@@ -1,21 +1,20 @@
 import { Component, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-import { FormsModule } from '@angular/forms';
+// import { MatInputModule } from '@angular/material/input';
+// import { FormsModule } from '@angular/forms';
 
 type ButtonType = "submit" | "reset" | "button";
-type InputType = "text" | "number" | "email" | "password" | "checkbox";
-type ElementType = "button" | "input" | "text"; 
+// type InputType = "text" | "number" | "email" | "password" | "checkbox";
+// type ElementType = "button" | "input" | "text"; 
 
 @Component({
   selector: 'app-button',
-  standalone: true,
-  imports: [MatButtonModule, MatInputModule, FormsModule],
+  imports: [MatButtonModule],
   templateUrl: './button.component.html',
   styleUrls: ['./button.component.css'],
 })
 export class ButtonComponent {
-  @Input() elementType: ElementType = "button"; 
+  @Input() elementType: ButtonType = "button"; 
 
   // Button Props
   @Input() buttonType: ButtonType = "button";
@@ -25,14 +24,14 @@ export class ButtonComponent {
   @Input() onClickHandler!: () => void;
 
   // Input Props
-  @Input() inputType: InputType = "text";
-  @Input() inputLabel: string = "";
-  @Input() inputValue: string | number | boolean = "";
-  @Input() inputPlaceholder: string = "";
-  @Input() required: boolean = false;
+  // @Input() inputType: InputType = "text";
+  // @Input() inputLabel: string = "";
+  // @Input() inputValue: string | number | boolean = "";
+  // @Input() inputPlaceholder: string = "";
+  // @Input() required: boolean = false;
 
   // Text Props
-  @Input() textContent: string = "";
-  @Input() fontSize: string = "16px";
-  @Input() textColor: string = "black";
+//   @Input() textContent: string = "";
+//   @Input() fontSize: string = "16px";
+//   @Input() textColor: string = "black";
 }
