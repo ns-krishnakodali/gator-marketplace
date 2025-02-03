@@ -1,0 +1,22 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: gator  # Default superuser
+      POSTGRES_DB: marketplace  # Temporary DB to initialize
+      POSTGRES_PASSWORD: "${DATABASE_PASSWORD}"  # Pass gator's password from .env file
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d    # Initialization scripts
+      - ./backup:/backup                      # Backup directory mapped to host
+      - pg_data:/var/lib/postgresql/data      # Persistent data storage
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gator -d marketplace -h localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10 
+
+volumes:
+  pg_data:
