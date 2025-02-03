@@ -12,9 +12,9 @@ type InputType = "text" | "number" | "email" | "password" | "checkbox";
   styleUrls: ['./input.component.css'],
 })
 export class InputComponent {
-  @Input() inputType: InputType = "text"; 
+  @Input() inputType: InputType = "text";
   @Input() inputLabel: string = "";
-  @Input() inputValue: string | number | boolean = "";
+  @Input() inputValue!: string | number | boolean;
   @Input() inputPlaceholder: string = "";
   @Input() required: boolean = false;
 }
