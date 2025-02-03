@@ -44,21 +44,18 @@ GRANT ALL PRIVILEGES ON DATABASE <DB> TO <USER>;
 GRANT ALL ON SCHEMA public TO <USER>;
 ```
 
-### 4. Configure Environment Variables
+or you can run docker-compose file to create the database and user:
 
-Create a `.env` file (if not already present) and add the following variables:
-
-```plaintext
-JWT_SECRET=<your_generated_secret_key>
-
-DATABASE_USER=USER
-DATABASE_PASSWORD=PASSWORD
-DATABASE_NAME=DB
-DATABASE_PORT=5432
-DATABASE_HOST=localhost
+```bash
+docker-compose up -d
 ```
 
-- Replace `USER`, `PASSWORD`, and `DB` with the values used during the PostgreSQL database setup.
+This is going to create `gator` user, `marketplace` database with password set in the `.env` file.
+
+### 4. Configure Environment Variables
+
+Create a `.env` file (if not already present) and copy from the `.env.example` file. Update the values of the environment variables as follows:
+
 - Generate a secure `JWT_SECRET` using the following command:
   
   ```bash
