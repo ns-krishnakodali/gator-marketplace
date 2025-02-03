@@ -1,4 +1,3 @@
-// handlers/user.go
 package handlers
 
 import (
@@ -12,19 +11,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type SignupInput struct {
-	Name     string `json:"name" binding:"required"`
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required,min=6"`
-}
-
-type LoginInput struct {
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required"`
-}
-
 func Signup(c *gin.Context) {
-	var input SignupInput
+	var input models.SignupInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -57,7 +45,7 @@ func Signup(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
-	var input LoginInput
+	var input models.LoginInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
