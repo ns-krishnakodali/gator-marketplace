@@ -1,7 +1,7 @@
-import { Component, Input } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { Component, Input } from '@angular/core'
+import { MatButtonModule } from '@angular/material/button'
 
-type ButtonType = "submit" | "reset" | "button";
+import { type ButtonType, type ButtonVariant } from './button.model'
 
 @Component({
   selector: 'app-button',
@@ -11,9 +11,10 @@ type ButtonType = "submit" | "reset" | "button";
   styleUrls: ['./button.component.css'],
 })
 export class ButtonComponent {
-  @Input() buttonType: ButtonType = "button";
-  @Input() buttonText: string = "Click Me";
-  @Input() buttonColor: "primary" | "accent" | "warn" = "primary";
-  @Input() disabled: boolean = false;
-  @Input() onClickHandler!: () => void;
+  @Input({ required: true }) id!: string
+  @Input({ required: true }) onClickHandler!: () => void
+  @Input() buttonType: ButtonType = 'button'
+  @Input() buttonVariant: ButtonVariant = 'primary'
+  @Input() className?: string
+  @Input() disabled?: boolean
 }
