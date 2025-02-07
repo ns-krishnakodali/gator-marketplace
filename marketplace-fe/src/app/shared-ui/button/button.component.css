@@ -1,0 +1,15 @@
+button {
+  width: fit-content;
+  cursor: pointer;
+  text-align: center;
+}
+
+.text {
+  border: none;
+  background: none;
+  color: var(--mat-sys-primary);
+}
+
+.text:hover {
+  filter: brightness(60%);
+}

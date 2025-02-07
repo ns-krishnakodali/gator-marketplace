@@ -1,20 +1,20 @@
 import { Component, Input } from '@angular/core'
-import { MatButtonModule } from '@angular/material/button'
+import { CommonModule } from '@angular/common'
 
 import { type ButtonType, type ButtonVariant } from './button.model'
 
 @Component({
   selector: 'app-button',
   standalone: true,
-  imports: [MatButtonModule],
+  imports: [CommonModule],
   templateUrl: './button.component.html',
   styleUrls: ['./button.component.css'],
 })
 export class ButtonComponent {
   @Input({ required: true }) id!: string
   @Input({ required: true }) onClickHandler!: () => void
-  @Input() buttonType: ButtonType = 'button'
-  @Input() buttonVariant: ButtonVariant = 'primary'
-  @Input() className?: string
+  @Input() type: ButtonType = 'button'
+  @Input() variant: ButtonVariant = 'primary'
+  @Input() class?: string
   @Input() disabled?: boolean
 }

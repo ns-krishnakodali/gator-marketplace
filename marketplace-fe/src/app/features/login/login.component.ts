@@ -1,12 +1,13 @@
 import { Component } from '@angular/core'
+import { MatButtonModule } from '@angular/material/button'
 
-import { ButtonComponent, InputComponent } from '../../shared-ui'
+import { ButtonComponent, InputComponent, TextComponent } from '../../shared-ui'
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
-  imports: [InputComponent, ButtonComponent],
+  imports: [MatButtonModule, ButtonComponent, InputComponent, TextComponent],
 })
 export class LoginComponent {
   email?: string

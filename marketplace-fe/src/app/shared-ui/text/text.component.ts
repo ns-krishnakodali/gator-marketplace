@@ -11,6 +11,7 @@ import { type TextSize } from './text.model'
   styleUrl: './text.component.css',
 })
 export class TextComponent {
-  @Input() size: TextSize = 'medium'
+  @Input({ required: true }) id!: string
+  @Input() size?: TextSize = 'medium'
   @Input() className?: string
 }

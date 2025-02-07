@@ -1,8 +1,8 @@
 <button
-  mat-flat-button
   [id]="id"
-  [class]="className"
-  [type]="buttonType"
+  [ngClass]="[class]"
+  [class.text]="variant === 'text'"
+  [type]="type"
   [disabled]="disabled"
   (click)="onClickHandler()"
 >

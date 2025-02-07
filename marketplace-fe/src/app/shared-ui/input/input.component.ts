@@ -11,7 +11,7 @@ import { type InputType } from './input.model'
 export class InputComponent {
   @Input({ required: true }) id!: string
   @Input() name?: string
-  @Input() className?: string
+  @Input() class?: string
   @Input() type: InputType = 'text'
   @Input() value?: string
   @Input() placeholder?: string

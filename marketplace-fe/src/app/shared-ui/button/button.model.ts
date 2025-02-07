@@ -1,2 +1,2 @@
 export type ButtonType = 'submit' | 'reset' | 'button'
-export type ButtonVariant = 'primary' | 'accent' | 'warn'
+export type ButtonVariant = 'primary' | 'secondary' | 'text'
