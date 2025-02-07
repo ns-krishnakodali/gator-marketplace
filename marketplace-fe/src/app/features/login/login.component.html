@@ -1,6 +1,6 @@
 <div class="login-container">
   <img src="assets/gator.png" alt="Gator Logo" class="gator-logo" width="80" height="60" />
-  <form action="">
+  <form (ngSubmit)="onClick()">
     <div class="login-form-container">
       <h2 class="form-header"><app-text id="account-login">Account Login</app-text></h2>
       <div class="form-inputs">
@@ -19,15 +19,7 @@
           [required]="true"
         />
       </div>
-      <button
-        mat-flat-button
-        id="login-button"
-        type="submit"
-        class="login-button"
-        (click)="onClick()"
-      >
-        Login
-      </button>
+      <button mat-flat-button id="login-button" type="submit" class="login-button">Login</button>
       <span class="signup-actions">
         <app-text id="no-account-text" size="small"> Don't have an account? </app-text>
         <app-button id="signup-button" variant="text" type="button" [onClickHandler]="onClick">

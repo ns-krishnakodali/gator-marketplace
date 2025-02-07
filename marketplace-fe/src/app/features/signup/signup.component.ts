@@ -1,4 +1,5 @@
 import { Component } from '@angular/core'
+import { MatButtonModule } from '@angular/material/button'
 
 import { ButtonComponent, InputComponent, TextComponent } from '../../shared-ui/'
 
@@ -7,15 +8,13 @@ import { ButtonComponent, InputComponent, TextComponent } from '../../shared-ui/
   standalone: true,
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css'],
-  imports: [ButtonComponent, InputComponent, TextComponent],
+  imports: [MatButtonModule, ButtonComponent, InputComponent, TextComponent],
 })
 export class SignupComponent {
-  username: string = ''
-  password: string = ''
+  username?: string
+  password?: string
 
-  onSubmit() {
-    console.log('Form Submitted')
-    console.log('Username:', this.username)
-    console.log('Password:', this.password)
+  onSubmit = (): void => {
+    console.log(this.username, this.password)
   }
 }

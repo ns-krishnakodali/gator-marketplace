@@ -13,5 +13,5 @@ import { type TextSize } from './text.model'
 export class TextComponent {
   @Input({ required: true }) id!: string
   @Input() size?: TextSize = 'medium'
-  @Input() className?: string
+  @Input() class?: string
 }
