@@ -5,7 +5,6 @@ import { type ButtonType, type ButtonVariant } from './button.model'
 
 @Component({
   selector: 'app-button',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './button.component.html',
   styleUrls: ['./button.component.css'],

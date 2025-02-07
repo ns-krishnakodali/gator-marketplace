@@ -7,7 +7,6 @@ import { ButtonComponent, InputComponent, TextComponent } from '../../../../shar
 
 @Component({
   selector: 'app-signup',
-  standalone: true,
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css'],
   imports: [MatButtonModule, ButtonComponent, InputComponent, TextComponent, FormComponent],

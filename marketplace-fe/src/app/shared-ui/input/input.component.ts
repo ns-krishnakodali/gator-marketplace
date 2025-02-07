@@ -4,7 +4,6 @@ import { type InputType } from './input.model'
 
 @Component({
   selector: 'app-input',
-  standalone: true,
   templateUrl: './input.component.html',
   styleUrls: ['./input.component.css'],
 })

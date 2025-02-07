@@ -5,7 +5,6 @@ import { type TextSize } from './text.model'
 
 @Component({
   selector: 'app-text',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './text.component.html',
   styleUrl: './text.component.css',
