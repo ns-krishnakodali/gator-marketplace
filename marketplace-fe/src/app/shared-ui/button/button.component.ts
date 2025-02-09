@@ -1,19 +1,19 @@
-import { Component, Input } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { Component, Input } from '@angular/core'
+import { CommonModule } from '@angular/common'
 
-type ButtonType = "submit" | "reset" | "button";
+import { type ButtonType, type ButtonVariant } from './button.model'
 
 @Component({
   selector: 'app-button',
-  standalone: true,
-  imports: [MatButtonModule],
+  imports: [CommonModule],
   templateUrl: './button.component.html',
   styleUrls: ['./button.component.css'],
 })
 export class ButtonComponent {
-  @Input() buttonType: ButtonType = "button";
-  @Input() buttonText: string = "Click Me";
-  @Input() buttonColor: "primary" | "accent" | "warn" = "primary";
-  @Input() disabled: boolean = false;
-  @Input() onClickHandler!: () => void;
+  @Input({ required: true }) id!: string
+  @Input({ required: true }) onClickHandler!: () => void
+  @Input() type: ButtonType = 'button'
+  @Input() variant: ButtonVariant = 'primary'
+  @Input() class?: string
+  @Input() disabled?: boolean
 }

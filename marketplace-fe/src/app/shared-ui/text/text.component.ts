@@ -1,13 +1,16 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input } from '@angular/core'
+import { CommonModule } from '@angular/common'
+
+import { type TextSize } from './text.model'
 
 @Component({
   selector: 'app-text',
-  standalone: true,
+  imports: [CommonModule],
   templateUrl: './text.component.html',
-  styleUrls: ['./text.component.css'],
+  styleUrl: './text.component.css',
 })
 export class TextComponent {
-  @Input() textContent: string = "";
-  @Input() fontSize: string = "16px";
-  @Input() textColor: string = "black";
+  @Input({ required: true }) id!: string
+  @Input() size?: TextSize = 'medium'
+  @Input() class?: string
 }

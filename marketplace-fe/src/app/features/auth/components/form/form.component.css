@@ -1,0 +1,33 @@
+.form-container {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-image: url('../../../../../assets/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.gator-logo {
+  margin-bottom: var(--spacing-1-5);
+  align-items: center;
+}
+
+.auth-form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-5) var(--spacing-6);
+  background-color: var(--color-white);
+  border: var(--border-1);
+  border-radius: var(--spacing-1);
+}
+
+.form-header {
+  margin-top: 0px;
+  margin-bottom: var(--spacing-3);
+  padding-top: 0px;
+}
