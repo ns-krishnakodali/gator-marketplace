@@ -1,0 +1,9 @@
+input {
+  font-family: 'Nunito', sans-serif;
+  outline: none;
+  border: var(--border-input);
+  border-radius: var(--spacing-half);
+  padding: var(--spacing-1);
+  padding-right: var(--spacing-2);
+  width: fit-content;
+}

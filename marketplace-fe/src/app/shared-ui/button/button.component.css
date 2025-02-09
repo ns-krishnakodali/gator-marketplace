@@ -1,16 +1,15 @@
 button {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    display: block; 
-  }
-  
-  button:hover {
-    background-color: #218838;
-  }
-  
+  width: fit-content;
+  cursor: pointer;
+  text-align: center;
+}
+
+.text {
+  border: none;
+  background: none;
+  color: var(--mat-sys-primary);
+}
+
+.text:hover {
+  filter: brightness(60%);
+}

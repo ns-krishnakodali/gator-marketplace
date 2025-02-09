@@ -1,0 +1,11 @@
+<div [id]="id" class="form-container">
+  <img src="assets/gator.png" alt="Gator Logo" class="gator-logo" width="80" height="60" />
+  <form (ngSubmit)="onSubmit()">
+    <div class="auth-form-container">
+      <h2 class="form-header">
+        <app-text id="form-heading">{{ heading }}</app-text>
+      </h2>
+      <ng-content />
+    </div>
+  </form>
+</div>
