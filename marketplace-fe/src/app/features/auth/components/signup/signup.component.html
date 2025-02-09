@@ -1,0 +1,33 @@
+<app-form id="signup-form" [onSubmit]="onSubmit" heading="Join Marketplace">
+  <div class="form-inputs">
+    <app-input id="name" class="signup-element" placeholder="Name" type="text" [required]="true" />
+    <app-input
+      id="email"
+      class="signup-element"
+      placeholder="Email"
+      type="email"
+      [required]="true"
+    />
+    <app-input
+      id="password"
+      class="signup-element"
+      placeholder="Password"
+      type="password"
+      [required]="true"
+    />
+    <app-input
+      id="confirm-password"
+      class="signup-element"
+      placeholder="Confirm Password"
+      type="password"
+      [required]="true"
+    />
+  </div>
+  <button mat-flat-button id="signup-button" type="submit" class="signup-button">Sign Up</button>
+  <span class="login-actions">
+    <app-text id="registered-text" size="small"> Already registered? </app-text>
+    <app-button id="login-button" variant="text" type="button" [onClickHandler]="onSubmit">
+      Login
+    </app-button>
+  </span>
+</app-form>

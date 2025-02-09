@@ -1,10 +1,10 @@
-
 <button
-        mat-raised-button
-        [type]="buttonType"
-        [color]="buttonColor"
-        [disabled]="disabled"
-        (click)="onClickHandler()">
-  {{ buttonText }}
+  [id]="id"
+  [ngClass]="[class]"
+  [class.text]="variant === 'text'"
+  [type]="type"
+  [disabled]="disabled"
+  (click)="onClickHandler()"
+>
+  <ng-content />
 </button>
-
