@@ -1,4 +1,5 @@
 import { Component } from '@angular/core'
+import { Router } from '@angular/router'
 import { MatButtonModule } from '@angular/material/button'
 
 import { FormComponent } from '../form/form.component'
@@ -13,9 +14,17 @@ import { ButtonComponent, InputComponent, TextComponent } from '../../../../shar
 })
 export class SignupComponent {
   username?: string
+  email?: string
   password?: string
+  confirmPassword?: string
 
-  onSubmit = (): void => {
-    console.log(this.username, this.password)
+  constructor(private router: Router) {}
+
+  onSubmit = (event: Event): void => {
+    console.log('Form Submitted: ', event)
+  }
+
+  onLogin = (): void => {
+    this.router.navigate(['/auth/login'])
   }
 }
