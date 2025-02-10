@@ -4,6 +4,7 @@
   [class]="class ?? ''"
   [type]="type"
   [value]="value ?? ''"
+  (input)="onInput($event)"
   [placeholder]="placeholder ?? ''"
   [required]="required"
 />
