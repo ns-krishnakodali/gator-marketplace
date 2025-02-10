@@ -1,6 +1,6 @@
 <button
   [id]="id"
-  [ngClass]="[class]"
+  [ngClass]="[class ?? '']"
   [class.text]="variant === 'text'"
   [type]="type"
   [disabled]="disabled"

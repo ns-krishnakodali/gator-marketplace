@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core'
+import { Component, EventEmitter, Input, Output } from '@angular/core'
 
 import { type InputType } from './input.model'
 
@@ -16,4 +16,11 @@ export class InputComponent {
   @Input() placeholder?: string
   @Input() required?: boolean
   @Input() readOnly?: boolean
+  
+  @Output() valueChange = new EventEmitter<string>();
+
+  onInput(event: Event) {
+    const newValue: string = (event.target as HTMLInputElement).value;
+    this.valueChange.emit(newValue);
+  }
 }

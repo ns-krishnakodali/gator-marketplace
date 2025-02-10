@@ -10,7 +10,7 @@ import (
 )
 
 func SetupRoutes(router *gin.Engine) {
-	router.PUT("/signup", handlers.Signup)
+	router.POST("/signup", handlers.Signup)
 	router.POST("/login", handlers.Login)
 
 	router.GET("/health", func(context *gin.Context) {
