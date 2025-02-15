@@ -1,6 +1,10 @@
 <div class="notifications-container">
   @for (notification of notifications; track notification.id) {
-    <div class="notification" [ngClass]="notification.type">
+    <div
+      class="notification"
+      [ngClass]="notification.type"
+      [attr.data-notification-id]="notification.id"
+    >
       <div class="notification-content">
         <app-text id="notification-text">{{ notification.message }}</app-text>
       </div>

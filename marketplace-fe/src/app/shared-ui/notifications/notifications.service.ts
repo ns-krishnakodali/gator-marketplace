@@ -9,7 +9,7 @@ export class NotificationsService {
   public notifications: INotification[] = []
 
   addNotification(notification: INotification): void {
-    notification.id = Date.now()
+    notification.id = notification.id || Date.now()
     this.notifications.push(notification)
 
     if (notification.autoClose ?? true) {
