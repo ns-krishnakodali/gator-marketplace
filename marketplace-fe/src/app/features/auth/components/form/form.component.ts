@@ -12,11 +12,11 @@ import { TextComponent } from '../../../../shared-ui/'
 export class FormComponent {
   @Input({ required: true }) id!: string
   @Input({ required: true }) heading!: string
-  
-  @Output() submitForm = new EventEmitter<Event>();
+
+  @Output() submitForm = new EventEmitter<Event>()
 
   onSubmit(event: Event) {
-    event.preventDefault();
-    this.submitForm.emit(event);
+    event.preventDefault()
+    this.submitForm.emit(event)
   }
 }

@@ -1,11 +1,11 @@
 # Sprint 1 Restrospective
 
 ## User Stories
-- Created [**2 epics**](https://github.com/users/KrishnaKodali99/projects/4/views/1?visibleFields=%5B%22Title%22%2C%22Assignees%22%2C%22Status%22%2C%22Labels%22%5D&filterQuery=label%3Aepic) and [**9 user stories**](https://github.com/users/KrishnaKodali99/projects/4/views/1?visibleFields=%5B%22Title%22%2C%22Assignees%22%2C%22Status%22%2C%22Labels%22%5D&filterQuery=label%3Astory) during this sprint.
+- Created [**2 epics**](https://github.com/users/KrishnaKodali99/projects/4/views/1?filterQuery=label%3A%22sprint-1%22+label%3Aepic) and [**9 user stories**](https://github.com/users/KrishnaKodali99/projects/4/views/1?filterQuery=label%3A%22sprint-1%22+label%3Astory) during this sprint.
 - The inclusion of user stories depends on the project scope.
 
 ## Sprint Planning
-- Sprint 1 [Board](https://github.com/users/KrishnaKodali99/projects/4/views/1?visibleFields=%5B%22Title%22%2C%22Assignees%22%2C%22Status%22%2C%22Labels%22%5D&layout=board)
+- Sprint 1 [Board](https://github.com/users/KrishnaKodali99/projects/4)
 - Conducted sprint planning and distributed tasks among participants.
 - This sprint focuses on configuring dependencies and completing user authentication development.
 - Each task is prefixed with **FE** (Frontend), **BE** (Backend), or **App** (Application).
