@@ -31,7 +31,12 @@ describe('SignupComponent', () => {
   })
 
   it('should call handleUserSignup on onSubmit', () => {
-    const signupData: SignupData = { name: 'Test User', email: 'test@ufl.edu', password: 'pass', confirmPassword: 'pass' }
+    const signupData: SignupData = {
+      name: 'Test User',
+      email: 'test@ufl.edu',
+      password: 'pass',
+      confirmPassword: 'pass',
+    }
     component.signupData = signupData
     component.onSubmit()
     expect(signupServiceSpy.handleUserSignup).toHaveBeenCalledWith(signupData)

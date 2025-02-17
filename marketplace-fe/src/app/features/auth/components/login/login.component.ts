@@ -26,7 +26,7 @@ import { ButtonComponent, InputComponent, TextComponent } from '../../../../shar
 })
 export class LoginComponent {
   loginData: LoginData = { email: '', password: '' }
-  isLoading$:  Observable<boolean>;
+  isLoading$: Observable<boolean>
 
   constructor(private loginService: LoginService) {
     this.isLoading$ = this.loginService.isLoading$
