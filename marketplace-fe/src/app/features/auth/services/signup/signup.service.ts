@@ -75,8 +75,8 @@ export class SignupService {
   private validateSignupData = (signupData: SignupData): { isValid: boolean; message: string } => {
     const name = signupData?.name?.trim()
     const email = signupData?.email?.trim()
-    const password = signupData?.password?.trim()
-    const confirmPassword = signupData?.confirmPassword?.trim()
+    const password = signupData?.password
+    const confirmPassword = signupData?.confirmPassword
 
     if (!name || !email || !password || !confirmPassword) {
       return { isValid: false, message: FILL_ALL_FORM_FIELDS }
