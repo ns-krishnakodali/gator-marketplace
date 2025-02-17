@@ -3,7 +3,7 @@
   flex-direction: column;
   position: absolute;
   width: 400px;
-  max-width: 50%;
+  max-width: 60%;
   max-height: 10%;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -26,6 +26,7 @@
 
 .notification {
   display: flex;
+  align-items: center;
   padding: var(--spacing-2);
   border-radius: var(--spacing-1);
   color: var(--color-background);
@@ -71,8 +72,8 @@
 .close-icon {
   margin-right: auto;
   cursor: pointer;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
 }
 
 .close-icon:hover {
