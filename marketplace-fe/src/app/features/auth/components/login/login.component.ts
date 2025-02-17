@@ -3,6 +3,9 @@ import { Router } from '@angular/router'
 import { MatButtonModule } from '@angular/material/button'
 
 import { FormComponent } from '../form/form.component'
+import { LoginData } from '../../models/login.model'
+import { LoginService } from '../../services/login.service'
+
 import { ButtonComponent, InputComponent, TextComponent } from '../../../../shared-ui'
 
 @Component({
@@ -12,13 +15,15 @@ import { ButtonComponent, InputComponent, TextComponent } from '../../../../shar
   imports: [MatButtonModule, ButtonComponent, InputComponent, TextComponent, FormComponent],
 })
 export class LoginComponent {
-  email?: string
-  password?: string
+  loginData: LoginData = { email: '', password: '' }
 
-  constructor(private router: Router) {}
+  constructor(
+    private loginService: LoginService,
+    private router: Router
+  ) {}
 
-  onSubmit(event: Event) {
-    console.log('Form submitted: ', event)
+  onSubmit = (): void => {
+    this.loginService.handleUserLogin(this.loginData.email, this.loginData.password)
   }
 
   onSignUp = (): void => {

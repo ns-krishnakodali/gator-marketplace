@@ -9,6 +9,4 @@ import { NotificationsComponent } from './shared-ui/'
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
-export class AppComponent {
-  title = 'marketplace-fe'
-}
+export class AppComponent {}

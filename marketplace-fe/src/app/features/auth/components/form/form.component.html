@@ -1,6 +1,6 @@
 <div [id]="id" class="form-container">
   <img src="assets/gator.png" alt="Gator Logo" class="gator-logo" width="80" height="60" />
-  <form (ngSubmit)="onSubmit($event)">
+  <form ngNativeValidate (ngSubmit)="onSubmit($event)">
     <div class="auth-form-container">
       <h2 class="form-header">
         <app-text id="form-heading">{{ heading }}</app-text>
