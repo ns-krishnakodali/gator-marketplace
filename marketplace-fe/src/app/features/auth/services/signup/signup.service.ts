@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core'
 import { Router } from '@angular/router'
 import { BehaviorSubject } from 'rxjs'
 
-import { APIService } from '../../../core'
-import { NotificationsService } from '../../../shared-ui'
+import { APIService } from '../../../../core'
+import { NotificationsService } from '../../../../shared-ui'
 import {
   FILL_ALL_FORM_FIELDS,
   INVALID_EMAIL_ADDRESS,
@@ -11,9 +11,9 @@ import {
   PASSWORDS_DO_NOT_MATCH,
   validateEmail,
   validateUFLDomain,
-} from '../../../utils'
+} from '../../../../utils'
 
-import type { SignupData } from '../models/signup.model'
+import type { SignupData } from '../../models/signup.model'
 
 @Injectable({
   providedIn: 'root',
@@ -23,8 +23,8 @@ export class SignupService {
   public isLoading$ = this.isLoadingSubject.asObservable()
 
   constructor(
-    private notificationsService: NotificationsService,
     private apiService: APIService,
+    private notificationsService: NotificationsService,
     private router: Router
   ) {}
 
@@ -39,6 +39,8 @@ export class SignupService {
       this.isLoadingSubject.next(false)
       return
     }
+
+    this.isLoadingSubject.next(true)
     this.apiService
       .post('signup', {
         name: signupData.name,
@@ -58,6 +60,9 @@ export class SignupService {
             message: error.message,
             type: 'error',
           })
+          this.isLoadingSubject.next(false)
+        },
+        complete: () => {
           this.isLoadingSubject.next(false)
         },
       })

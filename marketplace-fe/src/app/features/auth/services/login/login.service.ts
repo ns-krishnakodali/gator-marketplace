@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core'
 import { Router } from '@angular/router'
 import { BehaviorSubject } from 'rxjs'
 
-import { APIService } from '../../../core'
-import { NotificationsService } from '../../../shared-ui'
+import { APIService } from '../../../../core'
+import { NotificationsService } from '../../../../shared-ui'
 import {
   FILL_ALL_FORM_FIELDS,
   INVALID_EMAIL_ADDRESS,
@@ -12,9 +12,9 @@ import {
   setAuthToken,
   validateEmail,
   validateUFLDomain,
-} from '../../../utils'
+} from '../../../../utils'
 
-import type { LoginData } from '../models/login.model'
+import type { LoginData } from '../../models/login.model'
 
 @Injectable({
   providedIn: 'root',
@@ -24,8 +24,8 @@ export class LoginService {
   public isLoading$ = this.isLoadingSubject.asObservable()
 
   constructor(
-    private notificationsService: NotificationsService,
     private apiService: APIService,
+    private notificationsService: NotificationsService,
     private router: Router
   ) {}
 
@@ -49,12 +49,12 @@ export class LoginService {
           if (tokenResponse?.token) {
             setAuthToken(tokenResponse.token)
             this.router.navigate(['/'], { replaceUrl: true })
+            this.isLoadingSubject.next(true)
           } else {
             this.notificationsService.addNotification({
               message: LOGIN_FAILED,
               type: 'error',
             })
-            this.isLoadingSubject.next(false)
           }
         },
         error: (error) => {
@@ -62,6 +62,9 @@ export class LoginService {
             message: error.message,
             type: 'error',
           })
+          this.isLoadingSubject.next(false)
+        },
+        complete: () => {
           this.isLoadingSubject.next(false)
         },
       })

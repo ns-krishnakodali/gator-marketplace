@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common'
 import { Component } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
@@ -5,10 +6,9 @@ import { Observable } from 'rxjs'
 
 import { FormComponent } from '../form/form.component'
 import { LoginData } from '../../models/login.model'
-import { LoginService } from '../../services/login.service'
+import { LoginService } from '../../services/'
 
 import { ButtonComponent, InputComponent, TextComponent } from '../../../../shared-ui'
-import { CommonModule } from '@angular/common'
 
 @Component({
   selector: 'app-login',
