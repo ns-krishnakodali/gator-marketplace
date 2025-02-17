@@ -4,9 +4,24 @@
   position: absolute;
   width: 400px;
   max-width: 50%;
+  max-height: 10%;
+  overflow-y: scroll;
+  overflow-x: hidden;
   top: var(--spacing-1);
   left: 50%;
   transform: translateX(-50%);
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+}
+
+.notifications-container > * {
+  scroll-snap-align: start;
+}
+
+.notifications-container::-webkit-scrollbar {
+  display: none;
 }
 
 .notification {
@@ -62,4 +77,10 @@
 
 .close-icon:hover {
   opacity: 0.8;
+}
+
+.notifications-container::after {
+  content: '';
+  scroll-snap-align: start;
+  height: 0;
 }

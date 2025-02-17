@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core'
 
 import { Observable, throwError } from 'rxjs'
 import { catchError, map } from 'rxjs/operators'
+import { DEFAULT_ERROR_MESSAGE } from '../../utils'
 
 @Injectable({
   providedIn: 'root',
 })
 export class APIService {
-  private readonly BASE_URL = 'https://localhost:5000/'
+  private readonly BASE_URL = 'http://localhost:5000'
 
   constructor(private httpClient: HttpClient) {}
 
@@ -68,9 +69,13 @@ export class APIService {
   }
 
   private handleError = (error: HttpErrorResponse): Observable<never> => {
-    let errorMessage = 'An unknown error occurred'
+    let errorMessage = DEFAULT_ERROR_MESSAGE
     if (error.error instanceof ErrorEvent) {
-      errorMessage = `${error.status} - ${error.message}`
+      console.error('Client Error: ', error)
+      errorMessage = error?.error.message
+    } else if (error instanceof HttpErrorResponse) {
+      console.error('Server Error: ', error)
+      errorMessage = error?.error?.message
     }
     return throwError(() => new Error(errorMessage))
   }

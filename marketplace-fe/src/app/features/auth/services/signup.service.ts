@@ -8,18 +8,17 @@ import {
   FILL_ALL_FORM_FIELDS,
   INVALID_EMAIL_ADDRESS,
   INVALID_UFL_EMAIL,
-  LOGIN_FAILED,
-  setAuthToken,
+  PASSWORDS_DO_NOT_MATCH,
   validateEmail,
   validateUFLDomain,
 } from '../../../utils'
 
-import type { LoginData } from '../models/login.model'
+import type { SignupData } from '../models/signup.model'
 
 @Injectable({
   providedIn: 'root',
 })
-export class LoginService {
+export class SignupService {
   private isLoadingSubject = new BehaviorSubject<boolean>(false)
   public isLoading$ = this.isLoadingSubject.asObservable()
 
@@ -29,8 +28,9 @@ export class LoginService {
     private router: Router
   ) {}
 
-  handleUserLogin = (loginData: LoginData): void => {
-    const inputsValidation = this.validateLoginData(loginData)
+  handleUserSignup = (signupData: SignupData): void => {
+    this.isLoadingSubject.next(true)
+    const inputsValidation = this.validateSignupData(signupData)
     if (!inputsValidation.isValid) {
       this.notificationsService.addNotification({
         message: inputsValidation.message,
@@ -39,23 +39,19 @@ export class LoginService {
       this.isLoadingSubject.next(false)
       return
     }
-
-    this.isLoadingSubject.next(true)
     this.apiService
-      .post('login', { email: loginData.email, password: loginData.password })
+      .post('signup', {
+        name: signupData.name,
+        email: signupData.email,
+        password: signupData.password,
+      })
       .subscribe({
-        next: (response: unknown) => {
-          const tokenResponse = response as { token: string }
-          if (tokenResponse?.token) {
-            setAuthToken(tokenResponse.token)
-            this.router.navigate(['/'], { replaceUrl: true })
-          } else {
-            this.notificationsService.addNotification({
-              message: LOGIN_FAILED,
-              type: 'error',
-            })
-            this.isLoadingSubject.next(false)
-          }
+        next: () => {
+          this.notificationsService.addNotification({
+            message: 'Signup successful!',
+            type: 'success',
+          })
+          this.router.navigate(['/auth/login'])
         },
         error: (error) => {
           this.notificationsService.addNotification({
@@ -67,20 +63,24 @@ export class LoginService {
       })
   }
 
-  handleOnSignup = (): void => {
-    this.router.navigate(['/auth/signup'])
+  handleOnLogin = (): void => {
+    this.router.navigate(['/auth/login'])
   }
 
-  private validateLoginData = (loginData: LoginData): { isValid: boolean; message: string } => {
-    const email = loginData?.email?.trim()
-    const password = loginData?.password
+  private validateSignupData = (signupData: SignupData): { isValid: boolean; message: string } => {
+    const name = signupData?.name?.trim()
+    const email = signupData?.email?.trim()
+    const password = signupData?.password?.trim()
+    const confirmPassword = signupData?.confirmPassword?.trim()
 
-    if (!email || !password) {
+    if (!name || !email || !password || !confirmPassword) {
       return { isValid: false, message: FILL_ALL_FORM_FIELDS }
     } else if (validateEmail(email) === false) {
       return { isValid: false, message: INVALID_EMAIL_ADDRESS }
     } else if (validateUFLDomain(email) === false) {
       return { isValid: false, message: INVALID_UFL_EMAIL }
+    } else if (password !== confirmPassword) {
+      return { isValid: false, message: PASSWORDS_DO_NOT_MATCH }
     }
 
     return { isValid: true, message: '' }

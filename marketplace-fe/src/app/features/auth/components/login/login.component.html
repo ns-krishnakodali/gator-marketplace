@@ -17,7 +17,11 @@
       [required]="true"
     />
   </div>
-  <button mat-flat-button id="login-button" type="submit" class="login-button">Login</button>
+  @if (isLoading$ | async; as isLoading) {
+    <mat-spinner diameter="40" />
+  } @else {
+    <button mat-flat-button id="login-button" type="submit" class="login-button">Login</button>
+  }
   <span class="signup-actions">
     <app-text id="no-account-text" size="small"> Don't have an account? </app-text>
     <app-button id="signup-button" variant="text" type="button" [onClickHandler]="onSignUp">

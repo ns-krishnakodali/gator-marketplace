@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"marketplace-be/auth"
 	"marketplace-be/database"
 	"marketplace-be/routes"
 
@@ -13,6 +14,8 @@ func main() {
 	database.ConnectDatabase()
 
 	router := gin.Default()
+
+	router.Use(auth.CORSMiddleware())
 
 	routes.SetupRoutes(router)
 

@@ -1,8 +1,12 @@
 import { Component } from '@angular/core'
-import { Router } from '@angular/router'
+import { CommonModule } from '@angular/common'
 import { MatButtonModule } from '@angular/material/button'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { Observable } from 'rxjs'
 
 import { FormComponent } from '../form/form.component'
+import { SignupData } from '../../models/signup.model'
+import { SignupService } from '../../services/signup.service'
 
 import { ButtonComponent, InputComponent, TextComponent } from '../../../../shared-ui'
 
@@ -10,21 +14,29 @@ import { ButtonComponent, InputComponent, TextComponent } from '../../../../shar
   selector: 'app-signup',
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css'],
-  imports: [MatButtonModule, ButtonComponent, InputComponent, TextComponent, FormComponent],
+  imports: [
+    ButtonComponent,
+    CommonModule,
+    InputComponent,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    TextComponent,
+    FormComponent,
+  ],
 })
 export class SignupComponent {
-  username?: string
-  email?: string
-  password?: string
-  confirmPassword?: string
+  signupData: SignupData = { name: '', email: '', password: '', confirmPassword: '' }
+  isLoading$:  Observable<boolean>;
 
-  constructor(private router: Router) {}
+  constructor(private signupService: SignupService) {
+    this.isLoading$ = this.signupService.isLoading$
+  }
 
-  onSubmit = (event: Event): void => {
-    console.log('Form Submitted: ', event)
+  onSubmit = (): void => {
+    this.signupService.handleUserSignup(this.signupData)
   }
 
   onLogin = (): void => {
-    this.router.navigate(['/auth/login'])
+    this.signupService.handleOnLogin()
   }
 }

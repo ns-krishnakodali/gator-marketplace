@@ -1,11 +1,11 @@
-<app-form id="signup-form" (submitForm)="onSubmit($event)" heading="Join Marketplace">
+<app-form id="signup-form" (submitForm)="onSubmit()" heading="Join Marketplace">
   <div class="form-inputs">
     <app-input
       id="name"
       class="signup-element"
       placeholder="Name"
       type="text"
-      [(value)]="username"
+      [(value)]="signupData.name"
       [required]="true"
     />
     <app-input
@@ -13,7 +13,7 @@
       class="signup-element"
       placeholder="Email"
       type="email"
-      [(value)]="email"
+      [(value)]="signupData.email"
       [required]="true"
     />
     <app-input
@@ -21,7 +21,7 @@
       class="signup-element"
       placeholder="Password"
       type="password"
-      [(value)]="password"
+      [(value)]="signupData.password"
       [required]="true"
     />
     <app-input
@@ -29,11 +29,15 @@
       class="signup-element"
       placeholder="Confirm Password"
       type="password"
-      [(value)]="confirmPassword"
+      [(value)]="signupData.confirmPassword"
       [required]="true"
     />
   </div>
-  <button mat-flat-button id="signup-button" type="submit" class="signup-button">Sign Up</button>
+  @if (isLoading$ | async; as isLoading) {
+    <mat-spinner diameter="40" />
+  } @else {
+    <button mat-flat-button id="signup-button" type="submit" class="signup-button">Sign Up</button>
+  }
   <span class="login-actions">
     <app-text id="registered-text" size="small"> Already registered? </app-text>
     <app-button id="login-button" variant="text" type="button" [onClickHandler]="onLogin">
