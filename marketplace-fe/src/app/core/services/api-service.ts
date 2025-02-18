@@ -3,13 +3,15 @@ import { Injectable } from '@angular/core'
 
 import { Observable, throwError } from 'rxjs'
 import { catchError, map } from 'rxjs/operators'
+
 import { DEFAULT_ERROR_MESSAGE } from '../../utils'
+import { environment } from '../../../environments/environment'
 
 @Injectable({
   providedIn: 'root',
 })
 export class APIService {
-  private readonly BASE_URL = 'http://localhost:5000'
+  private readonly BASE_URL = environment.apiBaseURL
 
   constructor(private httpClient: HttpClient) {}
 
