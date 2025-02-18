@@ -1,11 +1,11 @@
-<app-form id="login-form" (submitForm)="onSubmit($event)" heading="Login to Marketplace">
+<app-form id="login-form" (submitForm)="onSubmit()" heading="Login to Marketplace">
   <div class="form-inputs">
     <app-input
       id="email"
       class="login-element"
       placeholder="Email"
       type="email"
-      [(value)]="email"
+      [(value)]="loginData.email"
       [required]="true"
     />
     <app-input
@@ -13,11 +13,15 @@
       class="login-element"
       placeholder="Password"
       type="password"
-      [(value)]="password"
+      [(value)]="loginData.password"
       [required]="true"
     />
   </div>
-  <button mat-flat-button id="login-button" type="submit" class="login-button">Login</button>
+  @if (isLoading$ | async; as isLoading) {
+    <mat-spinner diameter="40" />
+  } @else {
+    <button mat-flat-button id="login-button" type="submit" class="login-button">Login</button>
+  }
   <span class="signup-actions">
     <app-text id="no-account-text" size="small"> Don't have an account? </app-text>
     <app-button id="signup-button" variant="text" type="button" [onClickHandler]="onSignUp">
