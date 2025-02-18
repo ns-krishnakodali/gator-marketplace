@@ -3,6 +3,7 @@ package auth
 import (
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -12,9 +13,14 @@ import (
 var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
 
 func GenerateToken(userID int) (string, error) {
+	minutes, err := strconv.Atoi(os.Getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+	if err != nil {
+		minutes = 60 // Default to 60 minutes if not set
+	}
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id": userID,
-		"exp":     time.Now().Add(time.Hour * 24).Unix(),
+		"exp":     time.Now().Add(time.Minute * time.Duration(minutes)).Unix(),
 	})
 	return token.SignedString(jwtSecret)
 }
