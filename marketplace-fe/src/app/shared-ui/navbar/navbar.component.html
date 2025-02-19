@@ -1,9 +1,14 @@
 <nav class="navbar">
-    <div class="navbar-brand">{{ title }}</div>
-    <ul class="navbar-links">
-      <li *ngFor="let link of links">
-        <a [routerLink]="link.path">{{ link.label }}</a>
-      </li>
-    </ul>
-  </nav>
+  <div class="navbar-brand">{{ title }}</div>
   
+
+  <div *ngIf="showSearch" class="search-bar">
+    <input type="text" placeholder="Search..." />
+  </div>
+
+  <ul class="navbar-links">
+    <li *ngFor="let link of links">
+      <a [routerLink]="link.path">{{ link.label }}</a>
+    </li>
+  </ul>
+</nav>

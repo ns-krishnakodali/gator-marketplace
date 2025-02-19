@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./navbar.component.css'],
 })
 export class NavbarComponent {
-  @Input() title: string = "My App";
-  @Input() links: { label: string; path: string }[] = [];
+  @Input() showSearch: boolean = false; 
+  @Input() title: string = 'MyApp'; 
+  @Input() links: { label: string; path: string }[] = []; 
 }
