@@ -14,10 +14,14 @@
   --spacing-x-large: 150px;
   --spacing-xx-large: 200px;
 
+  --font-size-normal: 14px;
+
   --border-1: 1px solid #ccc;
   --border-input: 1.5px solid var(--color-border-1);
+  --border-landing-page-card: 1px solid var(--color-black);
 
   --color-white: white;
+  --color-black: black;
   --color-border-1: #3e4c59;
   --color-background: #fff;
 
