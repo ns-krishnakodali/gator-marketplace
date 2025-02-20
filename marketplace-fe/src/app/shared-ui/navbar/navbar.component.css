@@ -1,0 +1,83 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  overflow-x: visible;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-1) 0px;
+  color: var(--color-white);
+  background-color: var(--color-navbar-background);
+  border-bottom: var(--border-bottom-navbar);
+}
+
+.gator-marketplace {
+  display: flex;
+  align-items: center;
+  margin-left: var(--spacing-2-5);
+  font-weight: bold;
+}
+
+.gator-marketplace h2 {
+  margin: 0;
+  padding: 0;
+}
+
+.gator-logo {
+  margin-right: var(--spacing-1);
+}
+
+.search-bar {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  display: flex;
+  align-items: center;
+}
+
+.search-bar app-input {
+  flex-grow: 1;
+}
+
+.search-icon {
+  position: absolute;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.navbar-links {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  list-style: none;
+  margin-right: var(--spacing-3);
+}
+
+.navbar-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: var(--spacing-4);
+}
+
+.navbar-icon {
+  width: 28px;
+  height: 28px;
+  margin-right: var(--spacing-half);
+  margin-bottom: var(--spacing-quarter);
+  cursor: pointer;
+}
+
+.navbar-link a {
+  color: var(--color-white);
+  text-decoration: none;
+  transition: opacity 0.3s;
+}
+
+.navbar-link a:hover {
+  opacity: 0.7;
+}

@@ -16,19 +16,21 @@
 
   --font-size-normal: 14px;
 
-  --border-1: 1px solid #ccc;
-  --border-input: 1.5px solid var(--color-border-1);
-  --border-landing-page-card: 1px solid var(--color-black);
-
   --color-white: white;
   --color-black: black;
   --color-border-1: #3e4c59;
   --color-background: #fff;
 
-  --color-notification-info: #2196f3;
-  --color-notification-warning: #ff9800;
-  --color-notification-success: #4caf50;
+  --color-navbar-background: #005398;
   --color-notification-error: #f44336;
+  --color-notification-info: #2196f3;
+  --color-notification-success: #4caf50;
+  --color-notification-warning: #ff9800;
+
+  --border-1: 1px solid #ccc;
+  --border-input: 1.5px solid var(--color-border-1);
+  --border-landing-page-card: 1px solid var(--color-black);
+  --border-bottom-navbar: 1px solid var(--color-navbar-background);
 
   --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
