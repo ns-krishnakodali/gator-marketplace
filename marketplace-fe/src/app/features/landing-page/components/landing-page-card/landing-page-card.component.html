@@ -1,0 +1,11 @@
+<div class="card" (click)="onCardClick()" (keydown.enter)="onCardClick()" tabindex="0">
+  <div class="card-icon">
+    <img [src]="iconSrc" [alt]="iconAlt" class="card-image" />
+  </div>
+  <div class="card-title">
+    <app-text id="card-title" size="x-large">{{ cardTitle }}</app-text>
+  </div>
+  <div class="card-description">
+    <app-text id="card-decription" size="normal">{{ cardDescription }}</app-text>
+  </div>
+</div>

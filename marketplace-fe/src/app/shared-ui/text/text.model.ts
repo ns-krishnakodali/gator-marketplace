@@ -1,1 +1,1 @@
-export type TextSize = 'large' | 'medium' | 'small'
+export type TextSize = 'x-large' | 'large' | 'medium' | 'normal' | 'small'
