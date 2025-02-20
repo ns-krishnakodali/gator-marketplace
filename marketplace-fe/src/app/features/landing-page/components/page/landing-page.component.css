@@ -1,0 +1,18 @@
+.cards-container {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-large);
+  height: 100vh;
+  overflow-y: hidden;
+}
+
+@media (max-width: 768px) {
+  .cards-container {
+    flex-direction: row;
+    overflow-x: auto;
+    justify-content: center;
+    padding: var(--spacing-1-5);
+  }
+}
