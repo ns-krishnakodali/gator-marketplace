@@ -9,6 +9,7 @@ import {
   INVALID_EMAIL_ADDRESS,
   INVALID_UFL_EMAIL,
   LOGIN_FAILED,
+  isValidToken,
   setAuthToken,
   validateEmail,
   validateUFLDomain,
@@ -28,6 +29,12 @@ export class LoginService {
     private notificationsService: NotificationsService,
     private router: Router
   ) {}
+
+  validateAuthToken = (): void => {
+    if (isValidToken()) {
+      this.router.navigate(['/'], { replaceUrl: true })
+    }
+  }
 
   handleUserLogin = (loginData: LoginData): void => {
     const inputsValidation = this.validateLoginData(loginData)
