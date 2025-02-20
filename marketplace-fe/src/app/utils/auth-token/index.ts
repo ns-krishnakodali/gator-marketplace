@@ -34,6 +34,6 @@ export const removeAuthToken = (): void => {
 }
 
 export const isValidToken = (): boolean => {
-  const token = getAuthToken()
+  const token: string | null = getAuthToken()
   return typeof token === 'string' && token.trim() !== ''
 }
