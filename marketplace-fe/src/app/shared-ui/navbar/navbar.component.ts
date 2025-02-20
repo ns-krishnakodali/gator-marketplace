@@ -1,6 +1,6 @@
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Component, Input } from '@angular/core'
+import { CommonModule } from '@angular/common'
+import { RouterModule } from '@angular/router'
 
 @Component({
   selector: 'app-navbar',
@@ -10,7 +10,7 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./navbar.component.css'],
 })
 export class NavbarComponent {
-  @Input() showSearch: boolean = false; 
-  @Input() title: string = 'MyApp'; 
-  @Input() links: { label: string; path: string }[] = []; 
+  @Input() showSearch: boolean = false
+  @Input() title: string = 'MyApp'
+  @Input() links: { label: string; path: string }[] = []
 }
