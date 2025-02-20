@@ -9,6 +9,7 @@ import {
   INVALID_EMAIL_ADDRESS,
   INVALID_UFL_EMAIL,
   PASSWORDS_DO_NOT_MATCH,
+  isValidToken,
   validateEmail,
   validateUFLDomain,
 } from '../../../../utils'
@@ -27,6 +28,12 @@ export class SignupService {
     private notificationsService: NotificationsService,
     private router: Router
   ) {}
+
+  validateAuthToken = (): void => {
+    if (isValidToken()) {
+      this.router.navigate(['/'], { replaceUrl: true })
+    }
+  }
 
   handleUserSignup = (signupData: SignupData): void => {
     this.isLoadingSubject.next(true)
