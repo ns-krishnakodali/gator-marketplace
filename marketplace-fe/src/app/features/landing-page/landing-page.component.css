@@ -1,0 +1,61 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: white;
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Centers vertically */
+}
+
+/* Cards Section */
+.cards-container {
+  display: flex;
+  justify-content: center; /* Centers the cards */
+  align-items: center; /* Aligns them properly */
+  gap: 30px;
+  flex-wrap: nowrap; /* Ensures cards stay in a row */
+}
+
+.card {
+  background-color: white;
+  padding: 20px;
+  width: 280px;
+  text-align: center;
+  border-radius: 15px;
+  border: 2px solid black;
+  transition: transform 0.3s;
+  flex-shrink: 0; /* Prevents cards from shrinking */
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.card-icon {
+  font-size: 70px;
+  margin-bottom: 15px;
+}
+
+.card-title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.card-text {
+  font-size: 14px;
+  color: black;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .cards-container {
+      flex-direction: row; /* Keeps cards in a row */
+      overflow-x: auto; /* Allows scrolling if needed */
+      justify-content: center; /* Centers them even on small screens */
+      padding: 10px;
+  }
+}
