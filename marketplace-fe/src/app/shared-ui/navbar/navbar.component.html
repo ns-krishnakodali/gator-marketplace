@@ -1,0 +1,26 @@
+<nav class="navbar">
+  <div class="gator-marketplace">
+    <img src="assets/gator.png" alt="Gator Logo" class="gator-logo" width="80" height="60" />
+    <h2 id="marketplace">Marketplace</h2>
+  </div>
+  @if (showSearch) {
+    <div class="search-bar">
+      <app-input id="search-bar" type="text" placeholder="Enter product name or category..." />
+      <img src="assets/svg-icons/search-icon.svg" alt="Search Icon" class="search-icon" />
+    </div>
+  }
+  <div class="navbar-links">
+    @if (showAccount) {
+      <div class="navbar-link">
+        <img src="assets/svg-icons/account-icon.svg" alt="Account Icon" class="navbar-icon" />
+        <a [routerLink]="'/my-account'">My Account</a>
+      </div>
+    }
+    @if (showCart) {
+      <div class="navbar-link">
+        <img src="assets/svg-icons/cart-icon.svg" alt="Account Icon" class="navbar-icon" />
+        <a [routerLink]="'/my-cart'">Cart</a>
+      </div>
+    }
+  </div>
+</nav>
