@@ -15,8 +15,4 @@ export class LandingPageCardComponent {
   @Input({ required: true }) cardTitle = ''
   @Input({ required: true }) cardDescription = ''
   @Input({ required: true }) onCardClick!: () => void
-
-  onClick() {
-    this.onCardClick()
-  }
 }
