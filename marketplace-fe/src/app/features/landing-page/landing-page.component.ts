@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'
+import { Component } from '@angular/core'
 
 import { LandingPageCardComponent } from './components/'
 import { LandingPageService } from './services'
@@ -10,12 +10,8 @@ import { NavbarComponent } from '../../shared-ui'
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.css',
 })
-export class LandingPageComponent implements OnInit {
+export class LandingPageComponent {
   constructor(private landingPageService: LandingPageService) {}
-
-  ngOnInit(): void {
-    this.landingPageService.checkTokenValidation()
-  }
 
   onExploreMarketplaceClick = (): void => {
     this.landingPageService.navigateTo('/marketplace')

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { Component, OnInit } from '@angular/core'
+import { Component } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { Observable } from 'rxjs'
@@ -24,16 +24,12 @@ import { ButtonComponent, InputComponent, TextComponent } from '../../../../shar
     FormComponent,
   ],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
   loginData: LoginData = { email: '', password: '' }
   isLoading$: Observable<boolean>
 
   constructor(private loginService: LoginService) {
     this.isLoading$ = this.loginService.isLoading$
-  }
-
-  ngOnInit(): void {
-    this.loginService.validateAuthToken()
   }
 
   onSubmit = (): void => {
