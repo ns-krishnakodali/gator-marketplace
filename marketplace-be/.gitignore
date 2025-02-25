@@ -40,3 +40,5 @@ debug/
 *.prof
 coverage.out
 trace.out
+
+scripts/mock_product_data.go
