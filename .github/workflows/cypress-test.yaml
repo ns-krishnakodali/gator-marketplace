@@ -1,38 +1,51 @@
-# .github/workflows/cypress-tests.yml
 name: Angular E2E Tests
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
   pull_request:
-    branches:
-      - main
+    branches: [ "dev" , "main"]
 
 jobs:
   e2e-tests:
     runs-on: ubuntu-latest
-    container:
-      image: cypress/included:14.1.0 # ✅ Uses Cypress with all dependencies preinstalled
     steps:
-      - name: Checkout repository
+      - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: npm install
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Chrome dependencies for Cypress
+        if: runner.os == 'Linux'
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
+            libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 \
+            libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+        # Above installs Xvfb, libnss3, and other libraries required for headless Chrome&#8203;:contentReference[oaicite:3]{index=3}
+
+      - name: Install NPM dependencies
         working-directory: marketplace-fe
+        run: npm ci
+        # Using npm ci for a clean, deterministic install (faster and more reliable in CI than npm install)&#8203;:contentReference[oaicite:4]{index=4}
 
-    #   - name: Start Angular Application
-    #     run: npm run start &
-    #     working-directory: marketplace-fe
-    #     env:
-    #       CI: true
-
-    #   - name: Wait for Angular to be Ready
-    #     run: npx wait-on http://localhost:4200
-    #     working-directory: marketplace-fe
-
-      - name: Run Cypress E2E Tests with Angular CLI
-        run: npx ng e2e --no-watch --browser=chrome --headless --no-hmr
+      - name: Build Angular app (production)
         working-directory: marketplace-fe
+        run: npm run build -- --configuration=production
 
+      - name: Start Angular dev server
+        working-directory: marketplace-fe
+        run: npm run start -- --configuration=production &
+        # Starts the dev server in the background on default port (e.g., 4200)
+
+      - name: Wait for dev server to be ready
+        run: npx wait-on http://localhost:4200
+        # Wait until the Angular app is responding. For Node 18+/Ubuntu runners, you may need to target IPv6 localhost if necessary&#8203;:contentReference[oaicite:5]{index=5}.
+
+      - name: Run Cypress E2E tests (Headless Chrome)
+        working-directory: marketplace-fe
+        run: npx ng e2e --configuration=production --headless --browser=chrome
+        # Runs the Angular E2E tests with Cypress in headless Chrome. Fails if any test fails.
