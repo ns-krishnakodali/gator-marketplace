@@ -1,0 +1,38 @@
+# .github/workflows/cypress-tests.yml
+name: Angular E2E Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+    container:
+      image: cypress/included:14.1.0 # ✅ Uses Cypress with all dependencies preinstalled
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: marketplace-fe
+
+    #   - name: Start Angular Application
+    #     run: npm run start &
+    #     working-directory: marketplace-fe
+    #     env:
+    #       CI: true
+
+    #   - name: Wait for Angular to be Ready
+    #     run: npx wait-on http://localhost:4200
+    #     working-directory: marketplace-fe
+
+      - name: Run Cypress E2E Tests with Angular CLI
+        run: npx ng e2e --no-watch --browser=chrome --headless --no-hmr
+        working-directory: marketplace-fe
+
