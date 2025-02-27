@@ -8,9 +8,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
 
-	"marketplace-be/test_utils"
 	"marketplace-be/models"
 	"marketplace-be/products"
+	"marketplace-be/test_utils"
 )
 
 func init() {
@@ -22,12 +22,12 @@ func TestCreateProduct_Success(t *testing.T) {
 	_ = db
 
 	// Input with valid category
-	input := products.ProductInput{
+	input := models.ProductInput{
 		Name:     "Test Product",
 		Category: models.Books,
 		Price:    10.99,
 		Quantity: 5,
-		Images: []products.ProductImageInput{
+		Images: []models.ProductImageInput{
 			{MimeType: "image/png", URL: "http://example.com/img1.png", IsMain: true},
 			{MimeType: "image/png", URL: "http://example.com/img2.png", IsMain: false},
 		},
@@ -37,7 +37,6 @@ func TestCreateProduct_Success(t *testing.T) {
 	c, w := test_utils.CreateTestContext("POST", "/api/products", body)
 
 	products.CreateProduct(c)
-
 
 	require.Equal(t, http.StatusCreated, w.Code)
 
@@ -54,7 +53,7 @@ func TestCreateProduct_InvalidCategory(t *testing.T) {
 	db := test_utils.SetupTestDB(t)
 	_ = db
 
-	input := products.ProductInput{
+	input := models.ProductInput{
 		Name:     "Invalid Cat Product",
 		Category: "NonExistentCategory", // Invalid
 		Price:    15.0,
@@ -178,12 +177,12 @@ func TestUpdateProduct_Success(t *testing.T) {
 	})
 
 	// Attempt an update
-	updateInput := products.ProductInput{
+	updateInput := models.ProductInput{
 		Name:     "New Product Name",
 		Category: models.Books,
 		Price:    30,
 		Quantity: 10,
-		Images: []products.ProductImageInput{
+		Images: []models.ProductImageInput{
 			{MimeType: "image/jpeg", URL: "http://example.com/new1.jpg", IsMain: true},
 			{MimeType: "image/jpeg", URL: "http://example.com/new2.jpg", IsMain: false},
 		},

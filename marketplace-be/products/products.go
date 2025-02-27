@@ -14,26 +14,6 @@ import (
 )
 
 // ===============================
-//           MODELS
-// ===============================
-
-// For creating/updating a product along with images
-type ProductInput struct {
-	Name        string                `json:"name" binding:"required"`
-	Description string                `json:"description,omitempty"`
-	Price       float64               `json:"price" binding:"required"`
-	Category    models.Category       `json:"category" binding:"required"`
-	Quantity    int                   `json:"quantity"`
-	Images      []ProductImageInput   `json:"images,omitempty"`
-}
-
-type ProductImageInput struct {
-	MimeType string `json:"mimeType" binding:"required"`
-	URL      string `json:"url" binding:"required"`
-	IsMain   bool   `json:"isMain"`
-}
-
-// ===============================
 //        HELPER FUNCTIONS
 // ===============================
 
@@ -75,7 +55,7 @@ func parseCategories(catString string) (validCats []models.Category, invalidCats
 
 // CreateProduct - create a Product with optional ProductImages
 func CreateProduct(c *gin.Context) {
-	var input ProductInput
+	var input models.ProductInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -243,7 +223,7 @@ func UpdateProduct(c *gin.Context) {
 	}
 
 	// Bind input
-	var input ProductInput
+	var input models.ProductInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -280,7 +260,7 @@ func UpdateProduct(c *gin.Context) {
 		// Create new images
 		for _, img := range input.Images {
 			newImg := models.ProductImage{
-				Pid:     productPID,
+				Pid:      productPID,
 				MimeType: img.MimeType,
 				Url:      img.URL,
 				IsMain:   img.IsMain,
@@ -318,4 +298,3 @@ func DeleteProduct(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Product deleted successfully"})
 }
-
