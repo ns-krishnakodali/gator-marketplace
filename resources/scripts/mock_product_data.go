@@ -1,4 +1,4 @@
-package scripts
+package main
 
 import (
 	"fmt"
@@ -24,8 +24,9 @@ var categories = []models.Category{
 func GenerateMockProductsData(numProducts int) {
 	for i := 0; i < numProducts; i++ {
 		product_uuid := uuid.New().String()
+		fmt.Printf("%s\n", product_uuid)
 		product := models.Product{
-			PID:             product_uuid,
+			Pid:             product_uuid,
 			Name:            fmt.Sprintf("Product %d", i+1),
 			Description:     fmt.Sprintf("This is a sample description for product %d", i+1),
 			Price:           float64(rand.Intn(10000)) / 100,
@@ -39,10 +40,9 @@ func GenerateMockProductsData(numProducts int) {
 			continue
 		}
 
-		mockImageData := []byte("mock image data for testing purposes")
 		productImage := models.ProductImage{
-			PID:      product_uuid,
-			Data:     mockImageData,
+			Pid:      product_uuid,
+			Url:	  "https://placehold.co/600x400",
 			MimeType: "image/jpeg",
 			IsMain:   true,
 		}
@@ -51,4 +51,21 @@ func GenerateMockProductsData(numProducts int) {
 			fmt.Printf("Error creating product image: %v\n", err)
 		}
 	}
+}
+
+// Add a `main` function to call `GenerateMockProductsData`
+func main() {
+		// Ensure database is initialized
+	database.ConnectDatabase()
+
+	// Verify that the DB connection is valid before proceeding
+	if database.DB == nil {
+		fmt.Println("Error: Database connection is not initialized.")
+		return
+	}
+
+	fmt.Println("Generating mock products data...")
+	GenerateMockProductsData(1000) // Adjust the number as needed
+	fmt.Println("Mock data generation complete.")
+
 }
