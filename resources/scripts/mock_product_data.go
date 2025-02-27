@@ -67,5 +67,4 @@ func main() {
 	fmt.Println("Generating mock products data...")
 	GenerateMockProductsData(1000) // Adjust the number as needed
 	fmt.Println("Mock data generation complete.")
-
 }
