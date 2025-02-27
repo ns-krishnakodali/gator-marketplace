@@ -52,7 +52,7 @@ func Signup(c *gin.Context) {
 func Login(c *gin.Context) {
 	var input models.LoginInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid input format"})
 		return
 	}
 
