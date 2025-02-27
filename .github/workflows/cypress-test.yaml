@@ -27,15 +27,6 @@ jobs:
         working-directory: marketplace-fe
         run: npm run build -- --configuration=production
 
-      - name: Start Angular dev server
-        working-directory: marketplace-fe
-        run: npm run start -- --configuration=production &
-        # Starts the dev server in the background on default port (e.g., 4200)
-
-      - name: Wait for dev server to be ready
-        run: npx wait-on http://localhost:4200
-        # Wait until the Angular app is responding. For Node 18+/Ubuntu runners, you may need to target IPv6 localhost if necessary&#8203;:contentReference[oaicite:5]{index=5}.
-
       - name: Run Cypress E2E tests (Headless Chrome)
         working-directory: marketplace-fe
         run: npx ng e2e --configuration=production --headless --browser=chrome
