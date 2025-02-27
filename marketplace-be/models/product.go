@@ -36,7 +36,7 @@ type ProductImage struct {
 	ID        int       `gorm:"primaryKey;autoIncrement"`
 	Pid       string    `gorm:"type:varchar(36);not null;index"`
 	MimeType  string    `gorm:"type:varchar(100);not null"`
-	Url 	  string    `gorm:"type:text;not null;default:'https://placehold.co/600x400'"`
+	Url 	  string    `gorm:"type:text;not null;"`
 	IsMain    bool      `gorm:"not null;default:false"`
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
