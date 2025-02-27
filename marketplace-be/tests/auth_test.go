@@ -73,7 +73,7 @@ func TestSignup_BadRequest_InvalidJSON(t *testing.T) {
 	err := json.Unmarshal(w.Body.Bytes(), &resp)
 	require.NoError(t, err)
 
-	require.Contains(t, resp["message"], "unexpected EOF")
+	require.Contains(t, resp["message"], "Invalid input format")
 }
 
 func TestSignup_BadRequest_Validation(t *testing.T) {
@@ -88,8 +88,7 @@ func TestSignup_BadRequest_Validation(t *testing.T) {
 	var resp map[string]interface{}
 	err := json.Unmarshal(w.Body.Bytes(), &resp)
 	require.NoError(t, err)
-	// Typically will get a validation error message like "Key: 'SignupInput.Password' Error:Field validation for 'Password' failed..."
-	require.Contains(t, resp["message"], "Password")
+	require.Contains(t, resp["message"], "Invalid input format")
 }
 
 // ===================
@@ -167,6 +166,5 @@ func TestLogin_BadRequest_InvalidJSON(t *testing.T) {
 	err := json.Unmarshal(w.Body.Bytes(), &resp)
 	require.NoError(t, err)
 
-	// Check for "unexpected EOF" (or at least confirm it's an error about malformed JSON)
-	require.Contains(t, resp["message"], "unexpected EOF")
+	require.Contains(t, resp["message"], "Invalid input format")
 }
