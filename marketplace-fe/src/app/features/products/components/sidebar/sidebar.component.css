@@ -1,0 +1,23 @@
+.sidebar-container {
+    width: var(--spacing-xx-large);
+    height: 100vh;
+    background-color: var(--color-navbar-background);
+    box-shadow: var(--box-shadow);
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing-2);
+    border-right: 3px solid #d71b1b;
+
+  }
+  
+  .sidebar-item {
+    padding: var(--spacing-1);
+    margin: var(--spacing-half) 0;
+    color: var(--color-white);
+    cursor: pointer;
+    border-bottom: var(--border-1);
+  }
+  
+  .sidebar-item:hover {
+    background-color: var(--color-notification-info);
+  }
