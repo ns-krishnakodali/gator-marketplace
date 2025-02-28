@@ -10,7 +10,10 @@
     "test:headless": "ng test --browsers=ChromeHeadless --watch=false",
     "format": "prettier --write \"src/**/*.{ts,html,scss,css,json,md}\"",
     "format:check": "prettier --check \"src/**/*.{ts,html,scss,css,json,md}\"",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "e2e": "ng e2e",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
   },
   "private": true,
   "dependencies": {
@@ -32,8 +35,10 @@
     "@angular-devkit/build-angular": "^19.1.4",
     "@angular/cli": "^19.1.4",
     "@angular/compiler-cli": "^19.1.0",
+    "@cypress/schematic": "^3.0.0",
     "@types/jasmine": "~5.1.0",
     "angular-eslint": "19.0.2",
+    "cypress": "^14.1.0",
     "eslint": "^9.16.0",
     "jasmine-core": "~5.5.0",
     "karma": "~6.4.0",
