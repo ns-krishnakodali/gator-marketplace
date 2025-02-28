@@ -1,0 +1,11 @@
+<h2 style="text-align: center; width: 100%;">All Items</h2>
+  <mat-card class="product-card">
+  <img mat-card-image class="product-image" [src]="imageSrc" [alt]="productName" />
+  <mat-card-content>
+    <h2 class="product-name">{{ productName }}</h2>
+    <p class="product-price">${{ productPrice }}</p>
+    <button mat-button color="primary" (click)="addToCart()">Add to Cart</button>
+    <p class="product-date">Posted on {{ postedDate }}</p>
+  </mat-card-content>
+</mat-card>
+</div>
