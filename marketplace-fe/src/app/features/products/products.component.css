@@ -1,0 +1,10 @@
+.container {
+  display: flex;
+}
+
+.paginator {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  background: var(--color-white);
+}

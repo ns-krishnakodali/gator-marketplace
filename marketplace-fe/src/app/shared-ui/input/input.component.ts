@@ -9,13 +9,15 @@ import { type InputType } from './input.model'
 })
 export class InputComponent {
   @Input({ required: true }) id!: string
-  @Input() name?: string
   @Input() class?: string
-  @Input() type: InputType = 'text'
-  @Input() value?: string
+  @Input() checked?: boolean
+  @Input() disabled?: boolean
+  @Input() name?: string
   @Input() placeholder?: string
   @Input() required?: boolean
   @Input() readOnly?: boolean
+  @Input() type: InputType = 'text'
+  @Input() value?: string
 
   @Output() valueChange = new EventEmitter<string>()
 

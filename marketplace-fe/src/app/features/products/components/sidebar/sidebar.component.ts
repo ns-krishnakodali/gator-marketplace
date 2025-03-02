@@ -1,19 +1,26 @@
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core'
+import { CommonModule } from '@angular/common'
+import { MatDivider } from '@angular/material/divider'
+
+import { Categories, SortOptions } from '../../models'
+import { InputComponent } from '../../../../shared-ui/'
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [MatDivider, CommonModule, InputComponent],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
 })
 export class SidebarComponent {
+  @Input() categories: string[] = this.categoryValues
+  @Input() sortOptions: string[] = this.sortOptionValues
 
-  @Input() menuItems: { label: string; onClick: () => void }[] = [];
-  @Input() isExpanded: boolean = true;
+  get categoryValues() {
+    return Object.values(Categories)
+  }
 
-  toggleSidebar() {
-    this.isExpanded = !this.isExpanded;
+  get sortOptionValues() {
+    return Object.values(SortOptions)
   }
 }

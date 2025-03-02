@@ -1,0 +1,14 @@
+<app-navbar [showAccount]="true" [showCart]="true" [showSearchBar]="true" />
+<div class="container">
+  <app-sidebar />
+  <div>
+    <app-display-products />
+    <mat-paginator
+      class="paginator"
+      [length]="100"
+      [pageSize]="10"
+      [pageSizeOptions]="[]"
+      aria-label="Select page"
+    />
+  </div>
+</div>

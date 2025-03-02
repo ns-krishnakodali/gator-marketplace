@@ -1,7 +1,7 @@
 .card {
+  width: 280px;
   background-color: var(--color-white);
   padding: var(--spacing-2);
-  width: 280px;
   text-align: center;
   border-radius: var(--spacing-2);
   border: var(--border-landing-page-card);
@@ -20,8 +20,8 @@
 }
 
 .card-image {
-  width: 80px;
-  height: 80px;
+  width: 12rem;
+  height: 5rem;
 }
 
 .card-title {

@@ -1,7 +1,10 @@
+import { CommonModule } from '@angular/common'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { NavbarComponent } from './navbar.component'
-import { RouterTestingModule } from '@angular/router/testing'
 import { By } from '@angular/platform-browser'
+import { provideRouter } from '@angular/router'
+
+import { InputComponent } from '../input/input.component'
+import { NavbarComponent } from './navbar.component'
 
 describe('NavbarComponent', () => {
   let component: NavbarComponent
@@ -9,7 +12,9 @@ describe('NavbarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NavbarComponent, RouterTestingModule],
+      imports: [CommonModule],
+      declarations: [NavbarComponent, InputComponent],
+      providers: [provideRouter([])],
     }).compileComponents()
 
     fixture = TestBed.createComponent(NavbarComponent)
@@ -20,46 +25,51 @@ describe('NavbarComponent', () => {
     expect(component).toBeTruthy()
   })
 
-  it('should display the title', () => {
-    component.title = 'Test App'
+  it('should render the marketplace title', () => {
     fixture.detectChanges()
-    const titleElement = fixture.debugElement.query(By.css('.navbar-brand')).nativeElement
-    expect(titleElement.textContent).toContain('Test App')
+    const title = fixture.debugElement.query(By.css('#marketplace'))
+    expect(title.nativeElement.textContent).toContain('Marketplace')
   })
 
-  it('should render the search bar when showSearch is true', () => {
-    component.showSearch = true
+  it('should display the search bar when showSearchBar is true', () => {
+    component.showSearchBar = true
     fixture.detectChanges()
-    const searchBar = fixture.debugElement.query(By.css('.search-bar'))
+    const searchBar = fixture.debugElement.query(By.css('#search-bar'))
     expect(searchBar).toBeTruthy()
   })
 
-  it('should not render the search bar when showSearch is false', () => {
-    component.showSearch = false
+  it('should not display the search bar when showSearchBar is false', () => {
+    component.showSearchBar = false
     fixture.detectChanges()
-    const searchBar = fixture.debugElement.query(By.css('.search-bar'))
+    const searchBar = fixture.debugElement.query(By.css('#search-bar'))
     expect(searchBar).toBeFalsy()
   })
 
-  it('should render the correct number of navigation links', () => {
-    component.links = [
-      { label: 'Home', path: '/' },
-      { label: 'Dashboard', path: '/dashboard' },
-      { label: 'Profile', path: '/profile' },
-    ]
+  it('should display My Account link when showAccount is true', () => {
+    component.showAccount = true
     fixture.detectChanges()
-    const links = fixture.debugElement.queryAll(By.css('.navbar-links li'))
-    expect(links.length).toBe(3)
+    const accountLink = fixture.debugElement.query(By.css('.navbar-link a[href="/my-account"]'))
+    expect(accountLink).toBeTruthy()
   })
 
-  it('should set correct router links for navigation items', () => {
-    component.links = [
-      { label: 'Home', path: '/' },
-      { label: 'Dashboard', path: '/dashboard' },
-    ]
+  it('should not display My Account link when showAccount is false', () => {
+    component.showAccount = false
     fixture.detectChanges()
-    const linkElements = fixture.debugElement.queryAll(By.css('.navbar-links a'))
-    expect(linkElements[0].nativeElement.getAttribute('ng-reflect-router-link')).toBe('/')
-    expect(linkElements[1].nativeElement.getAttribute('ng-reflect-router-link')).toBe('/dashboard')
+    const accountLink = fixture.debugElement.query(By.css('.navbar-link a[href="/my-account"]'))
+    expect(accountLink).toBeFalsy()
+  })
+
+  it('should display Cart link when showCart is true', () => {
+    component.showCart = true
+    fixture.detectChanges()
+    const cartLink = fixture.debugElement.query(By.css('.navbar-link a[href="/my-cart"]'))
+    expect(cartLink).toBeTruthy()
+  })
+
+  it('should not display Cart link when showCart is false', () => {
+    component.showCart = false
+    fixture.detectChanges()
+    const cartLink = fixture.debugElement.query(By.css('.navbar-link a[href="/my-cart"]'))
+    expect(cartLink).toBeFalsy()
   })
 })
