@@ -7,14 +7,15 @@ import (
 type Category string
 
 const (
-	Electronics   Category = "Electronics"
+	Appliances    Category = "Appliances"
 	Books         Category = "Books"
 	Clothing      Category = "Clothing"
 	Furniture     Category = "Furniture"
-	Tickets       Category = "Tickets"
-	Sports        Category = "Sports"
-	Appliances    Category = "Appliances"
+	Electronics   Category = "Electronics"
+	Entertainment Category = "Entertainment"
 	Miscellaneous Category = "Miscellaneous"
+	Sports        Category = "Sports"
+	Tickets       Category = "Tickets"
 )
 
 type Product struct {
@@ -36,7 +37,7 @@ type ProductImage struct {
 	ID        int       `gorm:"primaryKey;autoIncrement"`
 	Pid       string    `gorm:"type:varchar(36);not null;index"`
 	MimeType  string    `gorm:"type:varchar(100);not null"`
-	Url 	  string    `gorm:"type:text;not null;"`
+	Url       string    `gorm:"type:text;not null;"`
 	IsMain    bool      `gorm:"not null;default:false"`
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
