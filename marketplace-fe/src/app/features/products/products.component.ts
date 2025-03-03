@@ -23,9 +23,12 @@ import { ProductsService } from './services'
 export class ProductsComponent implements OnInit {
   productsData: ProductData[] = []
   isLoading$: Observable<boolean>
-
-  defaultPageSize = 12
   totalItems!: number
+  defaultPageSize = 12
+
+  private pageNumber!: number
+  private categories: string[] = []
+  private sortOption!: string
 
   constructor(private productsService: ProductsService) {
     this.isLoading$ = this.productsService.isLoading$
@@ -40,14 +43,26 @@ export class ProductsComponent implements OnInit {
   }
 
   onPageChange(event: { pageIndex: number }): void {
-    this.productsService.getProductsData(event.pageIndex + 1, this.defaultPageSize)
+    this.pageNumber = event.pageIndex + 1
+    this.fetchProductsData()
   }
 
   onCategoryChange = (categories: string[]): void => {
-    this.productsService.getProductsData(1, this.defaultPageSize, categories)
+    this.categories = categories
+    this.fetchProductsData()
   }
 
   onSortOptionChange = (sortOption: string): void => {
-    this.productsService.getProductsData(1, this.defaultPageSize, [], sortOption)
+    this.sortOption = sortOption
+    this.fetchProductsData()
+  }
+
+  private fetchProductsData = (): void => {
+    this.productsService.getProductsData(
+      this.pageNumber,
+      this.defaultPageSize,
+      this.categories,
+      this.sortOption
+    )
   }
 }

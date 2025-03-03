@@ -67,8 +67,8 @@ export class APIService {
       'Content-Type': 'application/json',
     })
     if (addAuthHeader) {
-      const token = getAuthToken()
-      headers = headers.set('Authorization', `${token || ''}`)
+      const token: string = getAuthToken() || '';
+      headers = headers.set('Authorization', `${token}`)
     }
     if (customHeaders) {
       Object.entries(customHeaders).forEach(([key, value]: [string, string]) => {
@@ -79,7 +79,7 @@ export class APIService {
   }
 
   private handleError = (error: HttpErrorResponse): Observable<never> => {
-    let errorMessage = DEFAULT_ERROR_MESSAGE
+    let errorMessage: string = DEFAULT_ERROR_MESSAGE
     if (error.error instanceof ErrorEvent) {
       console.error('Client Error: ', error)
       errorMessage = error?.error.message
