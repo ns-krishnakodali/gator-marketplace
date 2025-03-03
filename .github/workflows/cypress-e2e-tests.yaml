@@ -1,0 +1,31 @@
+name: Angular E2E Tests
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["dev", "main"]
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install NPM dependencies
+        working-directory: marketplace-fe
+        run: npm ci
+
+      - name: Build Angular app (production)
+        working-directory: marketplace-fe
+        run: npm run build -- --configuration=production
+
+      - name: Run Cypress E2E tests (Headless Chrome)
+        working-directory: marketplace-fe
+        run: npx ng e2e --configuration=production --headless --browser=chrome
