@@ -1,15 +1,26 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { NavbarComponent } from './navbar.component'
-import { RouterTestingModule } from '@angular/router/testing'
 import { By } from '@angular/platform-browser'
+import { RouterModule, ActivatedRoute } from '@angular/router'
+import { of } from 'rxjs'
+
+import { NavbarComponent } from './navbar.component'
+import { NavbarService } from './navbar.service'
+import { InputComponent } from '../input/input.component'
 
 describe('NavbarComponent', () => {
   let component: NavbarComponent
   let fixture: ComponentFixture<NavbarComponent>
+  let navbarServiceSpy: jasmine.SpyObj<NavbarService>
 
   beforeEach(async () => {
+    navbarServiceSpy = jasmine.createSpyObj('NavbarService', ['navigateToLandingPage'])
+
     await TestBed.configureTestingModule({
-      imports: [NavbarComponent, RouterTestingModule],
+      imports: [NavbarComponent, InputComponent, RouterModule],
+      providers: [
+        { provide: NavbarService, useValue: navbarServiceSpy },
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: of({}) } } },
+      ],
     }).compileComponents()
 
     fixture = TestBed.createComponent(NavbarComponent)
@@ -20,46 +31,64 @@ describe('NavbarComponent', () => {
     expect(component).toBeTruthy()
   })
 
-  it('should display the title', () => {
-    component.title = 'Test App'
-    fixture.detectChanges()
-    const titleElement = fixture.debugElement.query(By.css('.navbar-brand')).nativeElement
-    expect(titleElement.textContent).toContain('Test App')
+  it('should call goToLandingPage when the logo is clicked', () => {
+    spyOn(component, 'goToLandingPage')
+    const logoElement = fixture.debugElement.query(By.css('.gator-marketplace')).nativeElement
+    logoElement.click()
+    expect(component.goToLandingPage).toHaveBeenCalled()
   })
 
-  it('should render the search bar when showSearch is true', () => {
-    component.showSearch = true
-    fixture.detectChanges()
-    const searchBar = fixture.debugElement.query(By.css('.search-bar'))
-    expect(searchBar).toBeTruthy()
+  it('should call goToLandingPage when the enter key is pressed on the logo', () => {
+    spyOn(component, 'goToLandingPage')
+    const logoElement = fixture.debugElement.query(By.css('.gator-marketplace')).nativeElement
+    logoElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }))
+    expect(component.goToLandingPage).toHaveBeenCalled()
   })
 
-  it('should not render the search bar when showSearch is false', () => {
-    component.showSearch = false
+  it('should display search bar when showSearchBar is true', () => {
+    component.showSearchBar = true
     fixture.detectChanges()
-    const searchBar = fixture.debugElement.query(By.css('.search-bar'))
-    expect(searchBar).toBeFalsy()
+    const searchBarElement = fixture.debugElement.query(By.css('.search-bar'))
+    expect(searchBarElement).toBeTruthy()
   })
 
-  it('should render the correct number of navigation links', () => {
-    component.links = [
-      { label: 'Home', path: '/' },
-      { label: 'Dashboard', path: '/dashboard' },
-      { label: 'Profile', path: '/profile' },
-    ]
+  it('should not display search bar when showSearchBar is false', () => {
+    component.showSearchBar = false
     fixture.detectChanges()
-    const links = fixture.debugElement.queryAll(By.css('.navbar-links li'))
-    expect(links.length).toBe(3)
+    const searchBarElement = fixture.debugElement.query(By.css('.search-bar'))
+    expect(searchBarElement).toBeNull()
   })
 
-  it('should set correct router links for navigation items', () => {
-    component.links = [
-      { label: 'Home', path: '/' },
-      { label: 'Dashboard', path: '/dashboard' },
-    ]
+  it('should display My Account link when showAccount is true', () => {
+    component.showAccount = true
     fixture.detectChanges()
-    const linkElements = fixture.debugElement.queryAll(By.css('.navbar-links a'))
-    expect(linkElements[0].nativeElement.getAttribute('ng-reflect-router-link')).toBe('/')
-    expect(linkElements[1].nativeElement.getAttribute('ng-reflect-router-link')).toBe('/dashboard')
+    const accountLink = fixture.debugElement.query(By.css('.navbar-link a'))
+    expect(accountLink.nativeElement.textContent).toBe('My Account')
+  })
+
+  it('should not display My Account link when showAccount is false', () => {
+    component.showAccount = false
+    fixture.detectChanges()
+    const accountLink = fixture.debugElement.query(By.css('.navbar-link a'))
+    expect(accountLink).toBeNull()
+  })
+
+  it('should display Cart link when showCart is true', () => {
+    component.showCart = true
+    fixture.detectChanges()
+    const cartLink = fixture.debugElement.query(By.css('.navbar-link a'))
+    expect(cartLink.nativeElement.textContent).toBe('Cart')
+  })
+
+  it('should not display Cart link when showCart is false', () => {
+    component.showCart = false
+    fixture.detectChanges()
+    const cartLink = fixture.debugElement.query(By.css('.navbar-link a'))
+    expect(cartLink).toBeNull()
+  })
+
+  it('should call NavbarService.navigateToLandingPage when goToLandingPage is called', () => {
+    component.goToLandingPage()
+    expect(navbarServiceSpy.navigateToLandingPage).toHaveBeenCalled()
   })
 })

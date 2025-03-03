@@ -1,7 +1,8 @@
-import { Component, Input } from '@angular/core'
 import { CommonModule } from '@angular/common'
+import { Component, Input } from '@angular/core'
 import { RouterModule } from '@angular/router'
 
+import { NavbarService } from './navbar.service'
 import { InputComponent } from '../input/input.component'
 
 @Component({
@@ -12,7 +13,13 @@ import { InputComponent } from '../input/input.component'
   styleUrls: ['./navbar.component.css'],
 })
 export class NavbarComponent {
-  @Input() showSearch = false
   @Input() showAccount = false
   @Input() showCart = false
+  @Input() showSearchBar = false
+
+  constructor(private navbarService: NavbarService) {}
+
+  goToLandingPage = (): void => {
+    this.navbarService.navigateToLandingPage()
+  }
 }

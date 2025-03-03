@@ -18,16 +18,17 @@ import (
 // ===============================
 
 // validCategory checks if a category is valid according to the ones defined in your models.
-func validCategory(cat models.Category) bool {
-	switch cat {
-	case models.Electronics,
+func validCategory(category models.Category) bool {
+	switch category {
+	case models.Appliances,
 		models.Books,
 		models.Clothing,
+		models.Electronics,
+		models.Entertainment,
 		models.Furniture,
-		models.Tickets,
+		models.Miscellaneous,
 		models.Sports,
-		models.Appliances,
-		models.Miscellaneous:
+		models.Tickets:
 		return true
 	}
 	return false
@@ -113,16 +114,16 @@ func GetProducts(c *gin.Context) {
 	// Categories (e.g. /products?categories=Electronics,Books)
 	categoriesParam := c.Query("categories")
 	if categoriesParam != "" {
-		validCats, invalidCats := parseCategories(categoriesParam)
-		if len(invalidCats) > 0 {
+		validCategories, invalidCategories := parseCategories(categoriesParam)
+		if len(invalidCategories) > 0 {
 			// If we want to fail on invalid categories, do so:
 			c.JSON(http.StatusBadRequest, gin.H{
-				"error": fmt.Sprintf("Invalid category(ies): %v", invalidCats),
+				"message": fmt.Sprintf("Invalid categories: %v", invalidCategories),
 			})
 			return
 		}
-		if len(validCats) > 0 {
-			query = query.Where("category IN ?", validCats)
+		if len(validCategories) > 0 {
+			query = query.Where("category IN ?", validCategories)
 		}
 	}
 
@@ -135,14 +136,15 @@ func GetProducts(c *gin.Context) {
 		query = query.Order("price ASC")
 	case "price_desc":
 		query = query.Order("price DESC")
-	case "category_asc":
-		query = query.Order("category ASC")
-	case "category_desc":
-		query = query.Order("category DESC")
-	case "relevance", "": // default
+	case "name_asc":
+		query = query.Order("name ASC")
+	case "name_desc":
+		query = query.Order("name DESC")
+	case "newest":
+		query = query.Order("created_at DESC")
+	case "most_popular", "":
 		query = query.Order("popularity_score DESC")
 	default:
-		// If an unknown sort is provided, ignore or return an error:
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid sort parameter"})
 		return
 	}
@@ -182,7 +184,7 @@ func GetProducts(c *gin.Context) {
 	query = query.Limit(pageSize).Offset(offset)
 
 	var products []models.Product
-	if err := query.Find(&products).Error; err != nil {
+	if err := query.Omit("id").Find(&products).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not fetch products"})
 		return
 	}
