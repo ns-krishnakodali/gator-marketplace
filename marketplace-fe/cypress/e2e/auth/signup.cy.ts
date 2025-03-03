@@ -34,7 +34,13 @@ describe('Signup Component Tests', () => {
   })
 
   it('Should be submitted on entering valid credentials', () => {
-    cy.intercept('POST', '/signup').as('signupRequest')
+    cy.intercept('POST', '/signup', {
+      statusCode: 201,
+      body: {
+        message: 'User created successfully',
+      },
+    }).as('signupRequest')
+
     cy.get('#name').type('John Doe')
     cy.get('#email').type('test@ufl.edu')
     cy.get('#password').type('password123')
@@ -44,6 +50,7 @@ describe('Signup Component Tests', () => {
     cy.wait('@signupRequest')
     cy.get('#notification-text').should('exist')
     cy.get('#notification-text').should('contain', '')
+    cy.url().should('include', '/auth/login')
   })
 
   it('Should navigate to the login page when clicking the Login button', () => {
