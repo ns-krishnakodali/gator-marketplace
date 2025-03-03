@@ -1,15 +1,14 @@
 .navbar {
-  position: fixed;
-  top: 0;
-  width: 100vw;
-  overflow-x: visible;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--spacing-1) 0px;
-  color: var(--color-white);
-  background-color: var(--color-navbar-background);
+  width: 100vw;
   border-bottom: var(--border-bottom-navbar);
+  top: 0;
+  padding: var(--spacing-1) 0px;
+  overflow-x: visible;
+  color: var(--color-white);
+  background-color: var(--color-blue);
 }
 
 .gator-marketplace {
@@ -22,6 +21,10 @@
 .gator-marketplace h2 {
   margin: 0;
   padding: 0;
+}
+
+.gator-marketplace:hover {
+  cursor: pointer;
 }
 
 .gator-logo {
@@ -43,9 +46,9 @@
 
 .search-icon {
   position: absolute;
-  right: 4px;
-  width: 24px;
-  height: 24px;
+  right: var(--spacing-half);
+  width: var(--spacing-3);
+  height: var(--spacing-3);
   cursor: pointer;
 }
 
@@ -64,12 +67,8 @@
   margin-left: var(--spacing-4);
 }
 
-.navbar-icon {
-  width: 28px;
-  height: 28px;
-  margin-right: var(--spacing-half);
-  margin-bottom: var(--spacing-quarter);
-  cursor: pointer;
+.navbar-link:hover {
+  opacity: 0.7;
 }
 
 .navbar-link a {
@@ -78,6 +77,10 @@
   transition: opacity 0.3s;
 }
 
-.navbar-link a:hover {
-  opacity: 0.7;
+.navbar-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: var(--spacing-half);
+  margin-bottom: var(--spacing-quarter);
+  cursor: pointer;
 }

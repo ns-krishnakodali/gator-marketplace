@@ -42,7 +42,7 @@ func GenerateMockProductsData(numProducts int) {
 
 		productImage := models.ProductImage{
 			Pid:      product_uuid,
-			Url:	  "https://placehold.co/600x400",
+			Url:      "https://placehold.co/600x400",
 			MimeType: "image/jpeg",
 			IsMain:   true,
 		}
@@ -53,18 +53,14 @@ func GenerateMockProductsData(numProducts int) {
 	}
 }
 
-// Add a `main` function to call `GenerateMockProductsData`
 func main() {
-		// Ensure database is initialized
 	database.ConnectDatabase()
-
-	// Verify that the DB connection is valid before proceeding
 	if database.DB == nil {
 		fmt.Println("Error: Database connection is not initialized.")
 		return
 	}
 
 	fmt.Println("Generating mock products data...")
-	GenerateMockProductsData(1000) // Adjust the number as needed
+	GenerateMockProductsData(100)
 	fmt.Println("Mock data generation complete.")
 }

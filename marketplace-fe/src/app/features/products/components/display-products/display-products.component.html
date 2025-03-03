@@ -1,0 +1,26 @@
+<div class="container">
+  <h2 class="products-heading">Explore Products</h2>
+  @if (isLoading) {
+    <div class="loader">
+      <mat-spinner diameter="60" />
+    </div>
+  } @else if (!productsData || productsData.length === 0) {
+    <div class="no-products">
+      <app-text id="no-products-text" class="no-products-text" size="x-large"
+        >Oops!! No items found.</app-text
+      >
+      <img src="assets/svg-icons/sad-face.svg" class="sad-face" alt="Sad Face" />
+    </div>
+  } @else {
+    <div class="products-container">
+      @for (productData of productsData; track $index) {
+        <app-product-card
+          [imageSrc]="productData.imageSrc"
+          [productName]="productData.name"
+          [productPrice]="productData.price"
+          [postedDate]="productData.postDate"
+        />
+      }
+    </div>
+  }
+</div>
