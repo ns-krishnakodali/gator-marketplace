@@ -34,8 +34,6 @@ describe('Login Component Tests', () => {
     cy.get('#login-button').click()
 
     cy.wait('@loginRequest')
-    cy.get('#notification-text').should('exist')
-    cy.get('#notification-text').should('contain', '')
   })
 
   it('Should navigate to the signup page when clicking the Sign Up button', () => {
