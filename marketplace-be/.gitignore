@@ -41,4 +41,5 @@ debug/
 coverage.out
 trace.out
 
+# Mock scripts
 scripts/mock_product_data.go
