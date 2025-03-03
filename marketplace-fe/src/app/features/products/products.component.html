@@ -1,0 +1,17 @@
+<app-navbar [showAccount]="true" [showCart]="true" [showSearchBar]="true" />
+<div class="container">
+  <app-sidebar
+    (selectedCategories)="onCategoryChange($event)"
+    (selectedSortOption)="onSortOptionChange($event)"
+  />
+  <div>
+    <app-display-products [productsData]="productsData" [isLoading]="isLoading$ | async" />
+    <mat-paginator
+      class="paginator"
+      [length]="totalItems"
+      [pageSize]="defaultPageSize"
+      aria-label="Select page"
+      (page)="onPageChange($event)"
+    />
+  </div>
+</div>

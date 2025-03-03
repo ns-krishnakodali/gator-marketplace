@@ -14,7 +14,7 @@ export class LandingPageComponent {
   constructor(private landingPageService: LandingPageService) {}
 
   onExploreMarketplaceClick = (): void => {
-    this.landingPageService.navigateTo('/marketplace')
+    this.landingPageService.navigateTo('/products')
   }
 
   onListProductsClick = (): void => {

@@ -15,7 +15,7 @@ export class FormComponent {
 
   @Output() submitForm = new EventEmitter<Event>()
 
-  onSubmit(event: Event) {
+  onSubmit = (event: Event): void => {
     event.preventDefault()
     this.submitForm.emit(event)
   }

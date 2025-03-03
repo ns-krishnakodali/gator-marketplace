@@ -4,7 +4,9 @@
   [class]="class ?? ''"
   [type]="type"
   [value]="value ?? ''"
-  (input)="onInput($event)"
+  [disabled]="disabled"
+  [checked]="checked"
+  (change)="onChange($event)"
   [placeholder]="placeholder ?? ''"
   [required]="required"
 />
