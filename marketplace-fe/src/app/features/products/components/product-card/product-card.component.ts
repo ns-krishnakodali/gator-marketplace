@@ -25,6 +25,7 @@ export class ProductCardComponent {
   @Input() productName!: string
   @Input() productPrice!: number
   @Input() postedDate!: string
+  @Input() productId?: string
   @Input() class?: string
 
   onAddtoCart = (): void => {

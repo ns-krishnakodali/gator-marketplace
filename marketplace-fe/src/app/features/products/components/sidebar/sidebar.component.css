@@ -20,3 +20,10 @@
 .section-item {
   margin-bottom: var(--spacing-1);
 }
+
+@media screen and (max-width: 1024px) {
+  .sidebar {
+    width: 20vw;
+    padding: var(--spacing-1);
+  }
+}

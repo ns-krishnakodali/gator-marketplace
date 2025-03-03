@@ -27,11 +27,11 @@ describe('InputComponent', () => {
   })
 
   it('should emit value changes when input is typed', () => {
-    spyOn(component.valueChange, 'emit')
+    spyOn(component.checkedChange, 'emit')
     const inputElement = fixture.debugElement.query(By.css('input')).nativeElement
     inputElement.value = 'New Value'
     inputElement.dispatchEvent(new Event('input'))
-    expect(component.valueChange.emit).toHaveBeenCalledWith('New Value')
+    expect(component.checkedChange.emit).toHaveBeenCalledWith('New Value')
   })
 
   it('should set readonly attribute when readOnly is true', () => {

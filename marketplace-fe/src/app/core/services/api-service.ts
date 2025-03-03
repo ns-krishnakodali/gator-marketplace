@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core'
 import { Observable, throwError } from 'rxjs'
 import { catchError, map } from 'rxjs/operators'
 
-import { DEFAULT_ERROR_MESSAGE } from '../../utils'
+import { DEFAULT_ERROR_MESSAGE, getAuthToken } from '../../utils'
 import { environment } from '../../../environments/environment'
 
 @Injectable({
@@ -17,12 +17,13 @@ export class APIService {
 
   get<T>(
     endpoint: string,
-    params?: Record<string, string>,
+    params?: Record<string, string | number | boolean | readonly (string | number | boolean)[]>,
+    addAuthHeader = true,
     headers?: Record<string, string>
   ): Observable<T> {
     return this.httpClient
       .get<T>(`${this.BASE_URL}/${endpoint}`, {
-        headers: this.getHeaders(headers),
+        headers: this.getHeaders(headers, addAuthHeader),
         params: new HttpParams({ fromObject: params || {} }),
       })
       .pipe(
@@ -58,10 +59,17 @@ export class APIService {
       )
   }
 
-  private getHeaders = (customHeaders?: Record<string, string>) => {
+  private getHeaders = (
+    customHeaders?: Record<string, string>,
+    addAuthHeader?: boolean
+  ): HttpHeaders => {
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
     })
+    if (addAuthHeader) {
+      const token = getAuthToken()
+      headers = headers.set('Authorization', `${token || ''}`)
+    }
     if (customHeaders) {
       Object.entries(customHeaders).forEach(([key, value]: [string, string]) => {
         headers = headers.set(key, value)

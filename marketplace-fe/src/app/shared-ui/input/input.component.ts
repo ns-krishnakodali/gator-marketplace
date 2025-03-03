@@ -20,9 +20,17 @@ export class InputComponent {
   @Input() value?: string
 
   @Output() valueChange = new EventEmitter<string>()
+  @Output() checkedChange = new EventEmitter<boolean>()
 
-  onInput(event: Event) {
+  onChange(event: Event) {
+    if (this.type === 'checkbox' || this.type === 'radio') {
+      const newValue: boolean = (event.target as HTMLInputElement).checked
+      this.checked = newValue
+      this.checkedChange.emit(newValue)
+      return
+    }
     const newValue: string = (event.target as HTMLInputElement).value
+    this.value = newValue
     this.valueChange.emit(newValue)
   }
 }

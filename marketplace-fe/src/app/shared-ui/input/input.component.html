@@ -6,7 +6,7 @@
   [value]="value ?? ''"
   [disabled]="disabled"
   [checked]="checked"
-  (input)="onInput($event)"
+  (change)="onChange($event)"
   [placeholder]="placeholder ?? ''"
   [required]="required"
 />

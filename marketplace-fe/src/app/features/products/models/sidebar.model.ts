@@ -11,10 +11,10 @@ export enum Categories {
 }
 
 export enum SortOptions {
-  MostPopular = 'Most Popular',
-  Newest = 'Newest',
-  PriceAsc = 'Price: Low to High',
-  PriceDesc = 'Price: High to Low',
-  NameAsc = 'Name: A to Z',
-  NameDesc = 'Name: Z to A',
+  most_popular = 'Most Popular',
+  newest = 'Newest',
+  price_asc = 'Price: Low to High',
+  price_desc = 'Price: High to Low',
+  name_asc = 'Name: A to Z',
+  name_desc = 'Name: Z to A',
 }

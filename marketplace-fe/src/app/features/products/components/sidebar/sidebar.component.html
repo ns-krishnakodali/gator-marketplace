@@ -3,9 +3,13 @@
     <h3 class="section-heading">Categories</h3>
     <mat-divider />
     <div class="section-details">
-      @for (category of categories; track $index) {
+      @for (category of categoryValues; track $index) {
         <div class="section-item">
-          <app-input type="checkbox" id="category-checkbox-{{ category }}" />
+          <app-input
+            type="checkbox"
+            id="category-checkbox-{{ category }}"
+            (checkedChange)="onCategoryChange(category, $event)"
+          />
           <label for="category-checkbox-{{ category }}" class="label-name">
             {{ category }}
           </label>
@@ -17,13 +21,14 @@
     <h3 class="section-heading">Sort</h3>
     <mat-divider />
     <div class="section-details">
-      @for (sortOption of sortOptions; track $index) {
+      @for (sortOption of sortOptionValues; track $index) {
         <div class="section-item">
           <app-input
             type="radio"
             name="sortOption"
             id="sortoption-radio-{{ sortOption }}"
             [checked]="sortOption === 'Most Popular'"
+            (checkedChange)="onSortOptionChange(sortOption)"
           />
           <label for="sortoption-radio-{{ sortOption }}" class="label-name">
             {{ sortOption }}
