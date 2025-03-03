@@ -22,7 +22,10 @@ export class InputComponent {
   @Output() valueChange = new EventEmitter<string>()
   @Output() checkedChange = new EventEmitter<boolean>()
 
-  onChange(event: Event) {
+  onChange = (event: Event): void => {
+    if (this.disabled) {
+      return
+    }
     if (this.type === 'checkbox' || this.type === 'radio') {
       const newValue: boolean = (event.target as HTMLInputElement).checked
       this.checked = newValue

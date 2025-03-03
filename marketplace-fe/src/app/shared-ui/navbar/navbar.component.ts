@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common'
 import { Component, Input } from '@angular/core'
 import { RouterModule } from '@angular/router'
 
-import { InputComponent } from '../input/input.component'
 import { NavbarService } from './navbar.service'
+import { InputComponent } from '../input/input.component'
 
 @Component({
   selector: 'app-navbar',

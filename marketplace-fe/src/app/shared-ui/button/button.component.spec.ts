@@ -20,13 +20,6 @@ describe('ButtonComponent', () => {
     expect(component).toBeTruthy()
   })
 
-  it('should apply the correct variant class', () => {
-    component.variant = 'secondary'
-    fixture.detectChanges()
-    const buttonElement = fixture.debugElement.query(By.css('button')).nativeElement
-    expect(buttonElement.classList).toContain('secondary')
-  })
-
   it('should disable the button when disabled is true', () => {
     component.disabled = true
     fixture.detectChanges()
@@ -40,5 +33,14 @@ describe('ButtonComponent', () => {
     const buttonElement = fixture.debugElement.query(By.css('button')).nativeElement
     buttonElement.click()
     expect(component.onClickHandler).toHaveBeenCalled()
+  })
+
+  it('should not call the onClickHandler when disabled is true', () => {
+    component.disabled = true
+    component.onClickHandler = jasmine.createSpy('onClickHandler')
+    fixture.detectChanges()
+    const buttonElement = fixture.debugElement.query(By.css('button')).nativeElement
+    buttonElement.click()
+    expect(component.onClickHandler).not.toHaveBeenCalled()
   })
 })

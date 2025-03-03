@@ -67,7 +67,7 @@ export class APIService {
       'Content-Type': 'application/json',
     })
     if (addAuthHeader) {
-      const token: string = getAuthToken() || '';
+      const token: string = getAuthToken() || ''
       headers = headers.set('Authorization', `${token}`)
     }
     if (customHeaders) {

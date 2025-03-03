@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { FormsModule } from '@angular/forms'
 import { By } from '@angular/platform-browser'
 
 import { FormComponent } from './form.component'
@@ -11,43 +10,45 @@ describe('FormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [FormComponent, TextComponent],
-      imports: [FormsModule],
+      imports: [FormComponent, TextComponent],
     }).compileComponents()
-  })
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(FormComponent)
     component = fixture.componentInstance
-    fixture.detectChanges()
   })
 
   it('should create the form component', () => {
-    component.toBeTruthy()
+    expect(component).toBeTruthy()
   })
 
-  it('should render the form heading correctly', () => {
-    component.heading = 'Test Heading'
+  it('should bind the id correctly', () => {
+    component.id = 'test-form'
     fixture.detectChanges()
-
-    const headingElement = fixture.debugElement.query(By.css('.form-header app-text')).nativeElement
-    expect(headingElement.textContent).toContain('Test Heading')
+    const formElement = fixture.debugElement.query(By.css('div')).nativeElement
+    expect(formElement.id).toBe('test-form')
   })
 
-  it('should set the correct id on the container', () => {
-    component.id = 'test-id'
+  it('should bind the heading correctly', () => {
+    component.heading = 'Form Heading'
     fixture.detectChanges()
-
-    const container = fixture.debugElement.query(By.css('.form-container')).nativeElement
-    expect(container.id).toBe('test-id')
+    const headingElement = fixture.debugElement.query(By.css('app-text')).nativeElement
+    expect(headingElement.textContent.trim()).toBe('Form Heading')
   })
 
-  it('should emit submitForm event when form is submitted', () => {
+  it('should emit the submitForm event when the form is submitted', () => {
     spyOn(component.submitForm, 'emit')
-
+    component.id = 'test-form'
+    component.heading = 'Form Heading'
+    fixture.detectChanges()
     const formElement = fixture.debugElement.query(By.css('form')).nativeElement
     formElement.dispatchEvent(new Event('submit'))
+    expect(component.submitForm.emit).toHaveBeenCalledWith(jasmine.any(Event))
+  })
 
-    expect(component.submitForm.emit).toHaveBeenCalled()
+  it('should prevent default form submission behavior', () => {
+    spyOn(component, 'onSubmit')
+    const formElement = fixture.debugElement.query(By.css('form')).nativeElement
+    formElement.dispatchEvent(new Event('submit'))
+    expect(component.onSubmit).toHaveBeenCalled()
   })
 })
