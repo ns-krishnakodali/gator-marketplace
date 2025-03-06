@@ -24,7 +24,8 @@
     @if (showCart) {
       <div class="navbar-link">
         <img src="assets/svg-icons/cart-icon.svg" alt="Account Icon" class="navbar-icon" />
-        <a [routerLink]="'/my-cart'">Cart</a>
+        <a class="router-link" [routerLink]="'/my-cart'">Cart</a>
+        <app-text id="cart-items" size="x-small">{{ itemsInCart }}</app-text>
       </div>
     }
   </div>
