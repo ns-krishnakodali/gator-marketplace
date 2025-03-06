@@ -1,7 +1,8 @@
 .product-card {
   width: fit-content;
   height: fit-content;
-  min-width: 12rem;
+  width: 15rem;
+  height: 18.75rem;
   box-shadow: none;
   box-shadow: var(--box-shadow-rounded);
 }
@@ -28,6 +29,11 @@
 .product-name {
   margin: 0;
   margin-bottom: var(--spacing-quarter);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%; /* Ensure it respects the container width */
+  display: block; /* or inline-block */
 }
 
 .product-price {
@@ -39,4 +45,10 @@
 .posted-on {
   font-weight: 600;
   color: var(--color-blue-light);
+}
+
+@media screen and (max-width: 1024px) {
+  .product-card {
+    width: 14rem;
+  }
 }

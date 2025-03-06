@@ -8,6 +8,7 @@
     <app-display-products [productsData]="productsData" [isLoading]="isLoading$ | async" />
     <mat-paginator
       class="paginator"
+      [pageIndex]="pageIndex - 1"
       [length]="totalItems"
       [pageSize]="defaultPageSize"
       aria-label="Select page"

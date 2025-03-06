@@ -21,12 +21,12 @@ import { ProductsService } from './services'
   ],
 })
 export class ProductsComponent implements OnInit {
-  productsData: ProductData[] = []
   isLoading$: Observable<boolean>
+  productsData: ProductData[] = []
   totalItems!: number
   defaultPageSize = 12
+  pageIndex = 1
 
-  private pageNumber!: number
   private categories: string[] = []
   private sortOption!: string
 
@@ -39,16 +39,17 @@ export class ProductsComponent implements OnInit {
       this.productsData = data.productsData
       this.totalItems = data.totalItems
     })
-    this.productsService.getProductsData(1, this.defaultPageSize)
+    this.productsService.getProductsData(this.pageIndex, this.defaultPageSize)
   }
 
-  onPageChange(event: { pageIndex: number }): void {
-    this.pageNumber = event.pageIndex + 1
+  onPageChange = (event: { pageIndex: number }): void => {
+    this.pageIndex = event.pageIndex + 1
     this.fetchProductsData()
   }
 
   onCategoryChange = (categories: string[]): void => {
     this.categories = categories
+    this.pageIndex = 1
     this.fetchProductsData()
   }
 
@@ -59,7 +60,7 @@ export class ProductsComponent implements OnInit {
 
   private fetchProductsData = (): void => {
     this.productsService.getProductsData(
-      this.pageNumber,
+      this.pageIndex,
       this.defaultPageSize,
       this.categories,
       this.sortOption
