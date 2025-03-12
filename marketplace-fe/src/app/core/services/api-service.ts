@@ -1,10 +1,11 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http'
 import { Injectable } from '@angular/core'
+import { Router } from '@angular/router'
 
 import { Observable, throwError } from 'rxjs'
 import { catchError, map } from 'rxjs/operators'
 
-import { DEFAULT_ERROR_MESSAGE, getAuthToken } from '../../utils'
+import { DEFAULT_ERROR_MESSAGE, getAuthToken, removeAuthToken } from '../../utils'
 import { environment } from '../../../environments/environment'
 
 @Injectable({
@@ -13,7 +14,10 @@ import { environment } from '../../../environments/environment'
 export class APIService {
   private readonly BASE_URL = environment.apiBaseURL
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(
+    private httpClient: HttpClient,
+    private router: Router
+  ) {}
 
   get<T>(
     endpoint: string,
@@ -86,6 +90,10 @@ export class APIService {
     } else if (error instanceof HttpErrorResponse) {
       console.error('Server Error: ', error)
       errorMessage = error?.error?.message
+      if (error?.status === 401 && errorMessage === 'Invalid token') {
+        removeAuthToken()
+        this.router.navigate(['/auth/login'], { queryParams: { returnUrl: this.router.url } })
+      }
     }
     return throwError(() => new Error(errorMessage))
   }
