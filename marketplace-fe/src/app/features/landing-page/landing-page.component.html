@@ -1,17 +1,21 @@
 <app-navbar [showAccount]="true" />
 <div class="cards-container">
-  <app-landing-page-card
-    [iconSrc]="'assets/svg-icons/explore-marketplace.svg'"
-    [iconAlt]="'Explore Marketplace Icon'"
-    [cardTitle]="'Explore Marketplace'"
-    [cardDescription]="'Discover and purchase items within UF community'"
-    [onCardClick]="onExploreMarketplaceClick"
-  />
-  <app-landing-page-card
-    [iconSrc]="'assets/svg-icons/list-products.svg'"
-    [iconAlt]="'List Products Icon'"
-    [cardTitle]="'List Products'"
-    [cardDescription]="'Early list and sell your items among the UF community'"
-    [onCardClick]="onListProductsClick"
-  />
+  @if (isLoading$ | async; as isLoading) {
+    <mat-spinner diameter="60" />
+  } @else {
+    <app-landing-page-card
+      [iconSrc]="'assets/svg-icons/explore-marketplace.svg'"
+      [iconAlt]="'Explore Marketplace Icon'"
+      [cardTitle]="'Explore Marketplace'"
+      [cardDescription]="'Discover and purchase items within UF community'"
+      [onCardClick]="onExploreMarketplaceClick"
+    />
+    <app-landing-page-card
+      [iconSrc]="'assets/svg-icons/list-products.svg'"
+      [iconAlt]="'List Products Icon'"
+      [cardTitle]="'List Products'"
+      [cardDescription]="'Early list and sell your items among the UF community'"
+      [onCardClick]="onListProductsClick"
+    />
+  }
 </div>

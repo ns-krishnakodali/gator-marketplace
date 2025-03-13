@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { TestBed } from '@angular/core/testing'
 import { Router } from '@angular/router'
+import { ActivatedRoute } from '@angular/router'
+
 import { of, throwError } from 'rxjs'
 
 import { APIService } from '../../../../core'
@@ -14,6 +17,8 @@ import {
 
 describe('LoginService', () => {
   let service: LoginService
+
+  let activatedRouteSpy: jasmine.SpyObj<ActivatedRoute>
   let notificationsServiceSpy: jasmine.SpyObj<NotificationsService>
   let apiServiceSpy: jasmine.SpyObj<APIService>
   let routerSpy: jasmine.SpyObj<Router>
@@ -22,6 +27,11 @@ describe('LoginService', () => {
     const notificationsSpy = jasmine.createSpyObj('NotificationsService', ['addNotification'])
     const apiSpy = jasmine.createSpyObj('APIService', ['post'])
     const routerMock = jasmine.createSpyObj('Router', ['navigate'])
+    const activatedRouteMock = {
+      snapshot: {
+        queryParams: { returnUrl: '/dashboard' },
+      },
+    }
 
     TestBed.configureTestingModule({
       providers: [
@@ -29,6 +39,7 @@ describe('LoginService', () => {
         { provide: APIService, useValue: apiSpy },
         { provide: NotificationsService, useValue: notificationsSpy },
         { provide: Router, useValue: routerMock },
+        { provide: ActivatedRoute, useValue: activatedRouteMock }, // Provide ActivatedRoute mock
       ],
     })
 
@@ -38,6 +49,7 @@ describe('LoginService', () => {
     ) as jasmine.SpyObj<NotificationsService>
     apiServiceSpy = TestBed.inject(APIService) as jasmine.SpyObj<APIService>
     routerSpy = TestBed.inject(Router) as jasmine.SpyObj<Router>
+    activatedRouteSpy = TestBed.inject(ActivatedRoute) as jasmine.SpyObj<ActivatedRoute>
   })
 
   it('should be created', () => {
@@ -68,14 +80,17 @@ describe('LoginService', () => {
     })
   })
 
-  it('should call API and navigate on successful login', () => {
+  it('should call API and navigate to returnUrl on successful login', () => {
     apiServiceSpy.post.and.returnValue(of({ token: 'valid_token' }))
+
     service.handleUserLogin({ email: 'user@ufl.edu', password: 'password123' })
+
     expect(apiServiceSpy.post).toHaveBeenCalledWith('login', {
       email: 'user@ufl.edu',
       password: 'password123',
     })
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/'], { replaceUrl: true })
+
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/dashboard'], { replaceUrl: true })
   })
 
   it('should show error notification if login fails', () => {

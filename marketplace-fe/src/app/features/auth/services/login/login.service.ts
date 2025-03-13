@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core'
-import { Router } from '@angular/router'
+import { Router, ActivatedRoute } from '@angular/router'
+
 import { BehaviorSubject } from 'rxjs'
 
 import { APIService } from '../../../../core'
@@ -24,6 +25,7 @@ export class LoginService {
   public isLoading$ = this.isLoadingSubject.asObservable()
 
   constructor(
+    private activatedRoute: ActivatedRoute,
     private apiService: APIService,
     private notificationsService: NotificationsService,
     private router: Router
@@ -40,6 +42,8 @@ export class LoginService {
       return
     }
 
+    const returnUrl: string = this.activatedRoute.snapshot.queryParams['returnUrl'] || '/'
+
     this.isLoadingSubject.next(true)
     this.apiService
       .post('login', { email: loginData.email, password: loginData.password })
@@ -48,7 +52,7 @@ export class LoginService {
           const tokenResponse = response as { token: string }
           if (tokenResponse?.token) {
             setAuthToken(tokenResponse.token)
-            this.router.navigate(['/'], { replaceUrl: true })
+            this.router.navigate([returnUrl], { replaceUrl: true })
             this.isLoadingSubject.next(true)
           } else {
             this.notificationsService.addNotification({
