@@ -29,7 +29,7 @@ func AuthMiddleware() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		tokenString := context.GetHeader("Authorization")
 		if tokenString == "" {
-			context.JSON(http.StatusUnauthorized, gin.H{"error": "No token provided"})
+			context.JSON(http.StatusUnauthorized, gin.H{"message": "No token provided"})
 			context.Abort()
 			return
 		}
@@ -39,7 +39,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		})
 
 		if err != nil || !token.Valid {
-			context.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+			context.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid token"})
 			context.Abort()
 			return
 		}
