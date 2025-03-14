@@ -86,10 +86,10 @@ export class APIService {
     let errorMessage: string = DEFAULT_ERROR_MESSAGE
     if (error.error instanceof ErrorEvent) {
       console.error('Client Error: ', error)
-      errorMessage = error?.error.message
+      errorMessage = error?.error.message || errorMessage
     } else if (error instanceof HttpErrorResponse) {
       console.error('Server Error: ', error)
-      errorMessage = error?.error?.message
+      errorMessage = error?.error?.message || error?.statusText || errorMessage
       if (error?.status === 401 && errorMessage === 'Invalid token') {
         removeAuthToken()
         this.router.navigate(['/auth/login'], { queryParams: { returnUrl: this.router.url } })

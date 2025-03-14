@@ -1,5 +1,6 @@
 // Error Messages
 export const DEFAULT_ERROR_MESSAGE = 'Unexpected error occurred. Please try again later.'
+export const IMAGE_UPLOAD_ERROR_MESSAGE = 'Error uploading image. Please try again later.'
 
 // Authentication
 export const FILL_ALL_FORM_FIELDS = 'Please fill in all fields.'

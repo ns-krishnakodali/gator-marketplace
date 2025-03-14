@@ -43,22 +43,6 @@
   margin-bottom: var(--spacing-7);
 }
 
-.container::-webkit-scrollbar {
-  width: var(--spacing-1-5);
-}
-
-.container::-webkit-scrollbar-thumb {
-  background: var(--color-background-scrollbar);
-}
-
-.container::-webkit-scrollbar-track {
-  background-color: var(--color-white);
-}
-
-.container::-webkit-scrollbar-thumb:hover {
-  background-color: var(--color-background-scrollbar-hover);
-}
-
 @media screen and (max-width: 1024px) {
   .container {
     width: calc(80vw - var(--spacing-3));

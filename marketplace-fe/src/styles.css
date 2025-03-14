@@ -25,9 +25,11 @@
   --color-background-scrollbar-hover: #c7ccd8;
 
   --color-black: black;
-  --color-currency: #157811;
   --color-blue: #005398;
+  --color-blue-hover: #005dbbc1;
   --color-blue-light: #005498a0;
+  --color-currency: #157811;
+  --colot-logout: #b22222;
   --color-notification-error: #f44336;
   --color-notification-info: #2196f3;
   --color-notification-success: #4caf50;
@@ -52,4 +54,22 @@ body {
   font-family: 'Nunito', sans-serif;
   overflow: hidden;
   background-color: var(--color-background);
+}
+
+*::-webkit-scrollbar {
+  width: 0.65rem;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--color-background-scrollbar);
+  border-radius: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background-color: var(--color-white);
+  border-radius: 8px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-background-scrollbar-hover);
 }

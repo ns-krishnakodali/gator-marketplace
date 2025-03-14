@@ -4,56 +4,65 @@
   <div class="account-section-container">
     <div class="account-sections">
       <h3>Overview</h3>
-      <ul class="account-section-list">
-        <li
-          (click)="renderSection('profile')"
-          (keydown.enter)="renderSection('profile')"
-          (keydown.space)="renderSection('profile')"
-          tabindex="0"
-          role="button"
-        >
-          <img
-            src="assets/svg-icons/account-icon.svg"
-            alt="Account Icon"
-            class="account-section-icon"
-          />
-          My Profile
-        </li>
-        <li
-          (click)="renderSection('orders')"
-          (keydown.enter)="renderSection('orders')"
-          (keydown.space)="renderSection('orders')"
-          tabindex="0"
-          role="button"
-        >
-          <img
-            src="assets/svg-icons/orders-icon.svg"
-            alt="Orders Icon"
-            class="account-section-icon"
-          />
-          Orders
-        </li>
-        <li
-          (click)="renderSection('payments')"
-          (keydown.enter)="renderSection('payments')"
-          (keydown.space)="renderSection('payments')"
-          tabindex="0"
-          role="button"
-        >
-          <img
-            src="assets/svg-icons/payments-icon.svg"
-            alt="Payments Icon"
-            class="account-section-icon"
-          />
-          Payments
-        </li>
-      </ul>
+      <div class="account-section-details">
+        <ul class="account-section-list">
+          <li
+            [ngClass]="{ selected: renderedSection === 'profile' }"
+            (click)="renderSection('profile')"
+            (keydown.enter)="renderSection('profile')"
+            (keydown.space)="renderSection('profile')"
+            tabindex="0"
+            role="button"
+          >
+            <img
+              src="assets/svg-icons/account-icon.svg"
+              alt="Account Icon"
+              class="account-section-icon"
+            />
+            My Profile
+          </li>
+          <li
+            [ngClass]="{ selected: renderedSection === 'orders' }"
+            (click)="renderSection('orders')"
+            (keydown.enter)="renderSection('orders')"
+            (keydown.space)="renderSection('orders')"
+            tabindex="0"
+            role="button"
+          >
+            <img
+              src="assets/svg-icons/orders-icon.svg"
+              alt="Orders Icon"
+              class="account-section-icon"
+            />
+            Orders
+          </li>
+          <li
+            [ngClass]="{ selected: renderedSection === 'payments' }"
+            (click)="renderSection('payments')"
+            (keydown.enter)="renderSection('payments')"
+            (keydown.space)="renderSection('payments')"
+            tabindex="0"
+            role="button"
+          >
+            <img
+              src="assets/svg-icons/payments-icon.svg"
+              alt="Payments Icon"
+              class="account-section-icon"
+            />
+            Payments
+          </li>
+        </ul>
+        <button class="logout-button" (click)="handleLogout()" mat-fab extended>
+          <mat-icon>logout</mat-icon>
+          Logout
+        </button>
+      </div>
     </div>
     <div class="section-details">
       @if (renderedSection === 'profile') {
         <app-profile
           name="John Doe"
-          displayName="John Doe"
+          displayName="john-doe"
           email="test1@ufl.edu"
           mobileNumber="355-121-5151"
         />

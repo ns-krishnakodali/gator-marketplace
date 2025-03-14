@@ -1,6 +1,29 @@
 <div class="profile-container">
+  <h2 class="profile-heading">Profile Information</h2>
+  <div class="profile-picture-container">
+    <div class="display-picture-container">
+      @if (isUploadingImage$ | async; as isUploadingImage) {
+        <mat-spinner diameter="60" />
+      } @else {
+        <img
+          [src]="displayPictureSrc || 'assets/profile-icon.png'"
+          alt="Display Picture"
+          class="display-picture"
+        />
+      }
+      <div class="upload-container">
+        <input type="file" (change)="onImageUpload($event)" accept="image/*" id="fileInput" />
+        <label for="fileInput" class="upload-label"
+          >{{ displayPictureSrc ? 'Change' : 'Upload' }} Image <mat-icon>upload</mat-icon></label
+        >
+      </div>
+    </div>
+    <div>
+      <p class="user-name">{{ name }}</p>
+      <p class="user-email">{{ email }}</p>
+    </div>
+  </div>
   <div class="profile-details">
-    <h3 class="profile-heading">Profile Information</h3>
     <div class="profile-grid">
       <div>
         <label for="name" class="profile-input-label">Name</label>
@@ -51,7 +74,6 @@
       Update Details
     </button>
   </div>
-  <mat-divider />
   <div class="profile-details">
     <h3 class="profile-heading">Password</h3>
     <div class="password-grid">
