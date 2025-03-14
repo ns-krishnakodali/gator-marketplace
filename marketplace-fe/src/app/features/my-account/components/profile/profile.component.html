@@ -1,0 +1,85 @@
+<div class="profile-container">
+  <div class="profile-details">
+    <h3 class="profile-heading">Profile Information</h3>
+    <div class="profile-grid">
+      <div>
+        <label for="name" class="profile-input-label">Name</label>
+        <app-input
+          id="name"
+          class="profile-element"
+          placeholder="Full Name"
+          type="text"
+          [(value)]="name"
+          [required]="true"
+        />
+      </div>
+      <div>
+        <label for="display-name" class="profile-input-label">Display Name</label>
+        <app-input
+          id="display-name"
+          class="profile-element"
+          placeholder="Display Name"
+          type="text"
+          [(value)]="displayName"
+          [required]="true"
+        />
+      </div>
+      <div>
+        <label for="email" class="profile-input-label">Email</label>
+        <app-input
+          id="email"
+          class="profile-element"
+          placeholder="Email"
+          type="email"
+          [(value)]="email"
+          [required]="true"
+        />
+      </div>
+      <div>
+        <label for="mobile-number" class="profile-input-label">Mobile Number</label>
+        <app-input
+          id="mobile-number"
+          class="profile-element"
+          placeholder="Mobile Number"
+          type="tel"
+          [(value)]="mobileNumber"
+          [required]="true"
+        />
+      </div>
+    </div>
+    <button mat-flat-button id="update-details-button" type="button" class="update-details-button">
+      Update Details
+    </button>
+  </div>
+  <mat-divider />
+  <div class="profile-details">
+    <h3 class="profile-heading">Password</h3>
+    <div class="password-grid">
+      <div>
+        <label for="old-password" class="profile-input-label">Old Password</label>
+        <app-input
+          id="old-password"
+          class="profile-element"
+          placeholder="Old Password"
+          type="password"
+          [(value)]="oldPassword"
+          [required]="true"
+        />
+      </div>
+      <div>
+        <label for="new-password" class="profile-input-label">New Password</label>
+        <app-input
+          id="new-password"
+          class="profile-element"
+          placeholder="New Password"
+          type="password"
+          [(value)]="newPassword"
+          [required]="true"
+        />
+      </div>
+    </div>
+    <button mat-flat-button id="update-details-button" type="button" class="update-details-button">
+      Modify Password
+    </button>
+  </div>
+</div>

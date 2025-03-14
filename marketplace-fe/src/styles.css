@@ -20,6 +20,9 @@
   --color-border-1: #3e4c59;
   --color-border-2: #dee2e6;
   --color-background: #fff;
+  --color-background-hover: #f0f4f8;
+  --color-background-scrollbar: #c7ccd8b9;
+  --color-background-scrollbar-hover: #c7ccd8;
 
   --color-black: black;
   --color-currency: #157811;
@@ -31,10 +34,8 @@
   --color-notification-warning: #ff9800;
   --color-white: white;
 
-  --color-background-scrollbar: #c7ccd8b9;
-  --color-background-scrollbar-hover: #c7ccd8;
-
   --border-1: 1px solid #ccc;
+  --border-2: 1px solid #e0e0e0;
   --border-input: 1.5px solid var(--color-border-1);
   --border-landing-page-card: 1.5px solid var(--color-border-2);
   --border-bottom-navbar: 1px solid var(--color-blue);

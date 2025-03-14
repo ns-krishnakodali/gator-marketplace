@@ -49,6 +49,7 @@ func SignupService(input *models.SignupInput) error {
 	newUser := models.User{
 		Name:         input.Name,
 		Email:        input.Email,
+		Mobile:       input.Mobile,
 		PasswordHash: string(hashedPassword),
 	}
 

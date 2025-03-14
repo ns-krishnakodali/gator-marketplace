@@ -1,0 +1,66 @@
+.account-container {
+  padding-top: var(--spacing-half);
+}
+
+.account-heading {
+  margin: var(--spacing-2) 0;
+  text-align: center;
+}
+
+.account-section-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.account-sections {
+  width: fit-content;
+  padding: 0 var(--spacing-4) var(--spacing-1) var(--spacing-2);
+  height: 70vh;
+  border-right: var(--border-1);
+}
+
+.account-sections h3 {
+  text-align: center;
+  margin: 0;
+  font-size: 1.25rem;
+  letter-spacing: 0.5px;
+}
+
+.account-section-list {
+  list-style: none;
+  margin: var(--spacing-2) 0 0;
+  padding: 0;
+}
+
+.account-section-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: var(--spacing-1);
+}
+
+.account-section-list li {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  position: relative;
+  padding: var(--spacing-half) var(--spacing-1);
+  margin-bottom: var(--spacing-2);
+  cursor: pointer;
+  user-select: none;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  width: 9rem;
+  border: var(--border-2);
+  border-radius: 0.5rem;
+  background-color: var(--color-background);
+}
+
+.account-section-list li:hover {
+  background-color: var(--color-background-hover);
+}
+
+.section-details {
+  width: 100%;
+  border-top: var(--border-2);
+  padding-top: var(--spacing-1);
+}

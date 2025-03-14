@@ -46,6 +46,7 @@ export class SignupService {
       .post('signup', {
         name: signupData.name,
         email: signupData.email,
+        mobile: signupData.mobileNumber,
         password: signupData.password,
       })
       .subscribe({

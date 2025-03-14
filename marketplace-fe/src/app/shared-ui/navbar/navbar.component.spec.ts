@@ -89,6 +89,6 @@ describe('NavbarComponent', () => {
 
   it('should call NavbarService.navigateToLandingPage when goToLandingPage is called', () => {
     component.goToLandingPage()
-    expect(navbarServiceSpy.navigateToLandingPage).toHaveBeenCalled()
+    expect(navbarServiceSpy.navigateToPage).toHaveBeenCalled()
   })
 })

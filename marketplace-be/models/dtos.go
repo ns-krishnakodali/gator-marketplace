@@ -2,6 +2,7 @@ package models
 
 type SignupInput struct {
 	Name     string `json:"name" binding:"required"`
+	Mobile   string `json:"mobile" binding:"required,mobile"`
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required,min=6"`
 }

@@ -1,0 +1,48 @@
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: fit-content;
+}
+
+.profile-heading {
+  margin: 0 0 var(--spacing-1-5);
+  font-size: 1.25rem;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: var(--spacing-5);
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 4rem 8rem;
+}
+
+.profile-input-label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-left: var(--spacing-quarter);
+}
+
+.update-details-button {
+  margin-top: 2rem;
+}
+
+.password-heading {
+  margin: 0;
+}
+
+.password-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8rem;
+}

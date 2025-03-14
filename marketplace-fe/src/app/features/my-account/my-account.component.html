@@ -1,0 +1,67 @@
+<app-navbar [showCart]="true" />
+<div class="account-container">
+  <h2 class="account-heading">My Account</h2>
+  <div class="account-section-container">
+    <div class="account-sections">
+      <h3>Overview</h3>
+      <ul class="account-section-list">
+        <li
+          (click)="renderSection('profile')"
+          (keydown.enter)="renderSection('profile')"
+          (keydown.space)="renderSection('profile')"
+          tabindex="0"
+          role="button"
+        >
+          <img
+            src="assets/svg-icons/account-icon.svg"
+            alt="Account Icon"
+            class="account-section-icon"
+          />
+          My Profile
+        </li>
+        <li
+          (click)="renderSection('orders')"
+          (keydown.enter)="renderSection('orders')"
+          (keydown.space)="renderSection('orders')"
+          tabindex="0"
+          role="button"
+        >
+          <img
+            src="assets/svg-icons/orders-icon.svg"
+            alt="Orders Icon"
+            class="account-section-icon"
+          />
+          Orders
+        </li>
+        <li
+          (click)="renderSection('payments')"
+          (keydown.enter)="renderSection('payments')"
+          (keydown.space)="renderSection('payments')"
+          tabindex="0"
+          role="button"
+        >
+          <img
+            src="assets/svg-icons/payments-icon.svg"
+            alt="Payments Icon"
+            class="account-section-icon"
+          />
+          Payments
+        </li>
+      </ul>
+    </div>
+    <div class="section-details">
+      @if (renderedSection === 'profile') {
+        <app-profile
+          name="John Doe"
+          displayName="John Doe"
+          email="test1@ufl.edu"
+          mobileNumber="355-121-5151"
+        />
+      } @else if (renderedSection === 'orders') {
+        <app-orders />
+      } @else if (renderedSection === 'payments') {
+        <app-payments />
+      }
+    </div>
+  </div>
+</div>

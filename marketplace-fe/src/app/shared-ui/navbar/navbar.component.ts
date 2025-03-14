@@ -21,7 +21,7 @@ export class NavbarComponent {
   constructor(private navbarService: NavbarService) {}
 
   goToLandingPage = (): void => {
-    this.navbarService.navigateToLandingPage()
+    this.navbarService.navigateToPage('/')
   }
 
   get itemsInCart() {
