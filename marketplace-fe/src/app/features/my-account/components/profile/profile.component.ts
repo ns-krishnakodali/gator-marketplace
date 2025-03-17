@@ -19,14 +19,18 @@ import { InputComponent } from '../../../../shared-ui'
 export class ProfileComponent implements OnInit {
   accountDetails!: AccountDetails
 
-  oldPassword?: string
-  newPassword?: string
+  currentPassword!: string
+  newPassword!: string
 
   areLoadingAccountDetails$: Observable<boolean>
+  areUpdatingAccountDetails$: Observable<boolean>
+  isUpdatingUserPassword$: Observable<boolean>
   isUploadingImage$: Observable<boolean>
 
   constructor(private profileService: ProfileService) {
     this.areLoadingAccountDetails$ = this.profileService.areLoadingAccountDetails$
+    this.areUpdatingAccountDetails$ = this.profileService.areUpdatingAccountDetails$
+    this.isUpdatingUserPassword$ = this.profileService.isUpdatingUserPassword$
     this.isUploadingImage$ = this.profileService.isUploadingImage$
   }
 
@@ -52,4 +56,12 @@ export class ProfileComponent implements OnInit {
 
   getDisplayPictureStatus = (): boolean =>
     this.profileService.getDisplayPictureStatus(this.accountDetails?.displayPictureSrc)
+
+  updateAccountDetails = (): void => {
+    this.profileService.updateAccountDetails(this.accountDetails)
+  }
+
+  updateAccountPassword = (): void => {
+    this.profileService.updateAccountPassword(this.currentPassword, this.newPassword)
+  }
 }

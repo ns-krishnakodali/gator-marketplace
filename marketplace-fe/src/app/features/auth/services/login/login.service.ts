@@ -81,9 +81,9 @@ export class LoginService {
   private validateLoginData = (loginData: LoginData): { isValid: boolean; message: string } => {
     if (!loginData?.email || !loginData?.password) {
       return { isValid: false, message: FILL_ALL_FORM_FIELDS }
-    } else if (validateEmail(loginData?.email) === false) {
+    } else if (!validateEmail(loginData?.email)) {
       return { isValid: false, message: INVALID_EMAIL_ADDRESS }
-    } else if (validateUFLDomain(loginData?.email) === false) {
+    } else if (!validateUFLDomain(loginData?.email)) {
       return { isValid: false, message: INVALID_UFL_EMAIL }
     }
 

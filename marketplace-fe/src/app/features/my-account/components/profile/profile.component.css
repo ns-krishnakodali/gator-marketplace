@@ -101,8 +101,12 @@ input[type='file'] {
   margin-left: var(--spacing-quarter);
 }
 
-.update-details-button {
+.update-details-button-container {
   margin-top: 2rem;
+}
+
+.update-details-button {
+  min-width: 9rem;
 }
 
 .password-heading {

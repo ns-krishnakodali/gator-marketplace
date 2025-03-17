@@ -36,18 +36,32 @@ export class APIService {
       )
   }
 
-  post<T>(endpoint: string, body: unknown, headers?: Record<string, string>): Observable<T> {
+  post<T>(
+    endpoint: string,
+    body: unknown,
+    addAuthHeader = true,
+    headers?: Record<string, string>
+  ): Observable<T> {
     return this.httpClient
-      .post<T>(`${this.BASE_URL}/${endpoint}`, body, { headers: this.getHeaders(headers) })
+      .post<T>(`${this.BASE_URL}/${endpoint}`, body, {
+        headers: this.getHeaders(headers, addAuthHeader),
+      })
       .pipe(
         map((response) => response),
         catchError(this.handleError)
       )
   }
 
-  put<T>(endpoint: string, body: unknown, headers?: Record<string, string>): Observable<T> {
+  put<T>(
+    endpoint: string,
+    body: unknown,
+    addAuthHeader = true,
+    headers?: Record<string, string>
+  ): Observable<T> {
     return this.httpClient
-      .put<T>(`${this.BASE_URL}/${endpoint}`, body, { headers: this.getHeaders(headers) })
+      .put<T>(`${this.BASE_URL}/${endpoint}`, body, {
+        headers: this.getHeaders(headers, addAuthHeader),
+      })
       .pipe(
         map((response) => response),
         catchError(this.handleError)

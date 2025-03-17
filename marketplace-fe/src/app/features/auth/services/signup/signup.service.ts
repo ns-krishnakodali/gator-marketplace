@@ -30,14 +30,12 @@ export class SignupService {
   ) {}
 
   handleUserSignup = (signupData: SignupData): void => {
-    this.isLoadingSubject.next(true)
     const inputsValidation = this.validateSignupData(signupData)
     if (!inputsValidation.isValid) {
       this.notificationsService.addNotification({
         message: inputsValidation.message,
         type: 'error',
       })
-      this.isLoadingSubject.next(false)
       return
     }
 
@@ -75,18 +73,18 @@ export class SignupService {
   }
 
   private validateSignupData = (signupData: SignupData): { isValid: boolean; message: string } => {
-    const name = signupData?.name?.trim()
-    const email = signupData?.email?.trim()
-    const password = signupData?.password
-    const confirmPassword = signupData?.confirmPassword
-
-    if (!name || !email || !password || !confirmPassword) {
+    if (
+      !signupData?.name?.trim() ||
+      !signupData?.email?.trim() ||
+      !signupData?.password ||
+      !signupData?.confirmPassword
+    ) {
       return { isValid: false, message: FILL_ALL_FORM_FIELDS }
-    } else if (validateEmail(email) === false) {
+    } else if (!validateEmail(signupData?.email?.trim())) {
       return { isValid: false, message: INVALID_EMAIL_ADDRESS }
-    } else if (validateUFLDomain(email) === false) {
+    } else if (!validateUFLDomain(signupData?.email?.trim())) {
       return { isValid: false, message: INVALID_UFL_EMAIL }
-    } else if (password !== confirmPassword) {
+    } else if (signupData?.password !== signupData?.confirmPassword) {
       return { isValid: false, message: PASSWORDS_DO_NOT_MATCH }
     }
 

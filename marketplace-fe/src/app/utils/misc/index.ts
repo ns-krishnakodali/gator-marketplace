@@ -1,6 +1,9 @@
 export const stringifyArray = (strArray: string[] | undefined): string =>
   !strArray || strArray.length === 0 ? '' : strArray.join(',')
 
+export const isValidMobileNumber = (mobileNumber: string): boolean =>
+  new RegExp('^\\d{3}-\\d{3}-\\d{4}').test(mobileNumber)
+
 export const formatMobileNumber = (number: string): string => {
   const digits = number.replace(/\D/g, '')
 

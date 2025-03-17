@@ -33,6 +33,7 @@ func SetupRoutes(router *gin.Engine) {
 		apiProtected.DELETE("/products/:pid", products.DeleteProduct)
 
 		apiProtected.GET("/account-details", handlers.GetAccountDetails)
-		apiProtected.POST("/update-account", handlers.UpdateAccountDetails)
+		apiProtected.PUT("/update-account", handlers.UpdateAccountDetails)
+		apiProtected.PUT("/update-password", handlers.UpdatePassword)
 	}
 }

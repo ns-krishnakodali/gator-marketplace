@@ -5,13 +5,25 @@ import { BehaviorSubject } from 'rxjs'
 import { AccountDetails } from '../models/'
 import { APIService } from '../../../core'
 import { NotificationsService } from '../../../shared-ui'
-import { IMAGE_UPLOAD_ERROR_MESSAGE, INVALID_EMAIL_ADDRESS, INVALID_UFL_EMAIL, validateEmail, validateUFLDomain } from '../../../utils'
+import {
+  EMPTY_DISPLAY_NAME,
+  EMPTY_MOBILE_NUMBER,
+  EMPTY_PASSWORD_FIELDS,
+  IMAGE_UPLOAD_ERROR_MESSAGE,
+  INVALID_EMAIL_ADDRESS,
+  INVALID_MOBILE_NUMBER,
+  INVALID_UFL_EMAIL,
+  isValidMobileNumber,
+  SAME_PASSWORDS,
+  validateEmail,
+  validateUFLDomain,
+} from '../../../utils'
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
-  private readonly DEFAULT_DP: string = 'assets/profile-icon.png'
+  private readonly DEFAULT_DP_SRC: string = 'assets/profile-icon.png'
   private readonly DEFAULT_ACCOUNT_DETAILS: AccountDetails = {
-    displayPictureSrc: this.DEFAULT_DP,
+    displayPictureSrc: this.DEFAULT_DP_SRC,
     name: '',
     displayName: '',
     email: '',
@@ -20,11 +32,13 @@ export class ProfileService {
 
   private areLoadingAccountDetailsSubject = new BehaviorSubject<boolean>(false)
   private areUpdatingAccountDetails = new BehaviorSubject<boolean>(false)
+  private isUpdatingUserPasswordSubject = new BehaviorSubject<boolean>(false)
   private isUploadingImageSubject = new BehaviorSubject<boolean>(false)
   private userDetailsSubject = new BehaviorSubject<AccountDetails>(this.DEFAULT_ACCOUNT_DETAILS)
 
   public areLoadingAccountDetails$ = this.areLoadingAccountDetailsSubject.asObservable()
   public areUpdatingAccountDetails$ = this.areUpdatingAccountDetails.asObservable()
+  public isUpdatingUserPassword$ = this.isUpdatingUserPasswordSubject.asObservable()
   public isUploadingImage$ = this.isUploadingImageSubject.asObservable()
   public userDetails$ = this.userDetailsSubject.asObservable()
 
@@ -76,14 +90,81 @@ export class ProfileService {
   }
 
   updateAccountDetails = (accountDetails: AccountDetails): void => {
-    if (!this.validateAccountDetails(accountDetails)) {
+    const inputsValidation = this.validateAccountDetails(accountDetails)
+    if (!inputsValidation.isValid) {
+      this.notificationsService.addNotification({
+        message: inputsValidation.message,
+        type: 'error',
+      })
       return
     }
     this.areUpdatingAccountDetails.next(true)
+    this.apiService
+      .put('api/update-account', {
+        name: accountDetails.name,
+        displayName: accountDetails.displayName,
+        email: accountDetails.email,
+        mobile: accountDetails.mobileNumber,
+      })
+      .subscribe({
+        next: () => {
+          this.notificationsService.addNotification({
+            message: 'Successfully updated account details!',
+            type: 'success',
+          })
+          this.areUpdatingAccountDetails.next(false)
+        },
+        error: (error) => {
+          this.notificationsService.addNotification({
+            message: error.message,
+            type: 'error',
+          })
+          this.areUpdatingAccountDetails.next(false)
+        },
+        complete: () => {
+          this.areUpdatingAccountDetails.next(false)
+        },
+      })
+  }
+
+  updateAccountPassword = (currentPassword: string, newPassword: string): void => {
+    const inputsValidation = this.validatePasswordDetails(currentPassword, newPassword)
+    if (!inputsValidation.isValid) {
+      this.notificationsService.addNotification({
+        message: inputsValidation.message,
+        type: 'error',
+      })
+      return
+    }
+    this.isUpdatingUserPasswordSubject.next(true)
+    this.apiService
+      .put('api/update-password', {
+        currentPassword,
+        newPassword,
+      })
+      .subscribe({
+        next: () => {
+          this.notificationsService.addNotification({
+            message: 'Successfully updated password!',
+            type: 'success',
+          })
+          this.isUpdatingUserPasswordSubject.next(false)
+        },
+        error: (error) => {
+          this.notificationsService.addNotification({
+            message: error.message,
+            type: 'error',
+          })
+          this.isUpdatingUserPasswordSubject.next(false)
+        },
+        complete: () => {
+          this.isUpdatingUserPasswordSubject.next(false)
+        },
+      })
   }
 
   getDisplayPictureStatus = (displayPictureSrc: string): boolean =>
-    typeof displayPictureSrc === 'undefined' || displayPictureSrc === this.DEFAULT_DP
+    typeof displayPictureSrc === 'undefined' || displayPictureSrc === this.DEFAULT_DP_SRC
 
   private processAccountDetails = (response: unknown): AccountDetails => {
     const data = (response as { accountDetails: never })?.accountDetails
@@ -92,7 +173,7 @@ export class ProfileService {
     }
 
     return {
-      displayPictureSrc: data?.['imageUrl'] || this.DEFAULT_DP,
+      displayPictureSrc: data?.['imageUrl'] || this.DEFAULT_DP_SRC,
       name: data?.['name'],
       displayName: data?.['displayName'],
       email: data?.['email'],
@@ -103,14 +184,32 @@ export class ProfileService {
   private validateAccountDetails = (
     accountDetails: AccountDetails
   ): { isValid: boolean; message: string } => {
-    if (validateEmail(accountDetails?.email) === false) {
+    if (!validateEmail(accountDetails?.email)) {
       return { isValid: false, message: INVALID_EMAIL_ADDRESS }
-    } else if (validateUFLDomain(accountDetails?.email) === false) {
+    } else if (!validateUFLDomain(accountDetails?.email)) {
       return { isValid: false, message: INVALID_UFL_EMAIL }
-    } else if(accountDetails?.displayName && accountDetails?.displayName === '') {
-      return { isValid: false, message: INVALID_UFL_EMAIL }
-    } else if(accountDetails?.mobileNumber && accountDetails?.mobileNumber === '') {
-      return { isValid: false, message: INVALID_UFL_EMAIL }
+    } else if (accountDetails?.displayName && accountDetails?.displayName === '') {
+      return { isValid: false, message: EMPTY_DISPLAY_NAME }
+    } else if (accountDetails?.mobileNumber && accountDetails?.mobileNumber === '') {
+      return { isValid: false, message: EMPTY_MOBILE_NUMBER }
+    } else if (!isValidMobileNumber(accountDetails?.mobileNumber)) {
+      return { isValid: false, message: INVALID_MOBILE_NUMBER }
+    }
+
+    return { isValid: true, message: '' }
+  }
+
+  private validatePasswordDetails = (
+    currentPassword: string,
+    newPassword: string
+  ): { isValid: boolean; message: string } => {
+    if (!currentPassword || !newPassword) {
+      return { isValid: false, message: EMPTY_PASSWORD_FIELDS }
+    }
+    if (currentPassword === '' || newPassword === '') {
+      return { isValid: false, message: EMPTY_PASSWORD_FIELDS }
+    } else if (currentPassword === newPassword) {
+      return { isValid: false, message: SAME_PASSWORDS }
     }
 
     return { isValid: true, message: '' }

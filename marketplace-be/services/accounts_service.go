@@ -6,6 +6,8 @@ import (
 
 	"marketplace-be/database"
 	"marketplace-be/models"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 func AccountDetailsService(userEmail string) (*models.AccountDetails, error) {
@@ -43,6 +45,44 @@ func UpdateAccountDetailsService(input *models.AccountDetailsInput, email string
 
 	if err != nil {
 		log.Printf("Failed to update user details for email %s: %v", email, err)
+		return err
+	}
+
+	return nil
+}
+
+func UpdatePasswordService(input *models.PasswordInput, userEmail string) error {
+	var hashedPassword string
+
+	if err := database.DB.
+		Model(&models.User{}).
+		Select("password_hash").
+		Where("email = ?", userEmail).
+		Take(&hashedPassword).Error; err != nil {
+		log.Printf("Error finding user with email %s: %v", userEmail, err)
+		return err
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(input.CurrentPassword)); err != nil {
+		return ErrInvalidCredentials
+	}
+
+	if input.CurrentPassword == input.NewPassword {
+		return ErrSamePassword
+	}
+
+	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		log.Printf("Error hashing password: %v", err)
+		return ErrHashingPassword
+	}
+
+	// Update password in a single query
+	if err := database.DB.
+		Model(&models.User{}).
+		Where("email = ?", userEmail).
+		Update("password_hash", string(newHashedPassword)).Error; err != nil {
+		log.Printf("Error updating password: %v", err)
 		return err
 	}
 

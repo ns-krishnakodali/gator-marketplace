@@ -58,3 +58,30 @@ func UpdateAccountDetails(c *gin.Context) {
 
 	c.Status(http.StatusNoContent)
 }
+
+func UpdatePassword(c *gin.Context) {
+	var input models.PasswordInput
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid input format"})
+		return
+	}
+
+	userEmail, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
+
+	// Call service to modify account details
+	err := services.UpdatePasswordService(&input, userEmail)
+	if err != nil {
+		switch {
+		case errors.Is(err, services.ErrInvalidCredentials):
+			c.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid password. Please check and try again."})
+		case errors.Is(err, services.ErrSamePassword):
+			c.JSON(http.StatusConflict, gin.H{"message": "New password, cannot be same as the current password."})
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+		}
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+}

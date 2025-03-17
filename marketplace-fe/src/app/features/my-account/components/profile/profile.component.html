@@ -2,7 +2,7 @@
   <h2 class="profile-heading">Profile Information</h2>
   <div class="profile-details-container">
     @if (areLoadingAccountDetails$ | async; as areLoadingAccountDetails) {
-      <mat-spinner diameter="80" class="loader" />
+      <mat-spinner diameter="80" />
     } @else {
       <div class="profile-picture-container">
         @if (isUploadingImage$ | async; as isUploadingImage) {
@@ -70,14 +70,21 @@
             />
           </div>
         </div>
-        <button
-          mat-flat-button
-          id="update-details-button"
-          type="button"
-          class="update-details-button"
-        >
-          Update Details
-        </button>
+        <div class="update-details-button-container">
+          @if (areUpdatingAccountDetails$ | async; as areUpdatingAccountDetails) {
+            <mat-spinner diameter="40" />
+          } @else {
+            <button
+              mat-flat-button
+              id="update-details-button"
+              type="button"
+              class="update-details-button"
+              (click)="updateAccountDetails()"
+            >
+              Update Details
+            </button>
+          }
+        </div>
       </div>
       <div class="profile-details">
         <h3 class="profile-heading">Password</h3>
@@ -89,7 +96,7 @@
               class="profile-element"
               placeholder="Old Password"
               type="password"
-              [(value)]="oldPassword"
+              [(value)]="currentPassword"
               [required]="true"
             />
           </div>
@@ -105,14 +112,21 @@
             />
           </div>
         </div>
-        <button
-          mat-flat-button
-          id="update-details-button"
-          type="button"
-          class="update-details-button"
-        >
-          Modify Password
-        </button>
+        <div class="update-details-button-container">
+          @if (isUpdatingUserPassword$ | async; as isUpdatingUserPassword) {
+            <mat-spinner diameter="40" />
+          } @else {
+            <button
+              mat-flat-button
+              id="update-details-button"
+              type="button"
+              class="update-details-button"
+              (click)="updateAccountPassword()"
+            >
+              Modify Password
+            </button>
+          }
+        </div>
       </div>
     }
   </div>

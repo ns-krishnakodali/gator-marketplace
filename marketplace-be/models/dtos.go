@@ -41,3 +41,8 @@ type AccountDetailsInput struct {
 	Email       string `json:"email"`
 	Mobile      string `json:"mobile"`
 }
+
+type PasswordInput struct {
+	CurrentPassword string `json:"currentPassword"`
+	NewPassword     string `json:"newPassword"`
+}
