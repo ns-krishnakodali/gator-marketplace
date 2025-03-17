@@ -51,11 +51,13 @@ func TestLoginHandler(t *testing.T) {
 	})
 
 	t.Run("Successful Login", func(t *testing.T) {
-		signupContext, signupWriter := test_utils.CreateTestContext("POST", "/signup", []byte(`{"name":"Test User","email":"login@example.com","password":"testpass"}`))
+		signupContext, signupWriter := test_utils.CreateTestContext("POST", "/signup", []byte(
+			`{"name":"Test User","email":"login@ufl.edu","mobile": "123-456-7890","password":"testpass"}`))
+
 		handlers.Signup(signupContext)
 		require.Equal(t, http.StatusCreated, signupWriter.Code)
 
-		c, w := test_utils.CreateTestContext("POST", "/login", []byte(`{"email":"login@example.com","password":"testpass"}`))
+		c, w := test_utils.CreateTestContext("POST", "/login", []byte(`{"email":"login@ufl.edu","password":"testpass"}`))
 		handlers.Login(c)
 
 		var resp map[string]interface{}
@@ -76,30 +78,47 @@ func TestSignupHandler(t *testing.T) {
 
 		require.Equal(t, http.StatusBadRequest, w.Code, "expected 400 BadRequest")
 		require.Contains(t, w.Body.String(), "Invalid input format")
+	})
 
-		var resp map[string]any
-		err := json.Unmarshal(w.Body.Bytes(), &resp)
-		require.NoError(t, err)
+	t.Run("Invalid user email (non ufl domain)", func(t *testing.T) {
+		c, w := test_utils.CreateTestContext("POST", "/signup", []byte(
+			`{"email":"existing@email.com","password":"password","name":"New User","mobile":"123-456-7890"}`))
+		handlers.Signup(c)
 
-		require.Contains(t, resp["message"], "Invalid input format")
+		require.Equal(t, http.StatusUnprocessableEntity, w.Code, "expected 422 BadRequest")
+		require.Contains(t, w.Body.String(), "Invalid email format. Please enter valid UFL email.")
+	})
+
+	t.Run("Invalid user mobile number", func(t *testing.T) {
+		c, w := test_utils.CreateTestContext("POST", "/signup", []byte(
+			`{"email":"existing@ufl.edu","password":"password","name":"New User","mobile":"123-4567890"}`))
+
+		handlers.Signup(c)
+
+		require.Equal(t, http.StatusUnprocessableEntity, w.Code, "expected 422 BadRequest")
+		require.Contains(t, w.Body.String(), "Invalid mobile number. Please follow xxx-xxx-xxxx format.")
 	})
 
 	t.Run("Email Already Registered", func(t *testing.T) {
 		// Create a user for testing
 		user := &models.User{
-			Email:        "existing@example.com",
+			Email:        "existing@ufl.edu",
 			PasswordHash: "$2a$10$hashedpassword", // a valid hashed password
 		}
 		db.Create(user)
 
-		c, w := test_utils.CreateTestContext("POST", "/signup", []byte(`{"email":"existing@example.com","password":"password","name":"Test User"}`))
+		c, w := test_utils.CreateTestContext("POST", "/signup", []byte(
+			`{"email":"existing@ufl.edu","password":"password","name":"Test User","mobile":"123-456-7890"}`))
+
 		handlers.Signup(c)
 		require.Equal(t, http.StatusConflict, w.Code)
 		require.Contains(t, w.Body.String(), "Email already registered")
 	})
 
 	t.Run("Successful Signup", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("POST", "/signup", []byte(`{"email":"newuser@example.com","password":"password","name":"New User"}`))
+		c, w := test_utils.CreateTestContext("POST", "/signup", []byte(
+			`{"email":"signup@ufl.edu","password":"password","name":"New User","mobile":"123-456-7899"}`))
+
 		handlers.Signup(c)
 		require.Equal(t, http.StatusCreated, w.Code)
 		require.Contains(t, w.Body.String(), "User created successfully")

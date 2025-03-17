@@ -7,6 +7,14 @@
   padding-bottom: var(--spacing-3);
 }
 
+.profile-details-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
 .profile-heading {
   margin: var(--spacing-half) 0 var(--spacing-1-5);
   font-size: 1.25rem;
@@ -16,19 +24,17 @@
 
 .profile-picture-container {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: var(--spacing-2);
-}
-
-.display-picture-container {
-  display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   overflow: hidden;
   width: 7.5rem;
-  height: 8.25rem;
-  margin: var(--spacing-1) var(--spacing-half) 0 0;
+  height: 8rem;
+  max-height: 9rem;
+  border: 1px dashed var(--color-border-2);
+  border-radius: 8px;
+  padding: var(--spacing-1);
+  margin-bottom: var(--spacing-2);
 }
 
 .display-picture {
@@ -52,10 +58,10 @@ input[type='file'] {
 .upload-label {
   display: flex;
   align-items: center;
+  justify-content: center;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  margin-top: var(--spacing-half);
+  font-size: 12px;
+  margin-top: var(--spacing-1);
   color: var(--mat-sys-primary);
   background-color: var(--color-background);
 }
@@ -65,18 +71,11 @@ input[type='file'] {
   border-radius: var(--spacing-1);
 }
 
-.user-name {
-  font-size: 1.125rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  margin: 0;
-}
-
-.user-email {
-  font-size: 0.875rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  margin: 0;
+.upload-icon {
+  font-size: 16px;
+  width: var(--spacing-2);
+  height: var(--spacing-2);
+  align-items: center;
 }
 
 .profile-details {

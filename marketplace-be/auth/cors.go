@@ -11,7 +11,7 @@ import (
 func CORSMiddleware() gin.HandlerFunc {
 	local_ui_url := os.Getenv("CORS_ORIGINS")
 	if local_ui_url == "" {
-		log.Fatal("CORS_ORIGINS environment variable not set")
+		log.Printf("CORS_ORIGINS environment variable not set")
 		local_ui_url = "http://localhost:4200" // Default to localhost if not set
 	}
 

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core'
+import { Component, OnInit } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
@@ -6,8 +6,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 import { Observable } from 'rxjs'
 
+import { AccountDetails } from '../../models/'
+import { ProfileService } from '../../services/'
 import { InputComponent } from '../../../../shared-ui'
-import { ProfileService } from '../../services/profile.service'
 
 @Component({
   selector: 'app-profile',
@@ -15,30 +16,40 @@ import { ProfileService } from '../../services/profile.service'
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
 })
-export class ProfileComponent {
-  @Input() displayPictureSrc?: string
-  @Input() name!: string
-  @Input() displayName!: string
-  @Input() email!: string
-  @Input() mobileNumber!: string
+export class ProfileComponent implements OnInit {
+  accountDetails!: AccountDetails
 
-  @Input() oldPassword!: string
-  @Input() newPassword!: string
+  oldPassword?: string
+  newPassword?: string
 
+  areLoadingAccountDetails$: Observable<boolean>
   isUploadingImage$: Observable<boolean>
 
   constructor(private profileService: ProfileService) {
+    this.areLoadingAccountDetails$ = this.profileService.areLoadingAccountDetails$
     this.isUploadingImage$ = this.profileService.isUploadingImage$
+  }
+
+  ngOnInit(): void {
+    this.profileService.userDetails$.subscribe((data: AccountDetails) => {
+      this.accountDetails = data
+    })
+    this.profileService.getAccountDetails()
   }
 
   async onImageUpload(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement
     if (input.files && input.files[0]) {
       try {
-        this.displayPictureSrc = await this.profileService.uploadDisplayPicture(input.files[0])
+        this.accountDetails.displayPictureSrc = await this.profileService.updateDisplayPicture(
+          input.files[0]
+        )
       } catch (error) {
         console.error('Error reading image file:', error)
       }
     }
   }
+
+  getDisplayPictureStatus = (): boolean =>
+    this.profileService.getDisplayPictureStatus(this.accountDetails?.displayPictureSrc)
 }

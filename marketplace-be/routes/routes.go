@@ -11,9 +11,8 @@ import (
 )
 
 func SetupRoutes(router *gin.Engine) {
-	router.POST("/signup", handlers.Signup)
-	router.POST("/products", products.CreateProduct)
 	router.POST("/login", handlers.Login)
+	router.POST("/signup", handlers.Signup)
 
 	router.GET("/health", func(context *gin.Context) {
 		context.JSON(http.StatusOK, gin.H{
@@ -28,11 +27,12 @@ func SetupRoutes(router *gin.Engine) {
 			c.JSON(http.StatusOK, gin.H{"message": "You have accessed a protected endpoint!"})
 		})
 
-		
 		apiProtected.GET("/products", products.GetProducts)
 		apiProtected.GET("/products/:pid", products.GetProductByPID)
 		apiProtected.PUT("/products/:pid", products.UpdateProduct)
 		apiProtected.DELETE("/products/:pid", products.DeleteProduct)
 
+		apiProtected.GET("/account-details", handlers.GetAccountDetails)
+		apiProtected.POST("/update-account", handlers.UpdateAccountDetails)
 	}
 }
