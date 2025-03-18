@@ -25,7 +25,13 @@ import { ButtonComponent, InputComponent, TextComponent } from '../../../../shar
   ],
 })
 export class SignupComponent {
-  signupData: SignupData = { name: '', email: '', password: '', confirmPassword: '' }
+  signupData: SignupData = {
+    name: '',
+    email: '',
+    mobileNumber: '',
+    password: '',
+    confirmPassword: '',
+  }
   isLoading$: Observable<boolean>
 
   constructor(private signupService: SignupService) {

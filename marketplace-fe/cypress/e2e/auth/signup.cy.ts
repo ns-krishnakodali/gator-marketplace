@@ -22,15 +22,27 @@ describe('Signup Component Tests', () => {
     cy.get('#confirm-password').find('input').should('have.attr', 'required')
   })
 
-  it('Should display a notification when passwords do not match', () => {
+  it('Should display a notification on incorrect mobile number', () => {
     cy.get('#name').type('John Doe')
     cy.get('#email').type('test@example.com')
+    cy.get('#mobile-number').type('1234783234')
     cy.get('#password').type('password123')
     cy.get('#confirm-password').type('password321')
     cy.get('#signup-button').click()
 
     cy.get('#notification-text').should('exist')
-    cy.get('#notification-text').should('contain', '')
+  })
+
+
+  it('Should display a notification when passwords do not match', () => {
+    cy.get('#name').type('John Doe')
+    cy.get('#email').type('test@example.com')
+    cy.get('#mobile-number').type('123-478-3234')
+    cy.get('#password').type('password123')
+    cy.get('#confirm-password').type('password321')
+    cy.get('#signup-button').click()
+
+    cy.get('#notification-text').should('exist')
   })
 
   it('Should be submitted on entering valid credentials', () => {
@@ -43,6 +55,7 @@ describe('Signup Component Tests', () => {
 
     cy.get('#name').type('John Doe')
     cy.get('#email').type('test@ufl.edu')
+    cy.get('#mobile-number').type('123-478-3234')
     cy.get('#password').type('password123')
     cy.get('#confirm-password').type('password123')
     cy.get('#signup-button').click()

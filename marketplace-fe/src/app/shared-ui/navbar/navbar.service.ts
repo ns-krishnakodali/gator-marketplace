@@ -6,8 +6,4 @@ import { Router } from '@angular/router'
 })
 export class NavbarService {
   constructor(private router: Router) {}
-
-  navigateToLandingPage = (): void => {
-    this.router.navigate(['/'])
-  }
 }

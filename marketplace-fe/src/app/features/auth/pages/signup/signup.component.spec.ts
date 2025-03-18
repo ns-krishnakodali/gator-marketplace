@@ -1,8 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { of } from 'rxjs'
 
-import { SignupData } from '../../models/signup.model'
 import { SignupComponent } from './signup.component'
+
+import { SignupData } from '../../models/signup.model'
 import { SignupService } from '../../services'
 
 describe('SignupComponent', () => {
@@ -34,6 +35,7 @@ describe('SignupComponent', () => {
     const signupData: SignupData = {
       name: 'Test User',
       email: 'test@ufl.edu',
+      mobileNumber: '123-456-7890',
       password: 'pass',
       confirmPassword: 'pass',
     }

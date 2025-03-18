@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"log"
 	"net/http"
 
@@ -9,8 +10,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
-const InternalServerError = "Internal Server Error"
 
 func Login(c *gin.Context) {
 	var input models.LoginInput
@@ -24,12 +23,12 @@ func Login(c *gin.Context) {
 	// Authenticate user and generate token
 	token, err := services.LoginService(&input)
 	if err != nil {
-		switch err.Error() {
-		case "user_not_found":
+		switch {
+		case errors.Is(err, services.ErrUserNotFound):
 			c.JSON(http.StatusNotFound, gin.H{"message": "Invalid credentials, try again"})
-		case "invalid_credentials":
+		case errors.Is(err, services.ErrInvalidCredentials):
 			c.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid credentials, try again"})
-		case "token_error":
+		case errors.Is(err, services.ErrTokenGeneration):
 			c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to generate token"})
 		default:
 			c.JSON(http.StatusInternalServerError, gin.H{"message": InternalServerError})
@@ -37,7 +36,6 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// Return generated token
 	c.JSON(http.StatusOK, gin.H{"token": token})
 }
 
@@ -53,19 +51,20 @@ func Signup(c *gin.Context) {
 
 	// Signup user
 	if err := services.SignupService(&input); err != nil {
-		switch err.Error() {
-		case "email_exists":
-			log.Printf("Attempted signup with already registered email: %s", input.Email)
+		switch {
+		case errors.Is(err, services.ErrEmailExists):
 			c.JSON(http.StatusConflict, gin.H{"message": "Email already registered"})
-		case "hash_error":
-			log.Printf("Error hashing password: %v", err)
+		case errors.Is(err, services.ErrHashingPassword):
 			c.JSON(http.StatusInternalServerError, gin.H{"message": InternalServerError})
+		case errors.Is(err, services.ErrInvalidEmailFormat):
+			c.JSON(http.StatusUnprocessableEntity, gin.H{"message": "Invalid email format. Please enter valid UFL email."})
+		case errors.Is(err, services.ErrInvalidMobileNumber):
+			c.JSON(http.StatusUnprocessableEntity, gin.H{"message": "Invalid mobile number. Please follow xxx-xxx-xxxx format."})
 		default:
 			c.JSON(http.StatusInternalServerError, gin.H{"message": InternalServerError})
 		}
 		return
 	}
 
-	// Return success message
 	c.JSON(http.StatusCreated, gin.H{"message": "User created successfully"})
 }

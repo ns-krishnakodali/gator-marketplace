@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core'
 
 import { type InputType } from './input.model'
+import { formatMobileNumber } from '../../utils'
 
 @Component({
   selector: 'app-input',
@@ -18,21 +19,29 @@ export class InputComponent {
   @Input() readOnly?: boolean
   @Input() type: InputType = 'text'
   @Input() value?: string
+  @Input() pattern?: string
 
   @Output() valueChange = new EventEmitter<string>()
   @Output() checkedChange = new EventEmitter<boolean>()
 
   onChange = (event: Event): void => {
+    let newValue: string
+
     if (this.disabled) {
       return
     }
+
     if (this.type === 'checkbox' || this.type === 'radio') {
-      const newValue: boolean = (event.target as HTMLInputElement).checked
-      this.checked = newValue
-      this.checkedChange.emit(newValue)
+      const newCheckedValue: boolean = (event.target as HTMLInputElement).checked
+      this.checked = newCheckedValue
+      this.checkedChange.emit(newCheckedValue)
       return
+    } else if (this.type === 'tel') {
+      newValue = formatMobileNumber((event.target as HTMLInputElement).value)
+    } else {
+      newValue = (event.target as HTMLInputElement).value
     }
-    const newValue: string = (event.target as HTMLInputElement).value
+
     this.value = newValue
     this.valueChange.emit(newValue)
   }
