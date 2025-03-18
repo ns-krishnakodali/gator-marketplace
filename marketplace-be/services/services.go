@@ -21,20 +21,14 @@ var ErrInvalidEmailFormat = errors.New("invalid email format, must be a ufl.edu 
 var ErrInvalidMobileNumber = errors.New("invalid mobile number format, must be xxx-xxx-xxxx")
 var ErrSamePassword = errors.New("passwords are same")
 
-func validateUFLEmail(email string) error {
+func validateUFLEmail(email string) bool {
 	re := regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@ufl.edu$`)
-	if !re.MatchString(email) {
-		return ErrInvalidEmailFormat
-	}
-	return nil
+	return re.MatchString(email)
 }
 
-func validateMobileNumber(mobileNumber string) error {
+func validateMobileNumber(mobileNumber string) bool {
 	re := regexp.MustCompile(`^\d{3}-\d{3}-\d{4}$`)
-	if !re.MatchString(mobileNumber) {
-		return ErrInvalidMobileNumber
-	}
-	return nil
+	return re.MatchString(mobileNumber)
 }
 
 func sanitizeString(s string) string {

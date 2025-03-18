@@ -71,14 +71,14 @@ func SignupService(input *models.SignupInput) error {
 
 func validateUserDetails(input *models.SignupInput) error {
 	switch {
-	case validateUFLEmail(input.Email) != nil:
-		return validateUFLEmail(input.Email)
+	case !validateUFLEmail(input.Email):
+		return ErrInvalidEmailFormat
 	case strings.TrimSpace(input.Name) == "":
 		return ErrEmptyName
 	case strings.TrimSpace(input.Mobile) == "":
 		return ErrEmptyMobileNumber
-	case validateMobileNumber(input.Mobile) != nil:
-		return validateMobileNumber(input.Mobile)
+	case !validateMobileNumber(input.Mobile):
+		return ErrInvalidMobileNumber
 	}
 	return nil
 }

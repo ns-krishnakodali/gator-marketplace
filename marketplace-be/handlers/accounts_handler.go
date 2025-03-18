@@ -45,18 +45,18 @@ func UpdateAccountDetails(c *gin.Context) {
 		case errors.Is(err, services.ErrEmailNotMatching),
 			errors.Is(err, services.ErrEmptyName),
 			errors.Is(err, services.ErrEmptyMobileNumber):
-			c.JSON(http.StatusUnprocessableEntity, gin.H{"message": "Invalid input data. Please check your details."})
+			c.JSON(http.StatusUnprocessableEntity, gin.H{"message": "Invalid input data, please check again"})
 		case errors.Is(err, services.ErrInvalidEmailFormat):
-			c.JSON(http.StatusUnprocessableEntity, gin.H{"message": "Invalid email format. Please enter valid UFL email."})
+			c.JSON(http.StatusUnprocessableEntity, gin.H{"message": "Invalid email format, please enter valid UFL email"})
 		case errors.Is(err, services.ErrInvalidMobileNumber):
-			c.JSON(http.StatusUnprocessableEntity, gin.H{"message": "Invalid mobile number. Please follow xxx-xxx-xxxx format."})
+			c.JSON(http.StatusUnprocessableEntity, gin.H{"message": "Invalid mobile number, please follow xxx-xxx-xxxx format"})
 		default:
 			c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
 		}
 		return
 	}
 
-	c.Status(http.StatusNoContent)
+	c.JSON(http.StatusNoContent, "Updated user details")
 }
 
 func UpdatePassword(c *gin.Context) {
