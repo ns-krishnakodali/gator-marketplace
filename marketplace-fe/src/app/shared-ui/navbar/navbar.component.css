@@ -16,6 +16,7 @@
   align-items: center;
   margin-left: var(--spacing-2-5);
   font-weight: bold;
+  text-decoration: none;
 }
 
 .gator-marketplace h2 {

@@ -8,7 +8,9 @@ import { NotificationsService } from '../../../../shared-ui'
 import {
   FILL_ALL_FORM_FIELDS,
   INVALID_EMAIL_ADDRESS,
+  INVALID_MOBILE_NUMBER,
   INVALID_UFL_EMAIL,
+  isValidMobileNumber,
   PASSWORDS_DO_NOT_MATCH,
   validateEmail,
   validateUFLDomain,
@@ -84,6 +86,8 @@ export class SignupService {
       return { isValid: false, message: INVALID_EMAIL_ADDRESS }
     } else if (!validateUFLDomain(signupData?.email?.trim())) {
       return { isValid: false, message: INVALID_UFL_EMAIL }
+    } else if (!isValidMobileNumber(signupData?.mobileNumber)) {
+      return { isValid: false, message: INVALID_MOBILE_NUMBER }
     } else if (signupData?.password !== signupData?.confirmPassword) {
       return { isValid: false, message: PASSWORDS_DO_NOT_MATCH }
     }

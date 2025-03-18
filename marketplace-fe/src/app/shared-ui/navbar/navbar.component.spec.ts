@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { By } from '@angular/platform-browser'
 import { RouterModule, ActivatedRoute } from '@angular/router'
+
 import { of } from 'rxjs'
 
 import { NavbarComponent } from './navbar.component'
@@ -13,7 +14,7 @@ describe('NavbarComponent', () => {
   let navbarServiceSpy: jasmine.SpyObj<NavbarService>
 
   beforeEach(async () => {
-    navbarServiceSpy = jasmine.createSpyObj('NavbarService', ['navigateToLandingPage'])
+    navbarServiceSpy = jasmine.createSpyObj('NavbarService', ['navigateToPage'])
 
     await TestBed.configureTestingModule({
       imports: [NavbarComponent, InputComponent, RouterModule],
@@ -29,20 +30,6 @@ describe('NavbarComponent', () => {
 
   it('should create the navbar component', () => {
     expect(component).toBeTruthy()
-  })
-
-  it('should call goToLandingPage when the logo is clicked', () => {
-    spyOn(component, 'goToLandingPage')
-    const logoElement = fixture.debugElement.query(By.css('.gator-marketplace')).nativeElement
-    logoElement.click()
-    expect(component.goToLandingPage).toHaveBeenCalled()
-  })
-
-  it('should call goToLandingPage when the enter key is pressed on the logo', () => {
-    spyOn(component, 'goToLandingPage')
-    const logoElement = fixture.debugElement.query(By.css('.gator-marketplace')).nativeElement
-    logoElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }))
-    expect(component.goToLandingPage).toHaveBeenCalled()
   })
 
   it('should display search bar when showSearchBar is true', () => {
@@ -85,10 +72,5 @@ describe('NavbarComponent', () => {
     fixture.detectChanges()
     const cartLink = fixture.debugElement.query(By.css('.navbar-link a'))
     expect(cartLink).toBeNull()
-  })
-
-  it('should call NavbarService.navigateToLandingPage when goToLandingPage is called', () => {
-    component.goToLandingPage()
-    expect(navbarServiceSpy.navigateToPage).toHaveBeenCalled()
   })
 })

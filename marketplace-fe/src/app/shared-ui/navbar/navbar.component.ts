@@ -18,13 +18,11 @@ export class NavbarComponent {
   @Input() showCart = false
   @Input() showSearchBar = false
 
+  itemsInCart = 0
+
   constructor(private navbarService: NavbarService) {}
 
-  goToLandingPage = (): void => {
-    this.navbarService.navigateToPage('/')
-  }
-
-  get itemsInCart() {
-    return ''
+  get itemsInCartValue() {
+    return this.itemsInCart === 0 ? '' : `(${this.itemsInCart})`
   }
 }

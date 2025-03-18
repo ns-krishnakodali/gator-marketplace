@@ -1,10 +1,5 @@
 <nav class="navbar">
-  <div
-    class="gator-marketplace"
-    (click)="goToLandingPage()"
-    (keydown.enter)="goToLandingPage()"
-    tabindex="0"
-  >
+  <div class="gator-marketplace" [routerLink]="'/'" tabindex="0">
     <img src="assets/gator.png" alt="Gator Logo" class="gator-logo" width="80" height="60" />
     <h2 id="marketplace">Marketplace</h2>
   </div>
@@ -25,7 +20,7 @@
       <div class="navbar-link">
         <img src="assets/svg-icons/cart-icon.svg" alt="Account Icon" class="navbar-icon" />
         <a class="router-link" [routerLink]="'/my-cart'">Cart</a>
-        <app-text id="cart-items" size="x-small">{{ itemsInCart }}</app-text>
+        <app-text id="cart-items" size="x-small">{{ itemsInCartValue }}</app-text>
       </div>
     }
   </div>
