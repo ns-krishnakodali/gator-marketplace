@@ -3,7 +3,7 @@
     <app-input
       id="name"
       class="signup-element"
-      placeholder="Name"
+      placeholder="Full Name"
       type="text"
       [(value)]="signupData.name"
       [required]="true"
@@ -11,9 +11,18 @@
     <app-input
       id="email"
       class="signup-element"
-      placeholder="Email"
+      placeholder="Email (ufl.edu)"
       type="email"
       [(value)]="signupData.email"
+      [required]="true"
+    />
+    <app-input
+      id="mobile-number"
+      class="signup-element"
+      placeholder="Mobile Number"
+      type="tel"
+      [(value)]="signupData.mobileNumber"
+      pattern="\d{3}-\d{3}-\d{4}"
       [required]="true"
     />
     <app-input

@@ -18,7 +18,7 @@ export class LandingPageComponent implements OnInit {
   isLoading$: Observable<boolean>
 
   constructor(private landingPageService: LandingPageService) {
-    this.isLoading$ = landingPageService.isLoading$
+    this.isLoading$ = this.landingPageService.isLoading$
   }
 
   ngOnInit(): void {

@@ -1,0 +1,133 @@
+<div class="profile-container">
+  <h2 class="profile-heading">Profile Information</h2>
+  <div class="profile-details-container">
+    @if (areLoadingAccountDetails$ | async; as areLoadingAccountDetails) {
+      <mat-spinner diameter="80" />
+    } @else {
+      <div class="profile-picture-container">
+        @if (isUploadingImage$ | async; as isUploadingImage) {
+          <mat-spinner diameter="60" />
+        } @else {
+          <img
+            [src]="accountDetails.displayPictureSrc"
+            alt="Display Picture"
+            class="display-picture"
+            loading="eager"
+          />
+        }
+        <div class="upload-container">
+          <input type="file" (change)="onImageUpload($event)" accept="image/*" id="fileInput" />
+          <label for="fileInput" class="upload-label"
+            >{{ getDisplayPictureStatus() ? 'Upload' : 'Change' }} Image
+            <mat-icon class="upload-icon">upload</mat-icon></label
+          >
+        </div>
+      </div>
+      <div class="profile-details">
+        <div class="profile-grid">
+          <div>
+            <label for="name" class="profile-input-label">Name</label>
+            <app-input
+              id="name"
+              class="profile-element"
+              placeholder="Full Name"
+              type="text"
+              [(value)]="accountDetails.name"
+              [required]="true"
+            />
+          </div>
+          <div>
+            <label for="display-name" class="profile-input-label">Display Name</label>
+            <app-input
+              id="display-name"
+              class="profile-element"
+              placeholder="Display Name"
+              type="text"
+              [(value)]="accountDetails.displayName"
+              [required]="true"
+            />
+          </div>
+          <div>
+            <label for="email" class="profile-input-label">Email</label>
+            <app-input
+              id="email"
+              class="profile-element"
+              placeholder="Email"
+              type="email"
+              [(value)]="accountDetails.email"
+              [required]="true"
+            />
+          </div>
+          <div>
+            <label for="mobile-number" class="profile-input-label">Mobile Number</label>
+            <app-input
+              id="mobile-number"
+              class="profile-element"
+              placeholder="Mobile Number"
+              type="tel"
+              [(value)]="accountDetails.mobileNumber"
+              [required]="true"
+            />
+          </div>
+        </div>
+        <div class="update-details-button-container">
+          @if (areUpdatingAccountDetails$ | async; as areUpdatingAccountDetails) {
+            <mat-spinner diameter="40" />
+          } @else {
+            <button
+              mat-flat-button
+              id="update-details-button"
+              type="button"
+              class="update-details-button"
+              (click)="updateAccountDetails()"
+            >
+              Update Details
+            </button>
+          }
+        </div>
+      </div>
+      <div class="profile-details">
+        <h3 class="profile-heading">Password</h3>
+        <div class="password-grid">
+          <div>
+            <label for="old-password" class="profile-input-label">Old Password</label>
+            <app-input
+              id="old-password"
+              class="profile-element"
+              placeholder="Old Password"
+              type="password"
+              [(value)]="currentPassword"
+              [required]="true"
+            />
+          </div>
+          <div>
+            <label for="new-password" class="profile-input-label">New Password</label>
+            <app-input
+              id="new-password"
+              class="profile-element"
+              placeholder="New Password"
+              type="password"
+              [(value)]="newPassword"
+              [required]="true"
+            />
+          </div>
+        </div>
+        <div class="update-details-button-container">
+          @if (isUpdatingUserPassword$ | async; as isUpdatingUserPassword) {
+            <mat-spinner diameter="40" />
+          } @else {
+            <button
+              mat-flat-button
+              id="update-details-button"
+              type="button"
+              class="update-details-button"
+              (click)="updateAccountPassword()"
+            >
+              Modify Password
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

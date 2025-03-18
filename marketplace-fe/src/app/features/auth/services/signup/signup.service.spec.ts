@@ -2,12 +2,14 @@ import { TestBed } from '@angular/core/testing'
 import { Router } from '@angular/router'
 import { of, throwError } from 'rxjs'
 
+import { SignupService } from './signup.service'
+
 import { APIService } from '../../../../core'
 import { NotificationsService } from '../../../../shared-ui'
-import { SignupService } from './signup.service'
 import {
   FILL_ALL_FORM_FIELDS,
   INVALID_EMAIL_ADDRESS,
+  INVALID_MOBILE_NUMBER,
   INVALID_UFL_EMAIL,
   PASSWORDS_DO_NOT_MATCH,
 } from '../../../../utils'
@@ -45,7 +47,13 @@ describe('SignupService', () => {
   })
 
   it('should show an error if signup fields are empty', () => {
-    service.handleUserSignup({ name: '', email: '', password: '', confirmPassword: '' })
+    service.handleUserSignup({
+      name: '',
+      email: '',
+      mobileNumber: '',
+      password: '',
+      confirmPassword: '',
+    })
     expect(notificationsServiceSpy.addNotification).toHaveBeenCalledWith({
       message: FILL_ALL_FORM_FIELDS,
       type: 'error',
@@ -56,6 +64,7 @@ describe('SignupService', () => {
     service.handleUserSignup({
       name: 'User',
       email: 'invalid-email',
+      mobileNumber: '123-456-7890',
       password: 'password123',
       confirmPassword: 'password123',
     })
@@ -69,6 +78,7 @@ describe('SignupService', () => {
     service.handleUserSignup({
       name: 'User',
       email: 'user@example.com',
+      mobileNumber: '123-456-7890',
       password: 'password123',
       confirmPassword: 'password123',
     })
@@ -78,10 +88,25 @@ describe('SignupService', () => {
     })
   })
 
+  it('should show an error if mobile number is not valid', () => {
+    service.handleUserSignup({
+      name: 'User',
+      email: 'test@ufl.edu',
+      mobileNumber: '1234567890', // no dashes
+      password: 'password123',
+      confirmPassword: 'password123',
+    })
+    expect(notificationsServiceSpy.addNotification).toHaveBeenCalledWith({
+      message: INVALID_MOBILE_NUMBER,
+      type: 'error',
+    })
+  })
+
   it('should show an error if passwords do not match', () => {
     service.handleUserSignup({
       name: 'User',
       email: 'user@ufl.edu',
+      mobileNumber: '123-456-7890',
       password: 'password123',
       confirmPassword: 'password321',
     })
@@ -96,6 +121,7 @@ describe('SignupService', () => {
     service.handleUserSignup({
       name: 'User',
       email: 'user@ufl.edu',
+      mobileNumber: '123-456-7890',
       password: 'password123',
       confirmPassword: 'password123',
     })
@@ -103,6 +129,7 @@ describe('SignupService', () => {
     expect(apiServiceSpy.post).toHaveBeenCalledWith('signup', {
       name: 'User',
       email: 'user@ufl.edu',
+      mobile: '123-456-7890',
       password: 'password123',
     })
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/auth/login'])
@@ -113,6 +140,7 @@ describe('SignupService', () => {
     service.handleUserSignup({
       name: 'User',
       email: 'user@ufl.edu',
+      mobileNumber: '123-456-7890',
       password: 'password123',
       confirmPassword: 'password123',
     })
@@ -128,6 +156,7 @@ describe('SignupService', () => {
     service.handleUserSignup({
       name: 'User',
       email: 'user@ufl.edu',
+      mobileNumber: '123-456-7890',
       password: 'password123',
       confirmPassword: 'password123',
     })

@@ -1,0 +1,120 @@
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: fit-content;
+  padding-bottom: var(--spacing-3);
+}
+
+.profile-details-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+.profile-heading {
+  margin: var(--spacing-half) 0 var(--spacing-1-5);
+  font-size: 1.25rem;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+.profile-picture-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  width: 7.5rem;
+  height: 8rem;
+  max-height: 9rem;
+  border: 1px dashed var(--color-border-2);
+  border-radius: 8px;
+  padding: var(--spacing-1);
+  margin-bottom: var(--spacing-2);
+}
+
+.display-picture {
+  width: 6.25rem;
+  height: 6.25rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.upload-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: auto;
+}
+
+input[type='file'] {
+  display: none;
+}
+
+.upload-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  margin-top: var(--spacing-1);
+  color: var(--mat-sys-primary);
+  background-color: var(--color-background);
+}
+
+.upload-label:hover {
+  color: var(--color-blue-hover);
+  border-radius: var(--spacing-1);
+}
+
+.upload-icon {
+  font-size: 16px;
+  width: var(--spacing-2);
+  height: var(--spacing-2);
+  align-items: center;
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: var(--spacing-2);
+  padding-bottom: var(--spacing-2);
+  border-bottom: var(--border-2);
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 4rem 8rem;
+}
+
+.profile-input-label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-left: var(--spacing-quarter);
+}
+
+.update-details-button-container {
+  margin-top: 2rem;
+}
+
+.update-details-button {
+  min-width: 9rem;
+}
+
+.password-heading {
+  margin: 0;
+}
+
+.password-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8rem;
+}

@@ -11,12 +11,12 @@
 
 ## User Stories
 
-- Created [**5 epics**](https://github.com/users/KrishnaKodali99/projects/4/views/6?filterQuery=label%3A%22sprint-2%22+label%3Aepic) and [**16 user stories**](https://github.com/users/KrishnaKodali99/projects/4/views/6?filterQuery=label%3A%22sprint-2%22+label%3Astory) during this sprint.
+- Created [**5 epics**](https://github.com/users/ns-krishnakodali/projects/4/views/6?filterQuery=label%3A%22sprint-2%22+label%3Aepic) and [**16 user stories**](https://github.com/users/ns-krishnakodali/projects/4/views/6?filterQuery=label%3A%22sprint-2%22+label%3Astory) during this sprint.
 - The user stories cover the development of new features, API integrations, and application testing.
 
 ## Sprint Planning
 
-- Sprint 2 [Board](https://github.com/users/KrishnaKodali99/projects/4/views/6)
+- Sprint 2 [Board](https://github.com/users/ns-krishnakodali/projects/4/views/6)
 - Conducted sprint planning and distributed tasks among participants.
 - This sprint focuses on:
   - Integrating APIs for user authentication.

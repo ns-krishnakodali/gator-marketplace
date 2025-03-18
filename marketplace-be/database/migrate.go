@@ -13,7 +13,7 @@ func MigrateDB() {
 		&models.ProductImage{},
 	)
 	if err != nil {
-		log.Fatal("Failed to migrate database:", err)
+		log.Printf("Failed to migrate database: %v", err)
 	}
 	log.Println("Database migration successful: All tables are ready.")
 }

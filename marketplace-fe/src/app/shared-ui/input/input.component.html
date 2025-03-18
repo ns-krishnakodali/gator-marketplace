@@ -8,5 +8,6 @@
   [checked]="checked"
   (change)="onChange($event)"
   [placeholder]="placeholder ?? ''"
+  [attr.pattern]="pattern ? pattern : null"
   [required]="required"
 />

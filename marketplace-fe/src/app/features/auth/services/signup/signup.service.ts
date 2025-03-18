@@ -8,7 +8,9 @@ import { NotificationsService } from '../../../../shared-ui'
 import {
   FILL_ALL_FORM_FIELDS,
   INVALID_EMAIL_ADDRESS,
+  INVALID_MOBILE_NUMBER,
   INVALID_UFL_EMAIL,
+  isValidMobileNumber,
   PASSWORDS_DO_NOT_MATCH,
   validateEmail,
   validateUFLDomain,
@@ -30,14 +32,12 @@ export class SignupService {
   ) {}
 
   handleUserSignup = (signupData: SignupData): void => {
-    this.isLoadingSubject.next(true)
     const inputsValidation = this.validateSignupData(signupData)
     if (!inputsValidation.isValid) {
       this.notificationsService.addNotification({
         message: inputsValidation.message,
         type: 'error',
       })
-      this.isLoadingSubject.next(false)
       return
     }
 
@@ -46,6 +46,7 @@ export class SignupService {
       .post('signup', {
         name: signupData.name,
         email: signupData.email,
+        mobile: signupData.mobileNumber,
         password: signupData.password,
       })
       .subscribe({
@@ -74,18 +75,20 @@ export class SignupService {
   }
 
   private validateSignupData = (signupData: SignupData): { isValid: boolean; message: string } => {
-    const name = signupData?.name?.trim()
-    const email = signupData?.email?.trim()
-    const password = signupData?.password
-    const confirmPassword = signupData?.confirmPassword
-
-    if (!name || !email || !password || !confirmPassword) {
+    if (
+      !signupData?.name?.trim() ||
+      !signupData?.email?.trim() ||
+      !signupData?.password ||
+      !signupData?.confirmPassword
+    ) {
       return { isValid: false, message: FILL_ALL_FORM_FIELDS }
-    } else if (validateEmail(email) === false) {
+    } else if (!validateEmail(signupData?.email?.trim())) {
       return { isValid: false, message: INVALID_EMAIL_ADDRESS }
-    } else if (validateUFLDomain(email) === false) {
+    } else if (!validateUFLDomain(signupData?.email?.trim())) {
       return { isValid: false, message: INVALID_UFL_EMAIL }
-    } else if (password !== confirmPassword) {
+    } else if (!isValidMobileNumber(signupData?.mobileNumber)) {
+      return { isValid: false, message: INVALID_MOBILE_NUMBER }
+    } else if (signupData?.password !== signupData?.confirmPassword) {
       return { isValid: false, message: PASSWORDS_DO_NOT_MATCH }
     }
 

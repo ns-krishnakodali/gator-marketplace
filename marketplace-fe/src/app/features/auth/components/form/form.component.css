@@ -1,14 +1,14 @@
 .form-container {
-  height: 100vh;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
   background-image: url('../../../../../assets/background.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  height: 100vh;
 }
 
 .gator-logo {
@@ -21,10 +21,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--spacing-5) var(--spacing-6);
+  padding: var(--spacing-4) var(--spacing-5);
   background-color: var(--color-white);
   border: var(--border-1);
   border-radius: var(--spacing-1);
+  width: 13rem;
 }
 
 .form-header {

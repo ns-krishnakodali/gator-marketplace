@@ -36,18 +36,32 @@ export class APIService {
       )
   }
 
-  post<T>(endpoint: string, body: unknown, headers?: Record<string, string>): Observable<T> {
+  post<T>(
+    endpoint: string,
+    body: unknown,
+    addAuthHeader = true,
+    headers?: Record<string, string>
+  ): Observable<T> {
     return this.httpClient
-      .post<T>(`${this.BASE_URL}/${endpoint}`, body, { headers: this.getHeaders(headers) })
+      .post<T>(`${this.BASE_URL}/${endpoint}`, body, {
+        headers: this.getHeaders(headers, addAuthHeader),
+      })
       .pipe(
         map((response) => response),
         catchError(this.handleError)
       )
   }
 
-  put<T>(endpoint: string, body: unknown, headers?: Record<string, string>): Observable<T> {
+  put<T>(
+    endpoint: string,
+    body: unknown,
+    addAuthHeader = true,
+    headers?: Record<string, string>
+  ): Observable<T> {
     return this.httpClient
-      .put<T>(`${this.BASE_URL}/${endpoint}`, body, { headers: this.getHeaders(headers) })
+      .put<T>(`${this.BASE_URL}/${endpoint}`, body, {
+        headers: this.getHeaders(headers, addAuthHeader),
+      })
       .pipe(
         map((response) => response),
         catchError(this.handleError)
@@ -86,10 +100,10 @@ export class APIService {
     let errorMessage: string = DEFAULT_ERROR_MESSAGE
     if (error.error instanceof ErrorEvent) {
       console.error('Client Error: ', error)
-      errorMessage = error?.error.message
+      errorMessage = error?.error.message || errorMessage
     } else if (error instanceof HttpErrorResponse) {
       console.error('Server Error: ', error)
-      errorMessage = error?.error?.message
+      errorMessage = error?.error?.message || error?.statusText || errorMessage
       if (error?.status === 401 && errorMessage === 'Invalid token') {
         removeAuthToken()
         this.router.navigate(['/auth/login'], { queryParams: { returnUrl: this.router.url } })
