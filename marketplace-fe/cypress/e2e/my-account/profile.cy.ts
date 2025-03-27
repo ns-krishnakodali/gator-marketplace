@@ -6,7 +6,7 @@ import {
   setupUpdatePasswordIntercept,
 } from '../../support/intercepts'
 
-describe('Login Component Tests', () => {
+describe('Profile Component Tests', () => {
   beforeEach(() => {
     setupLoginIntercept()
     setupProtectedIntercept()
@@ -66,6 +66,9 @@ describe('Login Component Tests', () => {
   })
 
   it('Should update account details successfully', () => {
+    // Mock Successful Update Response
+    setupUpdateAccountIntercept()
+
     // Modify Profile Fields and click Update Button
     cy.get('#name input').clear().type('Updated Name')
     cy.get('#display-name input').clear().type('UpdatedDisplay')
@@ -73,8 +76,6 @@ describe('Login Component Tests', () => {
     cy.get('#mobile-number input').clear().type('999-888-7777')
     cy.get('#update-details-button').contains('Update Details').click()
 
-    // Mock Successful Update Response
-    setupUpdateAccountIntercept()
     cy.wait('@updateAccountRequest')
 
     // Ensure the new values are reflected
@@ -95,12 +96,14 @@ describe('Login Component Tests', () => {
   })
 
   it('Should update password successfully', () => {
+    // Mock Successful Update Response
+    setupUpdatePasswordIntercept()
+
     // Modify Profile Password and click modify Button
     cy.get('#old-password input').type('oldPass123')
     cy.get('#new-password input').type('newPass456')
     cy.get('#modify-password-button').contains('Modify Password').click()
-
-    setupUpdatePasswordIntercept()
+    
     cy.wait('@updatePasswordRequest')
 
     cy.get('#modify-password-button').should('contain', 'Modify Password')
