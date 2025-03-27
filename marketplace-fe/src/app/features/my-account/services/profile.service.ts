@@ -15,6 +15,8 @@ import {
   INVALID_UFL_EMAIL,
   isValidMobileNumber,
   SAME_PASSWORDS,
+  UPDATE_DETAILS_SUCCESSFUL,
+  UPDATE_PASSWORD_SUCCESSFUL,
   validateEmail,
   validateUFLDomain,
 } from '../../../utils'
@@ -109,7 +111,7 @@ export class ProfileService {
       .subscribe({
         next: () => {
           this.notificationsService.addNotification({
-            message: 'Successfully updated account details!',
+            message: UPDATE_DETAILS_SUCCESSFUL,
             type: 'success',
           })
           this.areUpdatingAccountDetails.next(false)
@@ -145,7 +147,7 @@ export class ProfileService {
       .subscribe({
         next: () => {
           this.notificationsService.addNotification({
-            message: 'Successfully updated password!',
+            message: UPDATE_PASSWORD_SUCCESSFUL,
             type: 'success',
           })
           this.isUpdatingUserPasswordSubject.next(false)
