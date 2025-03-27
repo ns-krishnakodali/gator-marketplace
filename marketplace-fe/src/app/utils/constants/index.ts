@@ -11,7 +11,10 @@ export const PASSWORDS_DO_NOT_MATCH = 'Passwords do not match'
 export const LOGIN_FAILED = 'Login failed'
 export const SIGNUP_SUCCESSFUL = 'Signup successful!'
 
+// My Account
 export const EMPTY_DISPLAY_NAME = 'Display name should not be empty'
 export const EMPTY_MOBILE_NUMBER = 'Mobile Number should not be empty'
 export const EMPTY_PASSWORD_FIELDS = 'Password fields cannot be empty'
 export const SAME_PASSWORDS = 'New password must differ from current one'
+export const UPDATE_DETAILS_SUCCESSFUL = 'Successfully updated account details'
+export const UPDATE_PASSWORD_SUCCESSFUL = 'Successfully updated password!'
