@@ -5,7 +5,6 @@ import (
 
 	"marketplace-be/auth"
 	"marketplace-be/handlers"
-	"marketplace-be/products"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,10 +26,10 @@ func SetupRoutes(router *gin.Engine) {
 			c.JSON(http.StatusOK, gin.H{"message": "You have accessed a protected endpoint!"})
 		})
 
-		apiProtected.GET("/products", products.GetProducts)
-		apiProtected.GET("/products/:pid", products.GetProductByPID)
-		apiProtected.PUT("/products/:pid", products.UpdateProduct)
-		apiProtected.DELETE("/products/:pid", products.DeleteProduct)
+		apiProtected.GET("/products", handlers.GetProducts)
+		apiProtected.GET("/products/:pid", handlers.GetProductByPID)
+		apiProtected.PUT("/products/:pid", handlers.UpdateProduct)
+		apiProtected.DELETE("/products/:pid", handlers.DeleteProduct)
 
 		apiProtected.GET("/account-details", handlers.GetAccountDetails)
 		apiProtected.PUT("/update-account", handlers.UpdateAccountDetails)
