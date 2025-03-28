@@ -34,5 +34,13 @@ func SetupRoutes(router *gin.Engine) {
 		apiProtected.GET("/account-details", handlers.GetAccountDetails)
 		apiProtected.PUT("/update-account", handlers.UpdateAccountDetails)
 		apiProtected.PUT("/update-password", handlers.UpdatePassword)
+
+		// CART endpoints
+		apiProtected.GET("/cart", handlers.GetCartItems)
+		apiProtected.POST("/cart", handlers.AddToCart)
+		apiProtected.PUT("/cart/:cartItemID", handlers.UpdateCartItem)
+		apiProtected.DELETE("/cart/:cartItemID", handlers.RemoveCartItem)
+		apiProtected.DELETE("/cart", handlers.ClearCart)
+
 	}
 }
