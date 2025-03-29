@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router'
+import { ProductComponent } from './features/product/product.component';
+
 
 import { authenticationGuard, noAuthenticationGuard } from './core'
 
@@ -13,4 +15,6 @@ export const routes: Routes = [
   { path: '', component: LandingPageComponent, canActivate: [authenticationGuard] },
   { path: 'products', component: ProductsComponent, canActivate: [authenticationGuard] },
   { path: 'my-account', component: MyAccountComponent, canActivate: [authenticationGuard] },
-]
+  { path: 'product', component: ProductComponent, canActivate: [authenticationGuard] }
+];
+
