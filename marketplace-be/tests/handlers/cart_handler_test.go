@@ -2,6 +2,7 @@ package handlers_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"testing"
@@ -83,18 +84,17 @@ func TestGetCartItems_Handler_Success(t *testing.T) {
 func TestUpdateCartItem_Handler_Success(t *testing.T) {
 	db := test_utils.SetupTestDB(t)
 
-	// Create product with quantity 10
+	// Create product & cart item
 	db.Create(&models.Product{Pid: "pid-upd", Name: "P Upd", Quantity: 10})
-
-	// Create cart item with quantity=3
 	cart := models.CartItem{UserUID: "test-user-uid", ProductPID: "pid-upd", Quantity: 3}
 	db.Create(&cart)
 
-	body := `{"quantity":5}` // request to set quantity=5
-	cartID := strconv.Itoa(cart.ID)
+	// Instead of attaching cart.ID in the URL, put it in JSON
+	body := fmt.Sprintf(`{"cartItemID": %d, "quantity": 5}`, cart.ID)
 
-	c, w := test_utils.CreateTestContext("PUT", "/api/cart/"+cartID, []byte(body))
-	c.Params = gin.Params{{Key: "cartItemID", Value: cartID}}
+	// Now the path is just "/api/cart"
+	c, w := test_utils.CreateTestContext("PUT", "/api/cart", []byte(body))
+	// In a body-only design, no c.Params needed
 	test_utils.SetUserContext(c, "test-user-uid")
 
 	handlers.UpdateCartItem(c)
@@ -105,7 +105,7 @@ func TestUpdateCartItem_Handler_Success(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, 5, updated.Quantity)
 
-	// Product stock should be: initial=10; difference=2; final=8
+	// Confirm product is updated
 	var prod models.Product
 	db.Where("pid = ?", "pid-upd").First(&prod)
 	require.Equal(t, 8, prod.Quantity)
@@ -177,4 +177,3 @@ func TestClearCart_Handler_Success(t *testing.T) {
 	// pB was 8, user had 3 => new total 11
 	require.Equal(t, 11, pB.Quantity)
 }
-

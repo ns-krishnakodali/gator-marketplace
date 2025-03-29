@@ -1,15 +1,10 @@
 package services
 
 import (
-	"errors"
 	"fmt"
 	"marketplace-be/database"
 	"marketplace-be/models"
 )
-
-var ErrProductNotFound = errors.New("product not found")
-var ErrInsufficientProductQuantity = errors.New("insufficient product quantity")
-var ErrCartItemNotFound = errors.New("cart item not found")
 
 // AddToCartService reduces the product stock, then creates or increments a CartItem.
 func AddToCartService(userUID, productPID string, requestedQty int) (*models.CartItem, error) {
@@ -66,7 +61,7 @@ func GetCartItemsService(userUID string) ([]models.CartItem, error) {
 	return items, nil
 }
 
-// UpdateCartItemService changes the quantity of an existing CartItem. 
+// UpdateCartItemService changes the quantity of an existing CartItem.
 // We also adjust the Product stock accordingly.
 func UpdateCartItemService(cartItemID int, newQty int) (*models.CartItem, error) {
 	if newQty <= 0 {
@@ -111,8 +106,8 @@ func UpdateCartItemService(cartItemID int, newQty int) (*models.CartItem, error)
 	return &cartItem, nil
 }
 
-// RemoveCartItemService deletes a single cart item. 
-// We also optionally restore the product’s stock. 
+// RemoveCartItemService deletes a single cart item.
+// We also optionally restore the product’s stock.
 func RemoveCartItemService(cartItemID int) error {
 	var cartItem models.CartItem
 	if err := database.DB.First(&cartItem, cartItemID).Error; err != nil {
@@ -134,7 +129,7 @@ func RemoveCartItemService(cartItemID int) error {
 	return nil
 }
 
-// ClearCartService removes all items for a user, 
+// ClearCartService removes all items for a user,
 // and restores product stock for each cart item.
 func ClearCartService(userUID string) error {
 	var items []models.CartItem

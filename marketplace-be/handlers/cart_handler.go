@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -11,10 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type AddToCartInput struct {
-	ProductPID string `json:"product_pid"`
-	Quantity   int    `json:"quantity"`
-}
+
 
 func AddToCart(c *gin.Context) {
 	userEmail, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
@@ -44,7 +40,6 @@ func AddToCart(c *gin.Context) {
 
 func GetCartItems(c *gin.Context) {
 	userEmail, err := auth.ExtractUserID(c.GetHeader("Authorization"))
-	fmt.Printf("DEBUG: Extracted userEmail = '%s', err = %v\n", userEmail, err)
 
 	userUID := userEmail
 
@@ -57,23 +52,14 @@ func GetCartItems(c *gin.Context) {
 }
 
 func UpdateCartItem(c *gin.Context) {
-	cartItemIDParam := c.Param("cartItemID")
-	cartItemID, err := strconv.Atoi(cartItemIDParam)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid cartItemID"})
-		return
-	}
 
-	type UpdateQuantityInput struct {
-		Quantity int `json:"quantity"`
-	}
-	var input UpdateQuantityInput
+	var input UpdateCartItemInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
 		return
 	}
 
-	updatedItem, updateErr := services.UpdateCartItemService(cartItemID, input.Quantity)
+	updatedItem, updateErr := services.UpdateCartItemService(input.CartItemID, input.Quantity)
 	if updateErr != nil {
 		switch updateErr {
 		case services.ErrProductNotFound:

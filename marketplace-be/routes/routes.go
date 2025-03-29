@@ -38,7 +38,7 @@ func SetupRoutes(router *gin.Engine) {
 		// CART endpoints
 		apiProtected.GET("/cart", handlers.GetCartItems)
 		apiProtected.POST("/cart", handlers.AddToCart)
-		apiProtected.PUT("/cart/:cartItemID", handlers.UpdateCartItem)
+		apiProtected.PUT("/cart", handlers.UpdateCartItem)
 		apiProtected.DELETE("/cart/:cartItemID", handlers.RemoveCartItem)
 		apiProtected.DELETE("/cart", handlers.ClearCart)
 

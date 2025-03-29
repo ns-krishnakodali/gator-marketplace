@@ -2,7 +2,6 @@ package auth
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"os"
 	"strconv"
@@ -28,17 +27,14 @@ func GenerateToken(userEmail string) (string, error) {
 }
 
 func ExtractUserID(tokenString string) (string, error) {
-	fmt.Printf("tokenString from ExtractUserID = '%s'\n", tokenString)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
 		return jwtSecret, nil
 	})
 
 	if err != nil {
-		fmt.Printf("DEBUG: jwt.Parse returned err: %v\n", err)
 		return "", err
 	}
 	if !token.Valid {
-		fmt.Printf("DEBUG: token is not valid\n")
 		return "", errors.New("token invalid")
 	}
 

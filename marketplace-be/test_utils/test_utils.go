@@ -2,7 +2,6 @@ package test_utils
 
 import (
 	"bytes"
-	"fmt"
 	"net/http/httptest"
 	"os"
 	"testing"
@@ -77,7 +76,6 @@ func SetUserContext(c *gin.Context, userEmail string) {
 
 	// Sign the token
 	tokenString, err := token.SignedString(jwtSecret)
-	fmt.Println("DEBUG token:", tokenString, "err:", err)
 	if err != nil {
 		// In tests, you could panic or handle the error however you'd like
 		panic("failed to sign JWT in test: " + err.Error())
