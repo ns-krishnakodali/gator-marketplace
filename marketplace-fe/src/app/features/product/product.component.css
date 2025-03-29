@@ -1,22 +1,24 @@
 .products-container {
     display: flex;
-    gap: 20px;
-    padding: 20px;
+    gap: var(--spacing-2-5);
+    padding: var(--spacing-2-5);
   }
   
   .product-list {
     width: 60%;
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: var(--spacing-1);
   }
   
   .product-card {
     cursor: pointer;
-    padding: 10px;
-    border: 1px solid #ddd;
+    padding: var(--spacing-1);
+    border: var(--border-2);
     width: 150px;
     text-align: center;
+    box-shadow: var(--box-shadow);
+    background-color: var(--color-background);
   }
   
   .product-card img {
@@ -25,6 +27,7 @@
   
   .product-details {
     width: 35%;
-    padding: 20px;
-    border-left: 2px solid #ddd;
+    padding: var(--spacing-2-5);
+    border-left: var(--border-1);
+    background-color: var(--color-background);
   }
