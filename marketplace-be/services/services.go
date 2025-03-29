@@ -21,6 +21,10 @@ var ErrInvalidEmailFormat = errors.New("invalid email format, must be a ufl.edu 
 var ErrInvalidMobileNumber = errors.New("invalid mobile number format, must be xxx-xxx-xxxx")
 var ErrSamePassword = errors.New("passwords are same")
 
+var ErrProductNotFound = errors.New("product not found")
+var ErrInsufficientProductQuantity = errors.New("insufficient product quantity")
+var ErrCartItemNotFound = errors.New("cart item not found")
+
 func validateUFLEmail(email string) bool {
 	re := regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@ufl.edu$`)
 	return re.MatchString(email)

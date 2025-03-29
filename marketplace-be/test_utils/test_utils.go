@@ -3,13 +3,17 @@ package test_utils
 import (
 	"bytes"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"marketplace-be/models"
 
 	"marketplace-be/database"
 
+	"time"
+
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/require"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -25,7 +29,9 @@ func SetupTestDB(t *testing.T) *gorm.DB {
 	err = db.AutoMigrate(
 		&models.User{},
 		&models.Product{},
-		&models.ProductImage{})
+		&models.ProductImage{},
+		&models.CartItem{},
+	)
 	if err != nil {
 		t.Fatalf("AutoMigrate failed: %v", err)
 	}
@@ -50,4 +56,31 @@ func CreateTestContext(method, path string, body []byte) (*gin.Context, *httptes
 	c.Request = req
 
 	return c, w
+}
+
+// SetUserContext creates a valid JWT using the same JWT_SECRET
+// as your production code, then sets the Authorization header.
+func SetUserContext(c *gin.Context, userEmail string) {
+	// Read secret from env
+	jwtSecret := []byte(os.Getenv("JWT_SECRET"))
+
+	// Or, if you have a global variable loaded from env already (e.g. auth.JwtSecret),
+	// you can just reuse that. The key point is to sign with the same secret.
+
+	// Create real JWT claims
+	claims := jwt.MapClaims{
+		"user_email": userEmail,
+		"exp":        time.Now().Add(time.Hour * 1).Unix(), // 1-hour expiration
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	// Sign the token
+	tokenString, err := token.SignedString(jwtSecret)
+	if err != nil {
+		// In tests, you could panic or handle the error however you'd like
+		panic("failed to sign JWT in test: " + err.Error())
+	}
+
+	// Set Authorization header to "Bearer <token>"
+	c.Request.Header.Set("Authorization", tokenString)
 }

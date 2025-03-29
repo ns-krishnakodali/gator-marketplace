@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"errors"
 	"net/http"
 	"os"
 	"strconv"
@@ -30,8 +31,11 @@ func ExtractUserID(tokenString string) (string, error) {
 		return jwtSecret, nil
 	})
 
-	if err != nil || !token.Valid {
+	if err != nil {
 		return "", err
+	}
+	if !token.Valid {
+		return "", errors.New("token invalid")
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
