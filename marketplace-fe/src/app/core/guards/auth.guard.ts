@@ -11,7 +11,7 @@ export const authenticationGuard: CanActivateFn = (
   if (isValidToken()) {
     return true
   } else {
-    router.navigate(['/auth/login'], { queryParams: { returnUrl: _state.url } })
+    // router.navigate(['/auth/login'], { queryParams: { returnUrl: _state.url } })
     return false
   }
 }
