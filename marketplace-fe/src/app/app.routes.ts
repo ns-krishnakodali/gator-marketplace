@@ -14,6 +14,7 @@ export const routes: Routes = [
   { path: 'auth/signup', component: SignupComponent, canActivate: [noAuthenticationGuard] },
   { path: '', component: LandingPageComponent, canActivate: [authenticationGuard] },
   { path: 'products', component: ProductsComponent, canActivate: [authenticationGuard] },
+  { path: 'list-product', component: ProductsComponent, canActivate: [authenticationGuard] },
   { path: 'my-account', component: MyAccountComponent, canActivate: [authenticationGuard] },
   { path: 'product', component: ProductComponent, canActivate: [authenticationGuard] }
 ];
