@@ -1,0 +1,17 @@
+<div class="display-pictures-container">
+  <div class="image-thumbnails">
+    @for (image of images; track $index) {
+      <img
+        [src]="image.src"
+        [alt]="'Product Image ' + ($index + 1)"
+        class="image product-images"
+        tabindex="0"
+        (click)="onDisplayImageClick(image.src)"
+        (keydown.enter)="onDisplayImageClick(image.src)"
+      />
+    }
+  </div>
+  <div>
+    <img [src]="displayImageSrc" alt="Display Image" class="image display-image" />
+  </div>
+</div>

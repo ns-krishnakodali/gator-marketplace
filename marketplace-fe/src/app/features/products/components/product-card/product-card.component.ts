@@ -5,6 +5,7 @@ import { MatCard, MatCardContent } from '@angular/material/card'
 import { MatIconModule } from '@angular/material/icon'
 
 import { TextComponent } from '../../../../shared-ui/'
+import { ProductsService } from '../../services'
 
 @Component({
   selector: 'app-product-card',
@@ -25,14 +26,17 @@ export class ProductCardComponent {
   @Input() productName!: string
   @Input() productPrice!: number
   @Input() postedDate!: string
-  @Input() productId?: string
+  @Input() productId!: string
   @Input() class?: string
+
+  constructor(private productsService: ProductsService) {
+  }
 
   onAddtoCart = (): void => {
     console.log('Added to cart: ', this.postedDate)
   }
 
   onCardClick = (): void => {
-    console.log('Card clicked: ', this.productName)
+    this.productsService.openProductDetails(this.productId)
   }
 }

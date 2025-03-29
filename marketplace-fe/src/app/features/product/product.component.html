@@ -1,22 +1,10 @@
+<app-navbar [showAccount]="true" [showCart]="true" />
 <div class="product-container">
-    <div class="product-list">
-      <div 
-        *for="let product of products" 
-        class="product-card" 
-        (click)="selectProduct(product)">
-        <img [src]="product.image" alt="{{ product.name }}" />
-        <h3>{{ product.name }}</h3>
-      </div>
+  @if (isLoading$ | async; as isLoading) {
+    <div class="loading-spinner">
+      <mat-spinner diameter="40" />
     </div>
-  
-
-    @if (selectedProduct) {
-      <div class="product-details">
-        <h2>{{ selectedProduct.name }}</h2>
-        <img [src]="selectedProduct.image" alt="{{ selectedProduct.name }}" />
-        <p>{{ selectedProduct.description }}</p>
-      </div>
-    }
-  </div>
-
-
+  } @else {
+    <app-display-images [images]="productDetails.productImages" />
+  }
+</div>
