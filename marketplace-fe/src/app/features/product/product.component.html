@@ -1,10 +1,17 @@
 <app-navbar [showAccount]="true" [showCart]="true" />
-<div class="product-container">
+<div class="product-details-container">
   @if (isLoading$ | async; as isLoading) {
     <div class="loading-spinner">
       <mat-spinner diameter="40" />
     </div>
   } @else {
     <app-display-images [images]="productDetails.productImages" />
+    <app-product-details
+      [productName]="productDetails.name"
+      [productDescription]="productDetails.description"
+      [postedAt]="productDetails.postedAt"
+      [postedBy]="productDetails.postedBy"
+      [quantity]="productDetails.quantity"
+    />
   }
 </div>

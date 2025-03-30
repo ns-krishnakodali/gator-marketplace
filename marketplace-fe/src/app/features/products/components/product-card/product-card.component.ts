@@ -29,8 +29,7 @@ export class ProductCardComponent {
   @Input() productId!: string
   @Input() class?: string
 
-  constructor(private productsService: ProductsService) {
-  }
+  constructor(private productsService: ProductsService) {}
 
   onAddtoCart = (): void => {
     console.log('Added to cart: ', this.postedDate)

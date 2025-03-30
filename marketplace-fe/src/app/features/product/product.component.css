@@ -1,5 +1,10 @@
-.products-container {
+.product-details-container {
   display: flex;
-  gap: var(--spacing-2-5);
-  padding: var(--spacing-2-5);
+  padding: var(--spacing-2);
+  justify-content: space-between;
+}
+
+.product-details {
+  display: flex;
+  width: 100vw;
 }

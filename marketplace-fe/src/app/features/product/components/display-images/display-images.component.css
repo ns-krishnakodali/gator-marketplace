@@ -1,6 +1,6 @@
 .display-pictures-container {
   display: flex;
-  gap: var(--spacing-5);
+  gap: var(--spacing-4);
 }
 
 .image-thumbnails {
@@ -11,10 +11,12 @@
 
 .product-images {
   border: 1px solid var(--color-border-2);
-  width: 150px;
-  height: 150px;
+  width: 5rem;
+  height: 5rem;
   cursor: pointer;
-  transition: box-shadow 0.3s ease, filter 0.3s ease;
+  transition:
+    box-shadow 0.3s ease,
+    filter 0.3s ease;
 }
 
 .product-images:hover {
@@ -24,6 +26,6 @@
 
 .display-image {
   border: 1px solid var(--color-border-2);
-  width: 400px;
-  height: 400px;
+  width: 30rem;
+  height: 30rem;
 }

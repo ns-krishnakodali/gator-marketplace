@@ -5,18 +5,24 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 import { Observable } from 'rxjs'
 
+import { DisplayImagesComponent, ProductDetailsComponent } from './components/'
 import type { ProductDetails } from './models'
 import { ProductService } from './services'
 
 import { NavbarComponent } from '../../shared-ui'
-import { DisplayImagesComponent } from "./components/display-images/display-images.component";
 
 @Component({
   selector: 'app-product',
   standalone: true,
-  imports: [MatProgressSpinnerModule, CommonModule, NavbarComponent, DisplayImagesComponent],
+  imports: [
+    MatProgressSpinnerModule,
+    CommonModule,
+    NavbarComponent,
+    DisplayImagesComponent,
+    ProductDetailsComponent,
+  ],
   templateUrl: './product.component.html',
-  styleUrls: ['./product.component.scss'],
+  styleUrls: ['./product.component.css'],
 })
 export class ProductComponent implements OnInit {
   isLoading$: Observable<boolean>
@@ -31,7 +37,7 @@ export class ProductComponent implements OnInit {
     this.isLoading$ = this.productService.isLoading$
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.productService.productDetails$.subscribe((data) => {
       this.productDetails = data.productDetails
     })

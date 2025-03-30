@@ -1,1 +1,31 @@
-<p>product-details works!</p>
+<div class="product-details-container">
+  <h2 class="product-name">{{ productName }}</h2>
+  <div class="description-container">
+    <h3 class="description">Description</h3>
+    <app-text id="product-description" size="normal" class="product-description">
+      {{ productDescription }}
+    </app-text>
+  </div>
+  <div class="product-meta">
+    <app-text id="product-meta-details" size="normal">
+      Posted On: <b>{{ postedAt | date: 'MMM dd, yyyy' }}</b>
+    </app-text>
+    <app-text id="product-meta-details" size="normal">
+      Posted By: <b>{{ postedBy }}</b>
+    </app-text>
+  </div>
+  <label for="quantity" class="quantity-label">
+    <app-text id="quantity" size="normal">Quantity:</app-text>
+  </label>
+  <select name="quantity" id="quantity" class="quantity-select">
+    @for (option of quantityOptions; track $index) {
+      <option [value]="option">{{ option }}</option>
+    }
+  </select>
+  <div class="add-to-cart-container">
+    <button mat-flat-button id="add-to-cart" type="button" aria-label="Add to cart">
+      <mat-icon>shopping_cart</mat-icon>
+      Add to cart
+    </button>
+  </div>
+</div>

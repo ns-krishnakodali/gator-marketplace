@@ -8,6 +8,7 @@ export interface ProductDetails {
   description: string
   price: number
   category: Categories
+  postedBy: string
   quantity: number
   PopularityScore: number
   postedAt: Date

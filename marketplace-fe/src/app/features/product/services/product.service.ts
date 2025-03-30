@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core'
 
 import { BehaviorSubject } from 'rxjs'
 
-import type { ProductDetails, ProductDTO, ProductImage, ProductImageDTO } from '../models'
+import type { ProductDetails, ProductResponseDTO, ProductImage, ProductImageDTO } from '../models'
 
 import { APIService } from '../../../core'
 import { NotificationsService } from '../../../shared-ui'
@@ -45,7 +45,7 @@ export class ProductService {
   }
 
   private processProductDetailsResponse = (response: unknown): ProductDetails => {
-    const productResponse = response as ProductDTO
+    const productResponse = response as ProductResponseDTO
 
     return {
       pid: productResponse.Pid || '',
@@ -53,6 +53,7 @@ export class ProductService {
       description: productResponse.Description || '',
       price: productResponse.Price || 0,
       category: productResponse.Category,
+      postedBy: productResponse.PostedBy || '',
       quantity: productResponse.Quantity || 0,
       PopularityScore: productResponse.PopularityScore || 0,
       postedAt: new Date(),
