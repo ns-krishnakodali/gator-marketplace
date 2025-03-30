@@ -143,7 +143,7 @@ func GetProductsService(categoriesParam, sortParam string, page, pageSize int) (
 // GetProductByPIDService retrieves a product by PID.
 func GetProductByPIDService(productPID string) (models.Product, error) {
 	var product models.Product
-	err := database.DB.Preload("Images").Where("pid = ?", productPID).First(&product).Error
+	err := database.DB.Preload("Images").Omit("id").Where("pid = ?", productPID).First(&product).Error
 	if err != nil {
 		return product, fmt.Errorf("product not found")
 	}

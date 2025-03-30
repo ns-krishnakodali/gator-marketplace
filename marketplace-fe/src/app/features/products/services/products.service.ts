@@ -5,6 +5,7 @@ import { APIService } from '../../../core'
 import { NotificationsService } from '../../../shared-ui'
 import { ProductData } from '../models'
 import { stringifyArray } from '../../../utils'
+import { Router } from '@angular/router'
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +22,8 @@ export class ProductsService {
 
   constructor(
     private apiService: APIService,
-    private notificationsService: NotificationsService
+    private notificationsService: NotificationsService,
+    private router: Router
   ) {}
 
   getProductsData = (
@@ -59,6 +61,17 @@ export class ProductsService {
           this.isLoadingSubject.next(false)
         },
       })
+  }
+
+  openProductDetails = (productId: string): void => {
+    this.router.navigate(['/product', productId]).then((success) => {
+      if (!success) {
+        this.notificationsService.addNotification({
+          message: 'Failed to navigate to product details',
+          type: 'error',
+        })
+      }
+    })
   }
 
   private processProductsResponse = (response: unknown): ProductData[] => {

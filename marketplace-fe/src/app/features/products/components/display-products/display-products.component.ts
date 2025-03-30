@@ -3,7 +3,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 import { TextComponent } from '../../../../shared-ui'
 
-import { ProductData } from '../../models'
+import type { ProductData } from '../../models'
 import { ProductCardComponent } from '../product-card/product-card.component'
 
 @Component({

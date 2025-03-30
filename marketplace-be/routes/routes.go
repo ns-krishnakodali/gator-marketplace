@@ -27,9 +27,9 @@ func SetupRoutes(router *gin.Engine) {
 		})
 
 		apiProtected.GET("/products", handlers.GetProducts)
-		apiProtected.GET("/products/:pid", handlers.GetProductByPID)
-		apiProtected.PUT("/products/:pid", handlers.UpdateProduct)
-		apiProtected.DELETE("/products/:pid", handlers.DeleteProduct)
+		apiProtected.GET("/product/:pid", handlers.GetProductByPID)
+		apiProtected.PUT("/product/:pid", handlers.UpdateProduct)
+		apiProtected.DELETE("/product/:pid", handlers.DeleteProduct)
 
 		apiProtected.GET("/account-details", handlers.GetAccountDetails)
 		apiProtected.PUT("/update-account", handlers.UpdateAccountDetails)
