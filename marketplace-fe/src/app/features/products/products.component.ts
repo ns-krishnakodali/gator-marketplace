@@ -22,6 +22,7 @@ import { ProductsService } from './services'
 })
 export class ProductsComponent implements OnInit {
   isLoading$: Observable<boolean>
+
   productsData: ProductData[] = []
   totalItems!: number
   defaultPageSize = 12
