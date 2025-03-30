@@ -11,6 +11,7 @@ func MigrateDB() {
 		&models.User{},
 		&models.Product{},
 		&models.ProductImage{},
+		&models.CartItem{},
 	)
 	if err != nil {
 		log.Printf("Failed to migrate database: %v", err)

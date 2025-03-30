@@ -1,0 +1,22 @@
+<div class="product-container">
+    <div class="product-list">
+      <div 
+        *for="let product of products" 
+        class="product-card" 
+        (click)="selectProduct(product)">
+        <img [src]="product.image" alt="{{ product.name }}" />
+        <h3>{{ product.name }}</h3>
+      </div>
+    </div>
+  
+
+    @if (selectedProduct) {
+      <div class="product-details">
+        <h2>{{ selectedProduct.name }}</h2>
+        <img [src]="selectedProduct.image" alt="{{ selectedProduct.name }}" />
+        <p>{{ selectedProduct.description }}</p>
+      </div>
+    }
+  </div>
+
+
