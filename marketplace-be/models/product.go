@@ -19,18 +19,18 @@ const (
 )
 
 type Product struct {
-	ID              int       `gorm:"primaryKey;autoIncrement"`
-	Pid             string    `gorm:"type:uuid;unique;not null"`
-	Name            string    `gorm:"not null"`
-	Description     string    `gorm:"type:text"`
-	Price           float64   `gorm:"not null"`
-	Category        Category  `gorm:"type:text;not null"`
-	Quantity        int       `gorm:"not null;default:0"`
-	PopularityScore float64   `gorm:"default:0"`
-	CreatedAt       time.Time `gorm:"autoCreateTime"`
-	UpdatedAt       time.Time `gorm:"autoUpdateTime"`
-
-	Images []ProductImage `gorm:"foreignKey:Pid;references:Pid"`
+	ID              int            `gorm:"primaryKey;autoIncrement"`
+	Pid             string         `gorm:"type:uuid;unique;not null"`
+	Name            string         `gorm:"not null"`
+	Description     string         `gorm:"type:text"`
+	Price           float64        `gorm:"not null"`
+	Category        Category       `gorm:"type:text;not null"`
+	PostedBy        string         `gorm:"not null"`
+	Quantity        int            `gorm:"not null;default:0"`
+	PopularityScore float64        `gorm:"default:0"`
+	CreatedAt       time.Time      `gorm:"autoCreateTime"`
+	UpdatedAt       time.Time      `gorm:"autoUpdateTime"`
+	Images          []ProductImage `gorm:"foreignKey:Pid;references:Pid"`
 }
 
 type ProductImage struct {

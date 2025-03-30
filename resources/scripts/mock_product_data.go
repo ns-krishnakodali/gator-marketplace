@@ -65,6 +65,7 @@ func GenerateMockProductsData(numProducts int) {
 			Description:     fmt.Sprintf("This is a sample description for product %d", i+1),
 			Price:           float64(rand.Intn(10000)) / 100,
 			Category:        category,
+			PostedBy:        "GatorUser",
 			Quantity:        rand.Intn(100) + 1,
 			PopularityScore: float64(rand.Intn(1000)) / 100,
 		}
