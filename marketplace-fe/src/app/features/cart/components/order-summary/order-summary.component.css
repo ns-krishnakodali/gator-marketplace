@@ -1,0 +1,45 @@
+.order-summary-card {
+    border: 2px solid black;
+    border-radius: 12px;
+    padding: 16px;
+    width: 240px;
+    background-color: white;
+    font-family: Arial, sans-serif;
+  }
+  
+  .order-summary-card h3 {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  
+  .summary-line {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  
+  .price-green {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .price-bold {
+    font-weight: bold;
+  }
+  
+  .checkout-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 16px;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+  
+  .checkout-btn:hover {
+    background-color: #0056b3;
+  }
+  
