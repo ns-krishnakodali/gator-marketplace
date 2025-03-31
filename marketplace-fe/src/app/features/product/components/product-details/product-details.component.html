@@ -17,15 +17,25 @@
   <label for="quantity" class="quantity-label">
     <app-text id="quantity" size="normal">Quantity:</app-text>
   </label>
-  <select name="quantity" id="quantity" class="quantity-select">
+  <select name="quantity" id="quantity" class="quantity-select" [(ngModel)]="quantity">
     @for (option of quantityOptions; track $index) {
       <option [value]="option">{{ option }}</option>
     }
   </select>
   <div class="add-to-cart-container">
-    <button mat-flat-button id="add-to-cart" type="button" aria-label="Add to cart">
-      <mat-icon>shopping_cart</mat-icon>
-      Add to cart
-    </button>
+    @if (addToCartLoading) {
+      <mat-spinner [diameter]="40" />
+    } @else {
+      <button
+        mat-flat-button
+        id="add-to-cart"
+        type="button"
+        (click)="addtoCart()"
+        aria-label="Add to cart"
+      >
+        <mat-icon>shopping_cart</mat-icon>
+        Add to cart
+      </button>
+    }
   </div>
 </div>

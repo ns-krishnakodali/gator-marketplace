@@ -33,8 +33,8 @@ func TestLoginService(t *testing.T) {
 
 	// Create test user
 	user := &models.User{
-		Email:        "test@example.com",
 		Uid:          "211234-4312-38913891",
+		Email:        "test@example.com",
 		PasswordHash: "$2a$10$examplehashedpassword", // a valid hashed password
 	}
 	db.Create(user)

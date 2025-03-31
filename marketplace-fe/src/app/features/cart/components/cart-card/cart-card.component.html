@@ -1,27 +1,36 @@
-<p>cart-card works!</p>
-<div class="cart-card">
-    <div class="item-image">
-      <img [src]="item.imageUrl" [alt]="item.name" />
-    </div>
-  
-    <div class="item-info">
-      <div class="item-row">
-        <div class="item-name-and-remove">
-          <h3> item.name </h3>
-          <a href="#" (click)="onRemoveClick($event)">Remove Item</a>
-        </div>
-  
-        <div class="qty-price">
-          <label>Qty</label>
-          <select
-            [value]="item.quantity || 1"
-            (change)="onQuantityChange($event.target.value)">
-            <option *ngFor="let qty of quantityOptions" [value]="qty"> qty </option>
-          </select>
-  
-          <span class="price">Price: <span class="price-green">$ item.price </span></span>
-        </div>
-      </div>
-    </div>
+<div class="cart-card-container">
+  <img
+    [src]="cartProduct.imageSrc"
+    [alt]="cartProduct.name"
+    class="cart-image"
+    tabindex="0"
+    (click)="navigateToProductPage()"
+    (keyup.enter)="navigateToProductPage()"
+  />
+  <div class="cart-product-details">
+    <app-text id="product-name" size="medium">
+      <b>{{ cartProduct.name }}</b>
+    </app-text>
+    <app-button id="remove-item" type="button" variant="text" [onClickHandler]="onRemoveFromCart">
+      Remove Item
+    </app-button>
   </div>
-  
+  @if (isRemoveItemLoading$ | async; as isLoading) {
+    <mat-spinner [diameter]="40" />
+  } @else {
+    <div class="quantity-selector">
+      <button class="quantity-button" (click)="adjustQuantity(-1)">-</button>
+      <span class="quantity-display" id="quantity-display">
+        {{ cartProduct.quantity }}
+      </span>
+      <button class="quantity-button" (click)="adjustQuantity(+1)">+</button>
+    </div>
+    <div>
+      <app-text id="price" size="normal">
+        Price:<span class="currency">{{
+          cartProduct.price | currency: 'USD' : 'symbol' : '1.2-2'
+        }}</span>
+      </app-text>
+    </div>
+  }
+</div>

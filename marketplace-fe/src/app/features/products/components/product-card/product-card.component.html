@@ -3,22 +3,26 @@
     <div class="card-container">
       <img mat-card-image class="product-image" [src]="imageSrc" alt="Product Image" />
       <h4 class="product-name">{{ productName }}</h4>
-      <app-text id="product-price" class="product-price" size="normal">{{
-        productPrice | currency
-      }}</app-text>
-      <button
-        mat-flat-button
-        id="add-to-cart"
-        type="button"
-        aria-label="Add to cart"
-        (click)="onAddtoCart()"
-      >
-        <mat-icon>shopping_cart</mat-icon>
-        Add to cart
-      </button>
+      <app-text id="product-price" class="product-price" size="normal">
+        {{ productPrice | currency }}
+      </app-text>
+      @if (addToCartLoading) {
+        <mat-spinner [diameter]="40" />
+      } @else {
+        <button
+          mat-flat-button
+          [id]="'add-to-cart' + productId"
+          type="button"
+          aria-label="Add to cart"
+          (click)="addtoCart($event)"
+        >
+          <mat-icon>shopping_cart</mat-icon>
+          Add to cart
+        </button>
+      }
     </div>
-    <app-text id="posted-on" size="x-small" class="posted-on"
-      >Posted on: {{ postedDate | date }}</app-text
-    >
+    <app-text id="posted-on" size="x-small" class="posted-on">
+      Posted on: {{ postedDate | date }}
+    </app-text>
   </mat-card-content>
 </mat-card>
