@@ -1,169 +1,158 @@
 package services_test
 
 import (
-	"testing"
-
 	"marketplace-be/models"
 	"marketplace-be/services"
 	"marketplace-be/test_utils"
+	"testing"
 
 	"github.com/stretchr/testify/require"
 )
 
-func TestAddToCartService_Success(t *testing.T) {
+func TestAddToCartService(t *testing.T) {
 	db := test_utils.SetupTestDB(t)
 
-	// Create product with quantity 10
-	product := models.Product{
+	// Create test product
+	product := &models.Product{
 		Pid:      "pid-abc",
 		Name:     "Test Product",
 		Quantity: 10,
 		Price:    10.0,
 	}
-	db.Create(&product)
+	db.Create(product)
 
 	userUID := "uid-123"
 
-	// 1) Add 3 to cart
-	item, err := services.AddToCartService(userUID, "pid-abc", 3)
-	require.NoError(t, err)
-	require.NotNil(t, item)
-	require.Equal(t, 3, item.Quantity)
+	t.Run("Add to cart Success", func(t *testing.T) {
+		err := services.AddToCartService(userUID, "pid-abc", 3)
+		require.NoError(t, err)
 
-	// Check product quantity is now 7
-	var updatedProd models.Product
-	db.Where("pid = ?", "pid-abc").First(&updatedProd)
-	require.Equal(t, 7, updatedProd.Quantity)
+		var cartItem models.CartProduct
+		db.Where("user_uid = ? AND product_p_id = ?", userUID, "pid-abc").First(&cartItem)
+		require.Equal(t, 3, cartItem.Quantity)
 
-	// 2) Add 2 more => total cart quantity = 5, product = 5 left
-	item2, err2 := services.AddToCartService(userUID, "pid-abc", 2)
-	require.NoError(t, err2)
-	require.NotNil(t, item2)
-	require.Equal(t, 5, item2.Quantity)
-
-	// Confirm product quantity is 5
-	db.Where("pid = ?", "pid-abc").First(&updatedProd)
-	require.Equal(t, 5, updatedProd.Quantity)
-}
-
-func TestAddToCartService_OutOfStock(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
-
-	// Product has quantity=2
-	db.Create(&models.Product{
-		Pid:      "pid-xyz",
-		Name:     "Test Product",
-		Quantity: 2,
-		Price:    5.0,
+		var updatedProd models.Product
+		db.Where("pid = ?", "pid-abc").First(&updatedProd)
+		require.Equal(t, 10, updatedProd.Quantity) // No change in stock
 	})
 
-	userUID := "uid-xyz"
+	t.Run("Product Already Added", func(t *testing.T) {
+		// Create test product
+		product := &models.Product{
+			Pid:      "pid-xyz",
+			Name:     "Test Product",
+			Quantity: 5,
+			Price:    5.0,
+		}
+		db.Create(product)
 
-	// Try to add 5, but only 2 in stock
-	_, err := services.AddToCartService(userUID, "pid-xyz", 5)
-	require.Error(t, err)
-	require.Equal(t, services.ErrInsufficientProductQuantity, err)
+		userUID := "uid-xyz"
+
+		cartItem := &models.CartProduct{
+			UserUID:    userUID,
+			ProductPID: "pid-xyz",
+			Quantity:   2,
+		}
+		db.Create(cartItem)
+
+		err := services.AddToCartService(userUID, "pid-xyz", 3)
+		require.Error(t, err)
+		require.Equal(t, services.ErrProductAlreadyAdded, err)
+	})
 }
 
-func TestUpdateCartItemService_IncreaseQty_Success(t *testing.T) {
+func TestUpdateCartItemService(t *testing.T) {
 	db := test_utils.SetupTestDB(t)
 
-	// Product starts at quantity = 7.
-	// We assume that 3 units were already "reserved" by the cart item
-	// in a previous step (thus it's not 10).
-	p := models.Product{Pid: "p1", Name: "P1", Quantity: 7}
-	db.Create(&p)
+	t.Run("Increase Qty Success", func(t *testing.T) {
+		p := &models.Product{Pid: "p1", Name: "P1", Quantity: 10, Price: 5.0}
+		db.Create(p)
 
-	// Cart item with quantity 3 (already in cart).
-	cartItem := models.CartProduct{
-		UserUID:    "u1",
-		ProductPID: "p1",
-		Quantity:   3,
-	}
-	db.Create(&cartItem)
+		cartItem := &models.CartProduct{
+			UserUID:    "u1",
+			ProductPID: "p1",
+			Quantity:   3,
+		}
+		db.Create(cartItem)
 
-	// Now the user updates from 3 => 8 => difference = 5
-	// So the product goes from 7 => 2.
-	updated, err := services.UpdateCartItemService(cartItem.ID, 8)
-	require.NoError(t, err)
-	require.Equal(t, 8, updated.Quantity)
+		updated, err := services.UpdateCartItemService(cartItem.ProductPID, 8)
+		require.NoError(t, err)
+		require.Equal(t, float64(45), updated.TotalCost)
 
-	var product models.Product
-	db.Where("pid = ?", "p1").First(&product)
+		var updatedCart models.CartProduct
+		db.Where("user_uid = ? AND product_p_id = ?", "u1", "p1").First(&updatedCart)
+		require.Equal(t, 8, updatedCart.Quantity)
+	})
 
-	// Final product quantity should be 2
-	require.Equal(t, 2, product.Quantity)
+	t.Run("Decrease Qty Success", func(t *testing.T) {
+		p := &models.Product{Pid: "p2", Name: "P2", Quantity: 10, Price: 7.0}
+		db.Create(p)
+
+		cartItem := &models.CartProduct{UserUID: "u2", ProductPID: "p2", Quantity: 5}
+		db.Create(cartItem)
+
+		updated, err := services.UpdateCartItemService(cartItem.ProductPID, 2)
+		require.NoError(t, err)
+		require.Equal(t, float64(19), updated.TotalCost)
+
+		var updatedCart models.CartProduct
+		db.Where("user_uid = ? AND product_p_id = ?", "u2", "p2").First(&updatedCart)
+		require.Equal(t, 2, updatedCart.Quantity)
+	})
+
+	t.Run("Quantity Too High", func(t *testing.T) {
+		p := &models.Product{Pid: "p3", Name: "P3", Quantity: 5, Price: 10.0}
+		db.Create(p)
+
+		cartItem := &models.CartProduct{UserUID: "u3", ProductPID: "p3", Quantity: 3}
+		db.Create(cartItem)
+
+		_, err := services.UpdateCartItemService(cartItem.ProductPID, 10)
+		require.ErrorIs(t, err, services.ErrInsufficientProductQuantity)
+	})
+
+	t.Run("Product Not Found", func(t *testing.T) {
+		_, err := services.UpdateCartItemService("nonexistent", 2)
+		require.ErrorIs(t, err, services.ErrCartItemNotFound)
+	})
 }
 
-func TestUpdateCartItemService_DecreaseQty_Success(t *testing.T) {
+func TestRemoveCartItemService(t *testing.T) {
+	// Setup test DB
 	db := test_utils.SetupTestDB(t)
 
-	p := models.Product{Pid: "p2", Name: "P2", Quantity: 10}
-	db.Create(&p)
+	t.Run("Remove from cart Success", func(t *testing.T) {
+		db.Create(&models.Product{Pid: "px", Name: "PX", Quantity: 10})
 
-	// Start with a cart item of 5
-	cartItem := models.CartProduct{UserUID: "u2", ProductPID: "p2", Quantity: 5}
-	db.Create(&cartItem)
+		cart := &models.CartProduct{UserUID: "uA", ProductPID: "px", Quantity: 3}
+		db.Create(cart)
 
-	// Decrease to 2 => that means we return 3 to product stock
-	updated, err := services.UpdateCartItemService(cartItem.ID, 2)
-	require.NoError(t, err)
-	require.Equal(t, 2, updated.Quantity)
+		err := services.RemoveCartItemService("px", "uA")
+		require.NoError(t, err)
 
-	var product models.Product
-	db.Where("pid = ?", "p2").First(&product)
-	require.Equal(t, 13, product.Quantity) // 10 + (5 - 2) = 13
+		var count int64
+		db.Model(&models.CartProduct{}).Where("user_uid = ? AND product_p_id = ?", "uA", "px").Count(&count)
+		require.Equal(t, int64(0), count)
+	})
 }
 
-func TestRemoveCartItemService_Success(t *testing.T) {
+func TestClearCartService(t *testing.T) {
+	// Setup test DB
 	db := test_utils.SetupTestDB(t)
 
-	// Product
-	db.Create(&models.Product{Pid: "px", Name: "PX", Quantity: 10})
-	// Cart item of 3
-	cart := models.CartProduct{UserUID: "uA", ProductPID: "px", Quantity: 3}
-	db.Create(&cart)
+	t.Run("Success", func(t *testing.T) {
+		db.Create(&models.Product{Pid: "pA", Name: "pA", Quantity: 5})
+		db.Create(&models.Product{Pid: "pB", Name: "pB", Quantity: 8})
 
-	err := services.RemoveCartItemService(cart.ID)
-	require.NoError(t, err)
+		db.Create(&models.CartProduct{UserUID: "uA", ProductPID: "pA", Quantity: 2})
+		db.Create(&models.CartProduct{UserUID: "uA", ProductPID: "pB", Quantity: 3})
+		db.Create(&models.CartProduct{UserUID: "uZ", ProductPID: "pA", Quantity: 1})
 
-	// Check product stock is restored from 10 => 13
-	var product models.Product
-	db.Where("pid = ?", "px").First(&product)
-	require.Equal(t, 13, product.Quantity)
+		err := services.ClearCartService("uA")
+		require.NoError(t, err)
 
-	// Check cart item is gone
-	var count int64
-	db.Model(&models.CartProduct{}).Count(&count)
-	require.EqualValues(t, 0, count)
-}
-
-func TestClearCartService_Success(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
-
-	db.Create(&models.Product{Pid: "pA", Name: "pA", Quantity: 5})
-	db.Create(&models.Product{Pid: "pB", Name: "pB", Quantity: 8})
-
-	db.Create(&models.CartProduct{UserUID: "uA", ProductPID: "pA", Quantity: 2})
-	db.Create(&models.CartProduct{UserUID: "uA", ProductPID: "pB", Quantity: 3})
-	// Another user
-	db.Create(&models.CartProduct{UserUID: "uZ", ProductPID: "pA", Quantity: 1})
-
-	err := services.ClearCartService("uA")
-	require.NoError(t, err)
-
-	// Check items left
-	var all []models.CartProduct
-	db.Find(&all)
-	require.Len(t, all, 1) // only user "uZ" remains
-
-	// Stock should be restored
-	var productA, productB models.Product
-	db.Where("pid = ?", "pA").First(&productA)
-	db.Where("pid = ?", "pB").First(&productB)
-
-	// pA was 5, user "uA" had 2, so final should be 7
-	require.Equal(t, 7, productA.Quantity)
-	// pB was 8, user "uA" had 3 => final 11
-	require.Equal(t, 11, productB.Quantity)
+		var all []models.CartProduct
+		db.Find(&all)
+		require.Len(t, all, 1)
+	})
 }

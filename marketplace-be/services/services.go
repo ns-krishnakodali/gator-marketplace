@@ -27,6 +27,8 @@ var ErrProductNotFound = errors.New("product not found")
 var ErrInsufficientProductQuantity = errors.New("insufficient product quantity")
 var ErrCartItemNotFound = errors.New("cart item not found")
 var ErrProductAlreadyAdded = errors.New("product already added")
+var ErrDeleteProductImages = errors.New("could not delete product images")
+var ErrDeleteProduct = errors.New("could not delete product")
 
 func validateUFLEmail(email string) bool {
 	re := regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@ufl.edu$`)

@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core'
+import { Router } from '@angular/router'
+
 import { BehaviorSubject } from 'rxjs'
 
 import type { CartDetails, CartProduct, CartProductDTO, CartResponseDTO } from '../models'
@@ -6,7 +8,6 @@ import type { CartDetails, CartProduct, CartProductDTO, CartResponseDTO } from '
 import { APIService } from '../../../core'
 import { NotificationsService } from '../../../shared-ui'
 import { REMOVED_FROM_CART_SUCCESSFUL } from '../../../utils'
-import { Router } from '@angular/router'
 
 @Injectable({ providedIn: 'root' })
 export class CartService {

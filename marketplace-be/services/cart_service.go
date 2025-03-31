@@ -17,8 +17,9 @@ func AddToCartService(userUID, productPID string, requestedQty int) error {
 		return ErrProductNotFound
 	}
 
-	var existingCartItem models.CartProduct
-	if err := database.DB.Where("user_uid = ? AND product_p_id = ?", userUID, productPID).First(&existingCartItem).Error; err == nil {
+	var existingCartProduct models.CartProduct
+	if err := database.DB.Where("user_uid = ? AND product_p_id = ?", userUID, productPID).
+		First(&existingCartProduct).Error; err == nil {
 		return ErrProductAlreadyAdded
 	}
 
@@ -149,27 +150,10 @@ func RemoveCartItemService(productId string, userUID string) error {
 	return nil
 }
 
-// ClearCartService removes all items for a user,
+// ClearCartService removes all items for a user.
 func ClearCartService(userUID string) error {
-	var items []models.CartProduct
-	if err := database.DB.Where("user_uid = ?", userUID).Find(&items).Error; err != nil {
-		return fmt.Errorf("failed to find cart items")
-	}
-
-	// restore product stock
-	for _, it := range items {
-		var product models.Product
-		if err := database.DB.Where("pid = ?", it.ProductPID).First(&product).Error; err == nil {
-			product.Quantity += it.Quantity
-			if errSave := database.DB.Save(&product).Error; errSave != nil {
-				return fmt.Errorf("failed to restore product quantity for item %d", it.ID)
-			}
-		}
-	}
-
 	if err := database.DB.Where("user_uid = ?", userUID).Delete(&models.CartProduct{}).Error; err != nil {
 		return fmt.Errorf("failed to clear cart: %v", err)
 	}
-
 	return nil
 }

@@ -22,7 +22,7 @@ export const setupAccountDetailsIntercept = () => {
     statusCode: 200,
     body: {
       accountDetails: {
-        imageUrl: '',
+        displayImageUrl: '',
         name: 'John Doe',
         displayName: 'GatorUser',
         email: 'test@ufl.edu',

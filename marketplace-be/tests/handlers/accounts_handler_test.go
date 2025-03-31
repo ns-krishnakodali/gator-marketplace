@@ -23,14 +23,14 @@ func TestGetAccountDetails(t *testing.T) {
 
 	// Prepare test user
 	user := &models.User{
-		ID:           1,
-		Uid:          "12buid",
-		Email:        "test@ufl.edu",
-		ImageUrl:     "",
-		Name:         "Test User",
-		DisplayName:  "GatorUser",
-		Mobile:       "123-456-7890",
-		PasswordHash: "$2a$10$examplehashedpassword",
+		ID:              1,
+		Uid:             "user-uid",
+		Email:           "test@ufl.edu",
+		DisplayImageUrl: "https://displayimage",
+		Name:            "Test User",
+		DisplayName:     "GatorUser",
+		Mobile:          "123-456-7890",
+		PasswordHash:    "$2a$10$examplehashedpassword",
 	}
 	db.Create(user)
 
@@ -72,14 +72,14 @@ func TestUpdateAccountDetailsHandler(t *testing.T) {
 
 	// Prepare test user
 	user := &models.User{
-		ID:           1,
-		Uid:          "12buid",
-		Email:        "test@ufl.edu",
-		ImageUrl:     "",
-		Name:         "Test User",
-		DisplayName:  "GatorUser",
-		Mobile:       "123-456-7890",
-		PasswordHash: "$2a$10$examplehashedpassword",
+		ID:              1,
+		Uid:             "user-uid",
+		Email:           "test@ufl.edu",
+		DisplayImageUrl: "",
+		Name:            "Test User",
+		DisplayName:     "GatorUser",
+		Mobile:          "123-456-7890",
+		PasswordHash:    "$2a$10$examplehashedpassword",
 	}
 	db.Create(user)
 
@@ -102,7 +102,7 @@ func TestUpdateAccountDetailsHandler(t *testing.T) {
 
 		handlers.UpdateAccountDetails(c)
 		require.Equal(t, http.StatusUnprocessableEntity, w.Code)
-		require.Contains(t, w.Body.String(), "Invalid input data, please check again")
+		require.Contains(t, w.Body.String(), "nvalid email format, please enter valid UFL email")
 	})
 
 	t.Run("Invalid Mobile Number Format", func(t *testing.T) {

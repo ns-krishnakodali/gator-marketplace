@@ -174,7 +174,7 @@ export class ProfileService {
     }
 
     return {
-      displayPictureSrc: data?.['imageUrl'] || this.DEFAULT_DP_SRC,
+      displayPictureSrc: data?.['displayImageUrl'] || this.DEFAULT_DP_SRC,
       name: data?.['name'],
       displayName: data?.['displayName'],
       email: data?.['email'],

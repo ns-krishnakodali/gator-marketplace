@@ -13,14 +13,14 @@ import (
 
 var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
 
-func GenerateToken(UserUid string) (string, error) {
+func GenerateToken(userUid string) (string, error) {
 	minutes, err := strconv.Atoi(os.Getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
 	if err != nil {
 		minutes = 60 // Default to 60 minutes if not set
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_uid": UserUid,
+		"user_uid": userUid,
 		"exp":      time.Now().Add(time.Minute * time.Duration(minutes)).Unix(),
 	})
 	return token.SignedString(jwtSecret)

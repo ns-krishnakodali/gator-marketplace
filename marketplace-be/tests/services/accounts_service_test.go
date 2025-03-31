@@ -16,7 +16,7 @@ func TestAccountDetailsService(t *testing.T) {
 	db := test_utils.SetupTestDB(t)
 
 	t.Run("User Not Found", func(t *testing.T) {
-		details, err := services.GetAccountDetailsService("nonexistent@ufl.edu")
+		details, err := services.GetAccountDetailsService("user-uid")
 		require.Nil(t, details)
 		require.EqualError(t, err, services.ErrFailedFetching.Error())
 	})
@@ -24,22 +24,23 @@ func TestAccountDetailsService(t *testing.T) {
 	t.Run("Successful Fetch", func(t *testing.T) {
 		// Create test user
 		user := &models.User{
-			Email:       "details-test@ufl.edu",
-			Name:        "Test User",
-			DisplayName: "TestUser123",
-			Mobile:      "123-456-7890",
-			ImageUrl:    "https://example.com/image.jpg",
+			Uid:             "user-uid",
+			Email:           "details-test@ufl.edu",
+			Name:            "Test User",
+			DisplayName:     "TestUser123",
+			Mobile:          "123-456-7890",
+			DisplayImageUrl: "https://example.com/image.jpg",
 		}
 		db.Create(user)
 
-		details, err := services.GetAccountDetailsService("details-test@ufl.edu")
+		details, err := services.GetAccountDetailsService("user-uid")
 		require.NoError(t, err)
 		require.NotNil(t, details)
 		require.Equal(t, "details-test@ufl.edu", details.Email)
 		require.Equal(t, "Test User", details.Name)
 		require.Equal(t, "TestUser123", details.DisplayName)
 		require.Equal(t, "123-456-7890", details.Mobile)
-		require.Equal(t, "https://example.com/image.jpg", details.ImageUrl)
+		require.Equal(t, "https://example.com/image.jpg", details.DisplayImageUrl)
 	})
 }
 
@@ -49,6 +50,7 @@ func TestUpdateAccountDetailsService(t *testing.T) {
 
 	// Create test user
 	user := &models.User{
+		Uid:         "user-uid",
 		Email:       "update-test@ufl.edu",
 		Name:        "Test User",
 		DisplayName: "Test",
@@ -63,7 +65,7 @@ func TestUpdateAccountDetailsService(t *testing.T) {
 			DisplayName: "Updated Test",
 			Mobile:      "987-654-3210",
 		}
-		err := services.UpdateAccountDetailsService(input, "update-test@ufl.edu")
+		err := services.UpdateAccountDetailsService(input, "user-uid")
 		require.EqualError(t, err, services.ErrEmailNotMatching.Error())
 	})
 
@@ -74,7 +76,7 @@ func TestUpdateAccountDetailsService(t *testing.T) {
 			DisplayName: "Updated",
 			Mobile:      "987-654-3210",
 		}
-		err := services.UpdateAccountDetailsService(input, "update-test@gmail.com")
+		err := services.UpdateAccountDetailsService(input, "user-uid")
 		require.EqualError(t, err, services.ErrInvalidEmailFormat.Error())
 	})
 
@@ -85,7 +87,7 @@ func TestUpdateAccountDetailsService(t *testing.T) {
 			DisplayName: "Updated",
 			Mobile:      "987-654-3210",
 		}
-		err := services.UpdateAccountDetailsService(input, "update-test@ufl.edu")
+		err := services.UpdateAccountDetailsService(input, "user-uid")
 		require.EqualError(t, err, services.ErrEmptyName.Error())
 	})
 
@@ -96,7 +98,7 @@ func TestUpdateAccountDetailsService(t *testing.T) {
 			DisplayName: "Updated",
 			Mobile:      "",
 		}
-		err := services.UpdateAccountDetailsService(input, "update-test@ufl.edu")
+		err := services.UpdateAccountDetailsService(input, "user-uid")
 		require.EqualError(t, err, services.ErrEmptyMobileNumber.Error())
 	})
 
@@ -107,7 +109,7 @@ func TestUpdateAccountDetailsService(t *testing.T) {
 			DisplayName: "Updated",
 			Mobile:      "9876543210", // No dashes
 		}
-		err := services.UpdateAccountDetailsService(input, "update-test@ufl.edu")
+		err := services.UpdateAccountDetailsService(input, "user-uid")
 		require.EqualError(t, err, services.ErrInvalidMobileNumber.Error())
 	})
 
@@ -118,11 +120,11 @@ func TestUpdateAccountDetailsService(t *testing.T) {
 			DisplayName: "Updated Test",
 			Mobile:      "987-654-3210",
 		}
-		err := services.UpdateAccountDetailsService(input, "update-test@ufl.edu")
+		err := services.UpdateAccountDetailsService(input, "user-uid")
 		require.NoError(t, err)
 
 		var updatedUser models.User
-		db.Where("email = ?", "update-test@ufl.edu").First(&updatedUser)
+		db.Where("uid = ?", "user-uid").First(&updatedUser)
 		require.Equal(t, "Updated User", updatedUser.Name)
 		require.Equal(t, "Updated Test", updatedUser.DisplayName)
 		require.Equal(t, "987-654-3210", updatedUser.Mobile)
@@ -139,6 +141,7 @@ func TestUpdatePasswordService(t *testing.T) {
 	require.NoError(t, err)
 
 	user := &models.User{
+		Uid:          "user-uid",
 		Email:        "password-test@ufl.edu",
 		PasswordHash: string(hashedPassword),
 	}
@@ -149,7 +152,7 @@ func TestUpdatePasswordService(t *testing.T) {
 			CurrentPassword: "currentPassword",
 			NewPassword:     "newPassword",
 		}
-		err := services.UpdatePasswordService(input, "nonexistent@ufl.edu")
+		err := services.UpdatePasswordService(input, "user-uid-test")
 		require.Error(t, err)
 	})
 
@@ -158,7 +161,7 @@ func TestUpdatePasswordService(t *testing.T) {
 			CurrentPassword: "wrongPassword",
 			NewPassword:     "newPassword",
 		}
-		err := services.UpdatePasswordService(input, "password-test@ufl.edu")
+		err := services.UpdatePasswordService(input, "user-uid")
 		require.EqualError(t, err, services.ErrInvalidCredentials.Error())
 	})
 
@@ -167,7 +170,7 @@ func TestUpdatePasswordService(t *testing.T) {
 			CurrentPassword: "currentPassword",
 			NewPassword:     "currentPassword",
 		}
-		err := services.UpdatePasswordService(input, "password-test@ufl.edu")
+		err := services.UpdatePasswordService(input, "user-uid")
 		require.EqualError(t, err, services.ErrSamePassword.Error())
 	})
 
@@ -176,7 +179,7 @@ func TestUpdatePasswordService(t *testing.T) {
 			CurrentPassword: "currentPassword",
 			NewPassword:     "newPassword",
 		}
-		err := services.UpdatePasswordService(input, "password-test@ufl.edu")
+		err := services.UpdatePasswordService(input, "user-uid")
 		require.NoError(t, err)
 
 		// Verify password has been updated

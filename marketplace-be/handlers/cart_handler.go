@@ -19,6 +19,11 @@ func AddToCart(c *gin.Context) {
 		return
 	}
 
+	if input.ProductPID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Product ID is required"})
+		return
+	}
+
 	err := services.AddToCartService(userUid, input.ProductPID, input.Quantity)
 	if err != nil {
 		switch err {
@@ -52,6 +57,11 @@ func UpdateCartItem(c *gin.Context) {
 	var input models.UpdateCartItemInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid input"})
+		return
+	}
+
+	if input.ProductPID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Product ID is required"})
 		return
 	}
 

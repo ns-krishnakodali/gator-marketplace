@@ -28,12 +28,12 @@ type ProductImageInput struct {
 	IsMain   bool   `json:"isMain"`
 }
 
-type AccountDetails struct {
-	ImageUrl    string `json:"imageUrl"`
-	Name        string `json:"name"`
-	DisplayName string `json:"displayName"`
-	Email       string `json:"email"`
-	Mobile      string `json:"mobile"`
+type AccountDetailsResponse struct {
+	DisplayImageUrl string `json:"displayImageUrl"`
+	Name            string `json:"name"`
+	DisplayName     string `json:"displayName"`
+	Email           string `json:"email"`
+	Mobile          string `json:"mobile"`
 }
 
 type AccountDetailsInput struct {

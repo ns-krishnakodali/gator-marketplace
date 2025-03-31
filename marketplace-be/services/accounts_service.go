@@ -10,12 +10,12 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func GetAccountDetailsService(userUid string) (*models.AccountDetails, error) {
-	var details models.AccountDetails
+func GetAccountDetailsService(userUid string) (*models.AccountDetailsResponse, error) {
+	var details models.AccountDetailsResponse
 
 	result := database.DB.
 		Table("users").
-		Select("image_url, name, display_name, email, mobile").
+		Select("display_image_url, name, display_name, email, mobile").
 		Where("uid = ?", userUid).
 		First(&details)
 
@@ -101,10 +101,10 @@ func UpdatePasswordService(input *models.PasswordInput, userUid string) error {
 
 func validateAccountDetailsInput(input *models.AccountDetailsInput, email string) error {
 	switch {
-	case input.Email != email:
-		return ErrEmailNotMatching
 	case !validateUFLEmail(input.Email):
 		return ErrInvalidEmailFormat
+	case input.Email != email:
+		return ErrEmailNotMatching
 	case strings.TrimSpace(input.Name) == "":
 		return ErrEmptyName
 	case strings.TrimSpace(input.Mobile) == "":
