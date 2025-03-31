@@ -2,6 +2,7 @@ button {
   width: fit-content;
   cursor: pointer;
   text-align: center;
+  padding: 0px;
 }
 
 .text {

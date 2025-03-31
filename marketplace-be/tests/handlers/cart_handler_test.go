@@ -2,178 +2,363 @@ package handlers_test
 
 import (
 	"encoding/json"
-	"fmt"
+	"marketplace-be/auth"
+	"marketplace-be/handlers"
+	"marketplace-be/models"
+	"marketplace-be/test_utils"
 	"net/http"
-	"strconv"
 	"testing"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
-
-	"marketplace-be/handlers"
-	"marketplace-be/models"
-	"marketplace-be/test_utils"
 )
 
-func TestAddToCart_Handler_Success(t *testing.T) {
+func init() {
+	// Use test mode so Gin doesn't print too much
+	gin.SetMode(gin.TestMode)
+}
+
+func TestAddToCart(t *testing.T) {
 	db := test_utils.SetupTestDB(t)
 
-	// Create product
-	db.Create(&models.Product{
-		Pid:      "pid-abc",
-		Name:     "Test Product",
-		Quantity: 10,
+	// Prepare test user
+	user := &models.User{
+		ID:              1,
+		Uid:             "user-uid",
+		Email:           "test@ufl.edu",
+		DisplayImageUrl: "",
+		Name:            "Test User",
+		DisplayName:     "GatorUser",
+		Mobile:          "123-456-7890",
+		PasswordHash:    "$2a$10$examplehashedpassword",
+	}
+	db.Create(user)
+
+	// Prepare test product
+	product := &models.Product{
+		ID:          1,
+		Pid:         "product-pid",
+		Name:        "Test Product",
+		Description: "Test Description",
+		Price:       99.99,
+		Category:    models.Electronics,
+		PostedBy:    "seller-uid",
+		Quantity:    10,
+	}
+	db.Create(product)
+
+	// Create test token
+	token, _ := auth.GenerateToken(user.Uid)
+
+	t.Run("Invalid Input Format", func(t *testing.T) {
+		c, w := test_utils.CreateTestContext("POST", "/api/cart", []byte(`{"invalid":"json"}`))
+		c.Request.Header.Set("Authorization", token)
+
+		handlers.AddToCart(c)
+		require.Equal(t, http.StatusBadRequest, w.Code)
+		require.Contains(t, w.Body.String(), "Product ID is required")
 	})
 
-	// Prepare request
-	body := `{"product_pid":"pid-abc","quantity":2}`
-	c, w := test_utils.CreateTestContext("POST", "/api/cart", []byte(body))
-	test_utils.SetUserContext(c, "test-user-uid")
+	t.Run("Product Not Found", func(t *testing.T) {
+		c, w := test_utils.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"non-existent-pid","quantity":1}`))
+		c.Request.Header.Set("Authorization", token)
 
+		handlers.AddToCart(c)
+		require.Equal(t, http.StatusNotFound, w.Code)
+		require.Contains(t, w.Body.String(), "Product not found")
+	})
+
+	t.Run("Not Enough Product Quantity", func(t *testing.T) {
+		c, w := test_utils.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"product-pid","quantity":20}`))
+		c.Request.Header.Set("Authorization", token)
+
+		handlers.AddToCart(c)
+		require.Equal(t, http.StatusConflict, w.Code)
+		require.Contains(t, w.Body.String(), "Not enough product in stock")
+	})
+
+	t.Run("Successful Add To Cart", func(t *testing.T) {
+		c, w := test_utils.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"product-pid","quantity":5}`))
+		c.Request.Header.Set("Authorization", token)
+
+		handlers.AddToCart(c)
+		require.Equal(t, http.StatusCreated, w.Code)
+		require.Contains(t, w.Body.String(), "Added to cart")
+	})
+
+	t.Run("Product Already Added", func(t *testing.T) {
+		cartProduct := &models.CartProduct{
+			ID:         1,
+			UserUID:    "user-uid",
+			ProductPID: "product-pid",
+			Quantity:   2,
+			Product:    *product,
+		}
+		db.Create(cartProduct)
+
+		c, w := test_utils.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"product-pid","quantity":1}`))
+		c.Request.Header.Set("Authorization", token)
+
+		handlers.AddToCart(c)
+		require.Equal(t, http.StatusConflict, w.Code)
+		require.Contains(t, w.Body.String(), "Product already added to cart")
+	})
+}
+
+func TestGetCartItems(t *testing.T) {
+	db := test_utils.SetupTestDB(t)
+
+	// Prepare test user
+	user := &models.User{
+		ID:              1,
+		Uid:             "user-uid",
+		Email:           "test@ufl.edu",
+		DisplayImageUrl: "",
+		Name:            "Test User",
+		DisplayName:     "GatorUser",
+		Mobile:          "123-456-7890",
+		PasswordHash:    "$2a$10$examplehashedpassword",
+	}
+	db.Create(user)
+
+	// Prepare test product
+	db.Create(&models.Product{
+		ID:          1,
+		Pid:         "product-pid",
+		Name:        "Test Product",
+		Description: "Test Description",
+		Price:       99.99,
+		Category:    models.Electronics,
+		PostedBy:    "seller-uid",
+		Quantity:    10,
+		Images: []models.ProductImage{
+			{
+				Pid:      "product-pid",
+				MimeType: "image/jpeg",
+				Url:      "test-image-url.jpg",
+				IsMain:   true,
+			},
+		},
+	})
+
+	// Create test token
+	token, _ := auth.GenerateToken(user.Uid)
+
+	// Add product to cart first
+	c, w := test_utils.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"product-pid","quantity":5}`))
+	c.Request.Header.Set("Authorization", token)
 	handlers.AddToCart(c)
 	require.Equal(t, http.StatusCreated, w.Code)
 
-	var item models.CartItem
-	err := json.Unmarshal(w.Body.Bytes(), &item)
-	require.NoError(t, err)
-	require.Equal(t, "pid-abc", item.ProductPID)
-	require.Equal(t, 2, item.Quantity)
+	t.Run("Successfully Get Cart Items", func(t *testing.T) {
+		c, w := test_utils.CreateTestContext("GET", "/api/cart", nil)
+		c.Request.Header.Set("Authorization", token)
 
-	// Check product quantity is now 8
-	var p models.Product
-	db.Where("pid = ?", "pid-abc").First(&p)
-	require.Equal(t, 8, p.Quantity)
+		handlers.GetCartItems(c)
+		require.Equal(t, http.StatusOK, w.Code)
+
+		var response models.CartResponse
+		err := json.Unmarshal(w.Body.Bytes(), &response)
+		require.NoError(t, err)
+
+		// Verify response
+		require.Len(t, response.CartProducts, 1)
+		require.Equal(t, 5, response.CartProducts[0].AddedQuantity)
+		require.Equal(t, "product-pid", response.CartProducts[0].PID)
+		require.Equal(t, "Test Product", response.CartProducts[0].ProductName)
+		require.Equal(t, 99.99, response.CartProducts[0].ProductPrice)
+		require.Greater(t, response.TotalCost, response.ProductsTotal)
+	})
 }
 
-func TestAddToCart_Handler_ProductNotFound(t *testing.T) {
+func TestUpdateCartItem(t *testing.T) {
 	db := test_utils.SetupTestDB(t)
-	_ = db
 
-	body := `{"product_pid":"no-such-pid","quantity":1}`
-	c, w := test_utils.CreateTestContext("POST", "/api/cart", []byte(body))
-	test_utils.SetUserContext(c, "test-user-uid")
+	// Prepare test user
+	user := &models.User{
+		ID:              1,
+		Uid:             "user-uid",
+		Email:           "test@ufl.edu",
+		DisplayImageUrl: "",
+		Name:            "Test User",
+		DisplayName:     "GatorUser",
+		Mobile:          "123-456-7890",
+		PasswordHash:    "$2a$10$examplehashedpassword",
+	}
+	db.Create(user)
 
+	// Prepare test product
+	db.Create(&models.Product{
+		ID:          1,
+		Pid:         "product-pid",
+		Name:        "Test Product",
+		Description: "Test Description",
+		Price:       99.99,
+		Category:    models.Electronics,
+		PostedBy:    "seller-uid",
+		Quantity:    10,
+	})
+
+	// Create test token
+	token, _ := auth.GenerateToken(user.Uid)
+
+	// Add product to cart first
+	c, w := test_utils.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"product-pid","quantity":2}`))
+	c.Request.Header.Set("Authorization", token)
 	handlers.AddToCart(c)
-	require.Equal(t, http.StatusNotFound, w.Code)
+	require.Equal(t, http.StatusCreated, w.Code)
 
-	var resp map[string]interface{}
-	_ = json.Unmarshal(w.Body.Bytes(), &resp)
-	require.Equal(t, "Product not found", resp["error"])
+	t.Run("Invalid Input Format", func(t *testing.T) {
+		c, w := test_utils.CreateTestContext("PUT", "/api/cart", []byte(`{"invalid":"data"}`))
+		c.Request.Header.Set("Authorization", token)
+
+		handlers.UpdateCartItem(c)
+		require.Equal(t, http.StatusBadRequest, w.Code)
+		require.Contains(t, w.Body.String(), "Product ID is required")
+	})
+
+	t.Run("Product Not Found", func(t *testing.T) {
+		c, w := test_utils.CreateTestContext("PUT", "/api/cart", []byte(`{"productId":"non-existent-pid","quantity":1}`))
+		c.Request.Header.Set("Authorization", token)
+
+		handlers.UpdateCartItem(c)
+		require.Equal(t, http.StatusNotFound, w.Code)
+		require.Contains(t, w.Body.String(), "Cart item not found")
+	})
+
+	t.Run("Not Enough Quantity", func(t *testing.T) {
+		c, w := test_utils.CreateTestContext("PUT", "/api/cart", []byte(`{"productId":"product-pid","quantity":15}`))
+		c.Request.Header.Set("Authorization", token)
+
+		handlers.UpdateCartItem(c)
+		require.Equal(t, http.StatusConflict, w.Code)
+		require.Contains(t, w.Body.String(), "Not enough product in stock")
+	})
+
+	t.Run("Successful Update", func(t *testing.T) {
+		c, w := test_utils.CreateTestContext("PUT", "/api/cart", []byte(`{"productId":"product-pid","quantity":5}`))
+		c.Request.Header.Set("Authorization", token)
+
+		handlers.UpdateCartItem(c)
+		require.Equal(t, http.StatusOK, w.Code)
+
+		var response map[string]interface{}
+		err := json.Unmarshal(w.Body.Bytes(), &response)
+		require.NoError(t, err)
+
+		// Verify response fields exist
+		_, exists := response["productsTotal"]
+		require.True(t, exists)
+		_, exists = response["handlingFees"]
+		require.True(t, exists)
+		_, exists = response["totalCost"]
+		require.True(t, exists)
+	})
 }
 
-func TestGetCartItems_Handler_Success(t *testing.T) {
+func TestRemoveCartItem(t *testing.T) {
 	db := test_utils.SetupTestDB(t)
 
-	// Insert some items
-	db.Create(&models.CartItem{UserUID: "test-user-uid", ProductPID: "p1", Quantity: 2})
-	db.Create(&models.CartItem{UserUID: "test-user-uid", ProductPID: "p2", Quantity: 1})
-	db.Create(&models.CartItem{UserUID: "other-user", ProductPID: "pX", Quantity: 3})
+	// Prepare test user
+	user := &models.User{
+		ID:              1,
+		Uid:             "user-uid",
+		Email:           "test@ufl.edu",
+		DisplayImageUrl: "",
+		Name:            "Test User",
+		DisplayName:     "GatorUser",
+		Mobile:          "123-456-7890",
+		PasswordHash:    "$2a$10$examplehashedpassword",
+	}
+	db.Create(user)
 
-	c, w := test_utils.CreateTestContext("GET", "/api/cart", nil)
-	test_utils.SetUserContext(c, "test-user-uid")
+	// Prepare test product
+	product := &models.Product{
+		ID:          1,
+		Pid:         "product-pid",
+		Name:        "Test Product",
+		Description: "Test Description",
+		Price:       99.99,
+		Category:    models.Electronics,
+		PostedBy:    "seller-uid",
+		Quantity:    10,
+	}
+	db.Create(product)
 
-	handlers.GetCartItems(c)
-	require.Equal(t, http.StatusOK, w.Code)
+	// Create test token
+	token, _ := auth.GenerateToken(user.Uid)
 
-	var items []models.CartItem
-	err := json.Unmarshal(w.Body.Bytes(), &items)
-	require.NoError(t, err)
-	require.Len(t, items, 2) // only items for "test-user-uid"
+	// Add product to cart first
+	c, w := test_utils.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"product-pid","quantity":2}`))
+	c.Request.Header.Set("Authorization", token)
+	handlers.AddToCart(c)
+	require.Equal(t, http.StatusCreated, w.Code)
+
+	t.Run("Item Not Found", func(t *testing.T) {
+		c, w := test_utils.CreateTestContext("DELETE", "/api/cart/non-existent-pid", nil)
+		c.Request.Header.Set("Authorization", token)
+		c.Params = []gin.Param{{Key: "pid", Value: "non-existent-pid"}}
+
+		handlers.RemoveCartItem(c)
+		require.Equal(t, http.StatusNotFound, w.Code)
+		require.Contains(t, w.Body.String(), "Cart item not found")
+	})
+
+	t.Run("Successful Remove", func(t *testing.T) {
+		c, w := test_utils.CreateTestContext("DELETE", "/api/cart/product-pid", nil)
+		c.Request.Header.Set("Authorization", token)
+		c.Params = []gin.Param{{Key: "pid", Value: "product-pid"}}
+
+		handlers.RemoveCartItem(c)
+		require.Equal(t, http.StatusOK, w.Code)
+		require.Contains(t, w.Body.String(), "Item removed")
+	})
 }
 
-func TestUpdateCartItem_Handler_Success(t *testing.T) {
+func TestClearCart(t *testing.T) {
 	db := test_utils.SetupTestDB(t)
 
-	// Create product & cart item
-	db.Create(&models.Product{Pid: "pid-upd", Name: "P Upd", Quantity: 10})
-	cart := models.CartItem{UserUID: "test-user-uid", ProductPID: "pid-upd", Quantity: 3}
-	db.Create(&cart)
+	// Prepare test user
+	user := &models.User{
+		ID:              1,
+		Uid:             "user-uid",
+		Email:           "test@ufl.edu",
+		DisplayImageUrl: "",
+		Name:            "Test User",
+		DisplayName:     "GatorUser",
+		Mobile:          "123-456-7890",
+		PasswordHash:    "$2a$10$examplehashedpassword",
+	}
+	db.Create(user)
 
-	// Instead of attaching cart.ID in the URL, put it in JSON
-	body := fmt.Sprintf(`{"cartItemID": %d, "quantity": 5}`, cart.ID)
+	// Prepare test product
+	product := &models.Product{
+		ID:          1,
+		Pid:         "product-pid",
+		Name:        "Test Product",
+		Description: "Test Description",
+		Price:       99.99,
+		Category:    models.Electronics,
+		PostedBy:    "seller-uid",
+		Quantity:    10,
+	}
+	db.Create(product)
 
-	// Now the path is just "/api/cart"
-	c, w := test_utils.CreateTestContext("PUT", "/api/cart", []byte(body))
-	// In a body-only design, no c.Params needed
-	test_utils.SetUserContext(c, "test-user-uid")
+	// Create test token
+	token, _ := auth.GenerateToken(user.Uid)
 
-	handlers.UpdateCartItem(c)
-	require.Equal(t, http.StatusOK, w.Code)
+	// Add product to cart first
+	c, w := test_utils.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"product-pid","quantity":2}`))
+	c.Request.Header.Set("Authorization", token)
+	handlers.AddToCart(c)
+	require.Equal(t, http.StatusCreated, w.Code)
 
-	var updated models.CartItem
-	err := json.Unmarshal(w.Body.Bytes(), &updated)
-	require.NoError(t, err)
-	require.Equal(t, 5, updated.Quantity)
+	t.Run("Successful Clear Cart", func(t *testing.T) {
+		c, w := test_utils.CreateTestContext("DELETE", "/api/cart", nil)
+		c.Request.Header.Set("Authorization", token)
 
-	// Confirm product is updated
-	var prod models.Product
-	db.Where("pid = ?", "pid-upd").First(&prod)
-	require.Equal(t, 8, prod.Quantity)
-}
-
-func TestRemoveCartItem_Handler_Success(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
-
-	db.Create(&models.Product{Pid: "pid-del", Quantity: 10})
-	cart := models.CartItem{UserUID: "test-user-uid", ProductPID: "pid-del", Quantity: 3}
-	db.Create(&cart)
-
-	cartID := strconv.Itoa(cart.ID)
-	c, w := test_utils.CreateTestContext("DELETE", "/api/cart/"+cartID, nil)
-	c.Params = gin.Params{{Key: "cartItemID", Value: cartID}}
-	test_utils.SetUserContext(c, "test-user-uid")
-
-	handlers.RemoveCartItem(c)
-	require.Equal(t, http.StatusOK, w.Code)
-
-	var resp map[string]string
-	_ = json.Unmarshal(w.Body.Bytes(), &resp)
-	require.Equal(t, "Item removed", resp["message"])
-
-	// Confirm cart item is deleted
-	var count int64
-	db.Model(&models.CartItem{}).Count(&count)
-	require.EqualValues(t, 0, count)
-
-	// Product stock should have been restored from 10 => 13
-	var product models.Product
-	db.Where("pid = ?", "pid-del").First(&product)
-	require.Equal(t, 13, product.Quantity)
-}
-
-func TestClearCart_Handler_Success(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
-
-	db.Create(&models.Product{Pid: "pA", Quantity: 5})
-	db.Create(&models.Product{Pid: "pB", Quantity: 8})
-
-	db.Create(&models.CartItem{UserUID: "test-user-uid", ProductPID: "pA", Quantity: 2})
-	db.Create(&models.CartItem{UserUID: "test-user-uid", ProductPID: "pB", Quantity: 3})
-	db.Create(&models.CartItem{UserUID: "other-user", ProductPID: "pA", Quantity: 1})
-
-	c, w := test_utils.CreateTestContext("DELETE", "/api/cart", nil)
-	test_utils.SetUserContext(c, "test-user-uid")
-
-	handlers.ClearCart(c)
-	require.Equal(t, http.StatusOK, w.Code)
-
-	var resp map[string]string
-	_ = json.Unmarshal(w.Body.Bytes(), &resp)
-	require.Equal(t, "Cart cleared", resp["message"])
-
-	// confirm only "other-user" item remains
-	var items []models.CartItem
-	db.Find(&items)
-	require.Len(t, items, 1)
-	require.Equal(t, "other-user", items[0].UserUID)
-
-	// check product quantities are restored
-	var pA, pB models.Product
-	db.Where("pid = ?", "pA").First(&pA)
-	db.Where("pid = ?", "pB").First(&pB)
-
-	// pA was 5, user had 2 => new total 7
-	require.Equal(t, 7, pA.Quantity)
-	// pB was 8, user had 3 => new total 11
-	require.Equal(t, 11, pB.Quantity)
+		handlers.ClearCart(c)
+		require.Equal(t, http.StatusOK, w.Code)
+		require.Contains(t, w.Body.String(), "Cart cleared")
+	})
 }

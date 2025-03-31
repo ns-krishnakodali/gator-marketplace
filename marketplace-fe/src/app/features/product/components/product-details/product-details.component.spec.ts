@@ -36,7 +36,7 @@ describe('ProductDetailsComponent', () => {
     component.postedAt = testDate
 
     component.postedBy = 'Test User'
-    component.quantity = 5
+    component.maxQuantity = 5
 
     fixture.detectChanges()
   })
@@ -73,24 +73,24 @@ describe('ProductDetailsComponent', () => {
   })
 
   it('should generate quantity options based on available quantity', () => {
-    component.quantity = 5
+    component.maxQuantity = 5
     component.ngOnInit()
     expect(component.quantityOptions).toEqual([1, 2, 3, 4, 5])
 
-    component.quantity = 15
+    component.maxQuantity = 15
     component.ngOnInit()
     expect(component.quantityOptions).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
   })
 
   it('should limit quantity options to 10 when quantity is greater than 10', () => {
-    component.quantity = 20
+    component.maxQuantity = 20
     component.ngOnInit()
     expect(component.quantityOptions.length).toBe(10)
     expect(component.quantityOptions[9]).toBe(10)
   })
 
   it('should render the correct number of quantity options in the select element', () => {
-    component.quantity = 5
+    component.maxQuantity = 5
     component.ngOnInit()
     fixture.detectChanges()
 
@@ -107,7 +107,7 @@ describe('ProductDetailsComponent', () => {
   })
 
   it('should handle empty quantity case properly', () => {
-    component.quantity = 0
+    component.maxQuantity = 0
     component.ngOnInit()
     fixture.detectChanges()
 

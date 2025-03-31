@@ -1,5 +1,6 @@
 package models
 
+// Request Inputs
 type LoginInput struct {
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required"`
@@ -27,12 +28,12 @@ type ProductImageInput struct {
 	IsMain   bool   `json:"isMain"`
 }
 
-type AccountDetails struct {
-	ImageUrl    string `json:"imageUrl"`
-	Name        string `json:"name"`
-	DisplayName string `json:"displayName"`
-	Email       string `json:"email"`
-	Mobile      string `json:"mobile"`
+type AccountDetailsResponse struct {
+	DisplayImageUrl string `json:"displayImageUrl"`
+	Name            string `json:"name"`
+	DisplayName     string `json:"displayName"`
+	Email           string `json:"email"`
+	Mobile          string `json:"mobile"`
 }
 
 type AccountDetailsInput struct {
@@ -45,4 +46,38 @@ type AccountDetailsInput struct {
 type PasswordInput struct {
 	CurrentPassword string `json:"currentPassword"`
 	NewPassword     string `json:"newPassword"`
+}
+
+type AddToCartInput struct {
+	ProductPID string `json:"productId"`
+	Quantity   int    `json:"quantity"`
+}
+
+type UpdateCartItemInput struct {
+	ProductPID string `json:"productId"`
+	Quantity   int    `json:"quantity"`
+}
+
+// Response Outputs
+
+type CartResponse struct {
+	CartProducts  []CartItemResponse `json:"cartProducts"`
+	ProductsTotal float64            `json:"productsTotal"`
+	HandlingFee   float64            `json:"handlingFee"`
+	TotalCost     float64            `json:"totalCost"`
+}
+
+type CartItemResponse struct {
+	AddedQuantity int     `json:"addedQuantity"`
+	MaxQuantity   int     `json:"maxQuantity"`
+	PID           string  `json:"pid"`
+	ProductName   string  `json:"productName"`
+	ProductPrice  float64 `json:"productPrice"`
+	PrimaryImage  string  `json:"primaryImage"`
+}
+
+type CartUpdateResponse struct {
+	ProductsTotal float64 `json:"productsTotal"`
+	HandlingFee   float64 `json:"handlingFee"`
+	TotalCost     float64 `json:"totalCost"`
 }

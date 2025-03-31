@@ -1,16 +1,15 @@
-import { Component, Input } from '@angular/core';
+import { CurrencyPipe } from '@angular/common'
+import { Component, Input } from '@angular/core'
+import { MatButtonModule } from '@angular/material/button'
 
 @Component({
-  selector: 'app-order-summary-card',
-  templateUrl: './order-summary-card.component.html',
-  styleUrls: ['./order-summary-card.component.css']
+  selector: 'app-order-summary',
+  templateUrl: './order-summary.component.html',
+  styleUrls: ['./order-summary.component.css'],
+  imports: [CurrencyPipe, MatButtonModule],
 })
 export class OrderSummaryCardComponent {
-  @Input() itemsTotal: number = 0;
-  @Input() handlingFees: number = 0;
-
-  // Computed total: items total + handling fees
-  get total(): number {
-    return this.itemsTotal + this.handlingFees;
-  }
+  @Input({ required: true }) productsTotal!: string
+  @Input({ required: true }) handlingFee!: string
+  @Input({ required: true }) totalCost!: string
 }

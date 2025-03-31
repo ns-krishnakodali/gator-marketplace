@@ -18,3 +18,7 @@ export const EMPTY_PASSWORD_FIELDS = 'Password fields cannot be empty'
 export const SAME_PASSWORDS = 'New password must differ from current one'
 export const UPDATE_DETAILS_SUCCESSFUL = 'Successfully updated account details'
 export const UPDATE_PASSWORD_SUCCESSFUL = 'Successfully updated password!'
+
+// Cart
+export const ADD_TO_CART_SUCCESSFUL = 'Product added to cart'
+export const REMOVED_FROM_CART_SUCCESSFUL = 'Product removed to cart'
