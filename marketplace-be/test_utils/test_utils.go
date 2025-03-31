@@ -30,7 +30,7 @@ func SetupTestDB(t *testing.T) *gorm.DB {
 		&models.User{},
 		&models.Product{},
 		&models.ProductImage{},
-		&models.CartItem{},
+		&models.CartProduct{},
 	)
 	if err != nil {
 		t.Fatalf("AutoMigrate failed: %v", err)

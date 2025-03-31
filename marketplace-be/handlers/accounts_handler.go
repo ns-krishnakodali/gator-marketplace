@@ -11,10 +11,10 @@ import (
 )
 
 func GetAccountDetails(c *gin.Context) {
-	userEmail, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
+	userUid, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
 
 	// Fetch account details from the service
-	accountDetails, err := services.AccountDetailsService(userEmail)
+	accountDetails, err := services.GetAccountDetailsService(userUid)
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrFailedFetching):
@@ -36,10 +36,10 @@ func UpdateAccountDetails(c *gin.Context) {
 		return
 	}
 
-	userEmail, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
+	userUid, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
 
 	// Call service to modify account details
-	err := services.UpdateAccountDetailsService(&input, userEmail)
+	err := services.UpdateAccountDetailsService(&input, userUid)
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrEmailNotMatching),
@@ -67,10 +67,10 @@ func UpdatePassword(c *gin.Context) {
 		return
 	}
 
-	userEmail, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
+	userUid, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
 
 	// Call service to modify account details
-	err := services.UpdatePasswordService(&input, userEmail)
+	err := services.UpdatePasswordService(&input, userUid)
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrInvalidCredentials):

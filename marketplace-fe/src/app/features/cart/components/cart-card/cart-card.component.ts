@@ -1,28 +1,45 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input } from '@angular/core'
+import { CommonModule, CurrencyPipe } from '@angular/common'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+
+import { Observable } from 'rxjs'
+
+import type { CartProduct } from '../../models/'
+import { CartService } from '../../services'
+import { ButtonComponent, TextComponent } from '../../../../shared-ui'
 
 @Component({
   selector: 'app-cart-card',
   templateUrl: './cart-card.component.html',
-  styleUrls: ['./cart-card.component.css']
+  styleUrls: ['./cart-card.component.css'],
+  imports: [MatProgressSpinnerModule, CommonModule, CurrencyPipe, TextComponent, ButtonComponent],
 })
 export class CartCardComponent {
-  @Input() item: any;
-  @Input() quantityOptions: number[] = [1, 2, 3, 4, 5]; // passed from parent, default 1–5
+  @Input({ required: true }) cartProduct!: CartProduct
 
-  @Output() quantityChanged = new EventEmitter<number>();
-  @Output() removeItem = new EventEmitter<void>();
+  isRemoveItemLoading$: Observable<boolean>
 
-  // Triggered when dropdown value changes
-  onQuantityChange(value: string): void {
-    const qty = parseInt(value, 10);
-    if (!isNaN(qty) && qty > 0) {
-      this.quantityChanged.emit(qty);
-    }
+  constructor(private cartService: CartService) {
+    this.isRemoveItemLoading$ = this.cartService.removeCartItemIsLoading$
   }
 
-  // Triggered when "Remove Item" link is clicked
-  onRemoveClick(event: Event): void {
-    event.preventDefault(); // prevent default anchor behavior
-    this.removeItem.emit();
+  navigateToProductPage = (): void => {
+    this.cartService.navigateToProductPage(this.cartProduct.productId)
+  }
+
+  onRemoveFromCart = (): void => {
+    this.cartService.removeFromCart(this.cartProduct.productId)
+  }
+
+  adjustQuantity = (adjustment: number): void => {
+    this.cartProduct.quantity = Math.max(
+      0,
+      Math.min(
+        this.cartProduct.quantity + adjustment,
+        Math.min(this.cartProduct.maxQuantity || 0, 10)
+      )
+    )
+
+    this.cartService.updateCartItems(this.cartProduct.productId, this.cartProduct.quantity)
   }
 }

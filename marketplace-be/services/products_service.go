@@ -206,13 +206,21 @@ func UpdateProductService(productPID string, input models.ProductInput) (models.
 
 // DeleteProductService deletes a product by PID (and its related images).
 func DeleteProductService(productPID string) error {
-	// First, delete product images (if not using Cascade)
-	if err := database.DB.Where("pid = ?", productPID).Delete(&models.ProductImage{}).Error; err != nil {
-		return fmt.Errorf("could not delete product images")
+	// First check if the product exists
+	var product models.Product
+	result := database.DB.Where("pid = ?", productPID).First(&product)
+	if result.Error != nil {
+		return fmt.Errorf("error finding product: %w", result.Error)
 	}
 
+	// Delete product images
+	if err := database.DB.Where("pid = ?", productPID).Delete(&models.ProductImage{}).Error; err != nil {
+		return ErrDeleteProductImages
+	}
+
+	// Delete the product
 	if err := database.DB.Where("pid = ?", productPID).Delete(&models.Product{}).Error; err != nil {
-		return fmt.Errorf("could not delete product")
+		return ErrDeleteProduct
 	}
 
 	return nil

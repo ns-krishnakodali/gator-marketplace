@@ -24,7 +24,7 @@ func LoginService(input *models.LoginInput) (string, error) {
 		return "", ErrInvalidCredentials
 	}
 
-	token, err := auth.GenerateToken(user.Email)
+	token, err := auth.GenerateToken(user.Uid)
 	if err != nil {
 		return "", ErrTokenGeneration
 	}

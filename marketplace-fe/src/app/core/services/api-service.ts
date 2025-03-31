@@ -8,9 +8,7 @@ import { catchError, map } from 'rxjs/operators'
 import { DEFAULT_ERROR_MESSAGE, getAuthToken, removeAuthToken } from '../../utils'
 import { environment } from '../../../environments/environment'
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class APIService {
   private readonly BASE_URL = environment.apiBaseURL
 
@@ -68,9 +66,15 @@ export class APIService {
       )
   }
 
-  delete<T>(endpoint: string, headers?: Record<string, string>): Observable<T> {
+  delete<T>(
+    endpoint: string,
+    addAuthHeader = true,
+    headers?: Record<string, string>
+  ): Observable<T> {
     return this.httpClient
-      .delete<T>(`${this.BASE_URL}/${endpoint}`, { headers: this.getHeaders(headers) })
+      .delete<T>(`${this.BASE_URL}/${endpoint}`, {
+        headers: this.getHeaders(headers, addAuthHeader),
+      })
       .pipe(
         map((response) => response),
         catchError(this.handleError)

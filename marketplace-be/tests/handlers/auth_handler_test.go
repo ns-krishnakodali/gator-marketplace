@@ -24,6 +24,7 @@ func TestLoginHandler(t *testing.T) {
 
 	// Prepare test data
 	user := &models.User{
+		Uid:          "user-uid",
 		Email:        "test@example.com",
 		PasswordHash: "$2a$10$examplehashedpassword",
 	}
