@@ -42,5 +42,35 @@ export const setupUpdateAccountIntercept = (delay?: number) => {
 export const setupUpdatePasswordIntercept = () => {
   cy.intercept('PUT', '/api/update-password', {
     statusCode: 204,
-  }).as('updatePasswordRequest');
+  }).as('updatePasswordRequest')
+}
+
+export const setupProductDetailsIntercept = () => {
+  cy.intercept('GET', '/api/product/*', {
+    statusCode: 200,
+    body: {
+      ID: 0,
+      Pid: 'cb1aea77-427a-4abe-bf9f-649145369dfa',
+      Name: 'Sports-product 27',
+      Description: 'This is a sample description for product 27',
+      Price: 75.8,
+      Category: 'Sports',
+      PostedBy: 'GatorUser',
+      Quantity: 92,
+      PopularityScore: 9.83,
+      CreatedAt: '2025-03-30T23:48:15.295084-04:00',
+      UpdatedAt: '2025-03-30T23:48:15.295084-04:00',
+      Images: [
+        {
+          ID: 27,
+          Pid: 'cb1aea77-427a-4abe-bf9f-649145369dfa',
+          MimeType: 'image/jpeg',
+          Url: 'https://cdn.dummyjson.com/products/images/groceries/Apple/1.png',
+          IsMain: true,
+          CreatedAt: '2025-03-30T23:48:15.295602-04:00',
+          UpdatedAt: '2025-03-30T23:48:15.295602-04:00',
+        },
+      ],
+    },
+  }).as('productDetailsRequest')
 }
