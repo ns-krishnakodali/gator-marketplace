@@ -249,7 +249,7 @@ func TestGetProductByPID(t *testing.T) {
 		IsMain:   true,
 	})
 
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Get Product details Success", func(t *testing.T) {
 		c, w := test_utils.CreateTestContext("GET", "/api/products/pid-123", nil)
 		c.Params = gin.Params{{Key: "pid", Value: "pid-123"}}
 		c.Request.Header.Set("Authorization", token)
@@ -306,7 +306,7 @@ func TestUpdateProduct(t *testing.T) {
 		Pid: "pid-999", MimeType: "image/png", Url: "http://example.com/old.png", IsMain: true,
 	})
 
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Update Product details Success", func(t *testing.T) {
 		updateInput := models.ProductInput{
 			Name:     "New Product Name",
 			Category: models.Books,
@@ -386,7 +386,7 @@ func TestDeleteProduct(t *testing.T) {
 	db.Create(&models.Product{Pid: "pid-del", Name: "ToDelete"})
 	db.Create(&models.ProductImage{Pid: "pid-del", Url: "http://example.com/img.png"})
 
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Delete Product Success", func(t *testing.T) {
 		c, w := test_utils.CreateTestContext("DELETE", "/api/products/pid-del", nil)
 		c.Request.Header.Set("Authorization", token)
 		c.Params = gin.Params{{Key: "pid", Value: "pid-del"}}

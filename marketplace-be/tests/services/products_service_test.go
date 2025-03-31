@@ -109,7 +109,7 @@ func TestUpdateProductService(t *testing.T) {
 	// Setup test DB
 	db := test_utils.SetupTestDB(t)
 
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Update Product details Success", func(t *testing.T) {
 		db.Create(&models.Product{
 			Pid:         "pid-upd",
 			Name:        "Old Name",
@@ -147,7 +147,7 @@ func TestDeleteProductService(t *testing.T) {
 	// Setup test DB
 	db := test_utils.SetupTestDB(t)
 
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Delete Product details Success", func(t *testing.T) {
 		db.Create(&models.Product{Pid: "pid-del-svc", Name: "Service Delete"})
 		db.Create(&models.ProductImage{Pid: "pid-del-svc", Url: "http://example.com/img.png"})
 

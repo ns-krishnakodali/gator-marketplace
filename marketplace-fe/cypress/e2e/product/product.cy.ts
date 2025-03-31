@@ -24,14 +24,14 @@ describe('Product Details Page', () => {
     cy.wait('@productDetailsRequest')
   })
 
-  it('should display the product details correctly', () => {
+  it('Should display the product details correctly', () => {
     cy.get('.product-name').should('contain', 'Sports-product 27')
     cy.get('.product-description').should('contain', 'This is a sample description for product 27')
     cy.get('.product-meta').should('contain', 'Posted By: GatorUser')
     cy.get('.quantity-label').should('contain', 'Quantity:')
   })
 
-  it('should display the product images', () => {
+  it('Should display the product images', () => {
     cy.get('.display-image').should('exist')
 
     cy.get('.image-thumbnails .product-images').should('exist')
@@ -41,17 +41,15 @@ describe('Product Details Page', () => {
       .and('include', 'groceries/Apple/1.png')
   })
 
-  it('should not show loading spinner after API loads', () => {
+  it('Should not show loading spinner after API loads', () => {
     cy.get('.loading-spinner').should('not.exist')
     cy.get('mat-spinner').should('not.exist')
   })
 
-  it('should handle product with single image', () => {
+  it('Should handle product with single image', () => {
     cy.get('.image-thumbnails .product-images').then((thumbnails) => {
-      // Since we only have one image in the mock response
       expect(thumbnails.length).to.equal(1)
 
-      // Check that the display image matches the only thumbnail
       cy.get('.image-thumbnails .product-images')
         .first()
         .invoke('attr', 'src')
@@ -63,28 +61,25 @@ describe('Product Details Page', () => {
     })
   })
 
-  it('should have the correct number of quantity options', () => {
-    // The quantity select dropdown should have 10 options since product quantity is 92
-    // (component limits to max 10 options as per ProductDetailsComponent)
+  it('Should have the correct number of quantity options', () => {
     cy.get('#quantity.quantity-select')
       .find('option')
       .then((options) => {
         const optionCount = options.length
         expect(optionCount).to.equal(10)
 
-        // Check the first and last options
         cy.get('#quantity.quantity-select option').first().should('have.value', '1')
         cy.get('#quantity.quantity-select option').last().should('have.value', '10')
       })
   })
 
-  it('should have a functional add to cart button', () => {
+  it('Should have a functional add to cart button', () => {
     cy.get('#add-to-cart').should('exist')
     cy.get('#add-to-cart').should('contain', 'Add to cart')
     cy.get('#add-to-cart').find('mat-icon').should('contain', 'shopping_cart')
   })
 
-  it('should show proper date format for posted date', () => {
+  it('Should show proper date format for posted date', () => {
     cy.get('.product-meta').should('contain', 'Posted On:')
     
     // Check that the date follows the MMM dd, yyyy format (e.g., "Jan 01, 2023")
