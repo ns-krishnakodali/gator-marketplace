@@ -140,7 +140,7 @@ func TestClearCartService(t *testing.T) {
 	// Setup test DB
 	db := test_utils.SetupTestDB(t)
 
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Clear cart Success", func(t *testing.T) {
 		db.Create(&models.Product{Pid: "pA", Name: "pA", Quantity: 5})
 		db.Create(&models.Product{Pid: "pB", Name: "pB", Quantity: 8})
 
