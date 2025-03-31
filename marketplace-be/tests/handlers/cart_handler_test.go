@@ -33,7 +33,7 @@ func TestAddToCart_Handler_Success(t *testing.T) {
 	handlers.AddToCart(c)
 	require.Equal(t, http.StatusCreated, w.Code)
 
-	var item models.CartItem
+	var item models.CartProduct
 	err := json.Unmarshal(w.Body.Bytes(), &item)
 	require.NoError(t, err)
 	require.Equal(t, "pid-abc", item.ProductPID)
@@ -65,9 +65,9 @@ func TestGetCartItems_Handler_Success(t *testing.T) {
 	db := test_utils.SetupTestDB(t)
 
 	// Insert some items
-	db.Create(&models.CartItem{UserUID: "test-user-uid", ProductPID: "p1", Quantity: 2})
-	db.Create(&models.CartItem{UserUID: "test-user-uid", ProductPID: "p2", Quantity: 1})
-	db.Create(&models.CartItem{UserUID: "other-user", ProductPID: "pX", Quantity: 3})
+	db.Create(&models.CartProduct{UserUID: "test-user-uid", ProductPID: "p1", Quantity: 2})
+	db.Create(&models.CartProduct{UserUID: "test-user-uid", ProductPID: "p2", Quantity: 1})
+	db.Create(&models.CartProduct{UserUID: "other-user", ProductPID: "pX", Quantity: 3})
 
 	c, w := test_utils.CreateTestContext("GET", "/api/cart", nil)
 	test_utils.SetUserContext(c, "test-user-uid")
@@ -75,7 +75,7 @@ func TestGetCartItems_Handler_Success(t *testing.T) {
 	handlers.GetCartItems(c)
 	require.Equal(t, http.StatusOK, w.Code)
 
-	var items []models.CartItem
+	var items []models.CartProduct
 	err := json.Unmarshal(w.Body.Bytes(), &items)
 	require.NoError(t, err)
 	require.Len(t, items, 2) // only items for "test-user-uid"
@@ -86,7 +86,7 @@ func TestUpdateCartItem_Handler_Success(t *testing.T) {
 
 	// Create product & cart item
 	db.Create(&models.Product{Pid: "pid-upd", Name: "P Upd", Quantity: 10})
-	cart := models.CartItem{UserUID: "test-user-uid", ProductPID: "pid-upd", Quantity: 3}
+	cart := models.CartProduct{UserUID: "test-user-uid", ProductPID: "pid-upd", Quantity: 3}
 	db.Create(&cart)
 
 	// Instead of attaching cart.ID in the URL, put it in JSON
@@ -100,7 +100,7 @@ func TestUpdateCartItem_Handler_Success(t *testing.T) {
 	handlers.UpdateCartItem(c)
 	require.Equal(t, http.StatusOK, w.Code)
 
-	var updated models.CartItem
+	var updated models.CartProduct
 	err := json.Unmarshal(w.Body.Bytes(), &updated)
 	require.NoError(t, err)
 	require.Equal(t, 5, updated.Quantity)
@@ -115,7 +115,7 @@ func TestRemoveCartItem_Handler_Success(t *testing.T) {
 	db := test_utils.SetupTestDB(t)
 
 	db.Create(&models.Product{Pid: "pid-del", Quantity: 10})
-	cart := models.CartItem{UserUID: "test-user-uid", ProductPID: "pid-del", Quantity: 3}
+	cart := models.CartProduct{UserUID: "test-user-uid", ProductPID: "pid-del", Quantity: 3}
 	db.Create(&cart)
 
 	cartID := strconv.Itoa(cart.ID)
@@ -132,7 +132,7 @@ func TestRemoveCartItem_Handler_Success(t *testing.T) {
 
 	// Confirm cart item is deleted
 	var count int64
-	db.Model(&models.CartItem{}).Count(&count)
+	db.Model(&models.CartProduct{}).Count(&count)
 	require.EqualValues(t, 0, count)
 
 	// Product stock should have been restored from 10 => 13
@@ -147,9 +147,9 @@ func TestClearCart_Handler_Success(t *testing.T) {
 	db.Create(&models.Product{Pid: "pA", Quantity: 5})
 	db.Create(&models.Product{Pid: "pB", Quantity: 8})
 
-	db.Create(&models.CartItem{UserUID: "test-user-uid", ProductPID: "pA", Quantity: 2})
-	db.Create(&models.CartItem{UserUID: "test-user-uid", ProductPID: "pB", Quantity: 3})
-	db.Create(&models.CartItem{UserUID: "other-user", ProductPID: "pA", Quantity: 1})
+	db.Create(&models.CartProduct{UserUID: "test-user-uid", ProductPID: "pA", Quantity: 2})
+	db.Create(&models.CartProduct{UserUID: "test-user-uid", ProductPID: "pB", Quantity: 3})
+	db.Create(&models.CartProduct{UserUID: "other-user", ProductPID: "pA", Quantity: 1})
 
 	c, w := test_utils.CreateTestContext("DELETE", "/api/cart", nil)
 	test_utils.SetUserContext(c, "test-user-uid")
@@ -162,7 +162,7 @@ func TestClearCart_Handler_Success(t *testing.T) {
 	require.Equal(t, "Cart cleared", resp["message"])
 
 	// confirm only "other-user" item remains
-	var items []models.CartItem
+	var items []models.CartProduct
 	db.Find(&items)
 	require.Len(t, items, 1)
 	require.Equal(t, "other-user", items[0].UserUID)

@@ -16,7 +16,7 @@ func TestAccountDetailsService(t *testing.T) {
 	db := test_utils.SetupTestDB(t)
 
 	t.Run("User Not Found", func(t *testing.T) {
-		details, err := services.AccountDetailsService("nonexistent@ufl.edu")
+		details, err := services.GetAccountDetailsService("nonexistent@ufl.edu")
 		require.Nil(t, details)
 		require.EqualError(t, err, services.ErrFailedFetching.Error())
 	})
@@ -32,7 +32,7 @@ func TestAccountDetailsService(t *testing.T) {
 		}
 		db.Create(user)
 
-		details, err := services.AccountDetailsService("details-test@ufl.edu")
+		details, err := services.GetAccountDetailsService("details-test@ufl.edu")
 		require.NoError(t, err)
 		require.NotNil(t, details)
 		require.Equal(t, "details-test@ufl.edu", details.Email)

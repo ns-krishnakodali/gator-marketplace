@@ -35,7 +35,7 @@ func TestGetAccountDetails(t *testing.T) {
 	db.Create(user)
 
 	// Create test token
-	token, _ := auth.GenerateToken(user.Email)
+	token, _ := auth.GenerateToken(user.Uid)
 
 	t.Run("User Not Found", func(t *testing.T) {
 		c, w := test_utils.CreateTestContext("GET", "/api/account", nil)
@@ -84,7 +84,7 @@ func TestUpdateAccountDetailsHandler(t *testing.T) {
 	db.Create(user)
 
 	// Create test token
-	token, _ := auth.GenerateToken(user.Email)
+	token, _ := auth.GenerateToken(user.Uid)
 
 	t.Run("Invalid Input Format", func(t *testing.T) {
 		c, w := test_utils.CreateTestContext("PUT", "/api/update-account", []byte(`{"name":""}`))

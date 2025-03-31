@@ -8,6 +8,8 @@ import (
 
 var DpPrefix = "GatorUser"
 
+var HandlingFees = 5.00
+
 var ErrUserNotFound = errors.New("user not found")
 var ErrInvalidCredentials = errors.New("invalid credentials")
 var ErrTokenGeneration = errors.New("token generation error")
@@ -24,6 +26,7 @@ var ErrSamePassword = errors.New("passwords are same")
 var ErrProductNotFound = errors.New("product not found")
 var ErrInsufficientProductQuantity = errors.New("insufficient product quantity")
 var ErrCartItemNotFound = errors.New("cart item not found")
+var ErrProductAlreadyAdded = errors.New("product already added")
 
 func validateUFLEmail(email string) bool {
 	re := regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@ufl.edu$`)

@@ -1,58 +1,55 @@
-.cart-card {
-    display: flex;
-    align-items: flex-start;
-    padding: 16px;
-    border-bottom: 1px solid #ccc;
-    font-family: Arial, sans-serif;
-    gap: 20px;
-  }
-  
-  .item-image img {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .item-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .item-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    width: 100%;
-  }
-  
-  .item-name-and-remove h3 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: bold;
-  }
-  
-  .item-name-and-remove a {
-    font-size: 13px;
-    text-decoration: underline;
-    color: black;
-    cursor: pointer;
-  }
-  
-  .qty-price {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 14px;
-  }
-  
-  input[type='number'] {
-    width: 45px;
-    padding: 4px;
-    text-align: center;
-  }
-  
-  .price-green {
-    color: green;
-    font-weight: bold;
-  }
-  
+.cart-card-container {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--color-border-1);
+  height: 6rem;
+  max-height: 20vh;
+  padding: var(--spacing-2);
+  width: fit-content;
+}
+
+.cart-image {
+  width: 6rem;
+  height: 6rem;
+  margin-right: var(--spacing-3);
+  cursor: pointer;
+}
+
+.cart-product-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 12.5rem;
+  height: 70%;
+  margin-right: var(--spacing-x-large);
+}
+
+.product-name {
+  margin: 0;
+}
+
+.quantity-selector {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid var(--color-border-1);
+  border-radius: 1rem;
+  padding: 0 var(--spacing-half) 0;
+  margin-right: var(--spacing-6);
+  user-select: none;
+  width: 5rem;
+}
+
+.quantity-button {
+  background: none;
+  border: none;
+  padding: none;
+  cursor: pointer;
+  font-size: large;
+}
+
+.currency {
+  margin-left: var(--spacing-quarter);
+  color: var(--color-currency);
+  font-weight: bolder;
+}

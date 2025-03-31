@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core'
 import { CommonModule } from '@angular/common'
 
-import { type ButtonType, type ButtonVariant } from './button.model'
+import type { ButtonType, ButtonVariant } from './button.model'
 
 @Component({
   selector: 'app-button',

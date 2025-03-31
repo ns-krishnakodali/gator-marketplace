@@ -11,17 +11,17 @@
   }
   <div class="navbar-links">
     @if (showAccount) {
-      <div class="navbar-link">
+      <a class="navbar-link" [routerLink]="'/my-account'">
         <img src="assets/svg-icons/account-icon.svg" alt="Account Icon" class="navbar-icon" />
-        <a [routerLink]="'/my-account'">My Account</a>
-      </div>
+        <app-text id="my-account">My Account</app-text>
+      </a>
     }
     @if (showCart) {
-      <div class="navbar-link">
+      <a class="navbar-link" [routerLink]="'/cart'">
         <img src="assets/svg-icons/cart-icon.svg" alt="Account Icon" class="navbar-icon" />
-        <a class="router-link" [routerLink]="'/my-cart'">Cart</a>
+        <app-text id="cart" class="router-link">Cart</app-text>
         <app-text id="cart-items" size="x-small">{{ itemsInCartValue }}</app-text>
-      </div>
+      </a>
     }
   </div>
 </nav>

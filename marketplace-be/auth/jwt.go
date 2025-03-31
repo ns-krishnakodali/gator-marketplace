@@ -13,15 +13,15 @@ import (
 
 var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
 
-func GenerateToken(userEmail string) (string, error) {
+func GenerateToken(UserUid string) (string, error) {
 	minutes, err := strconv.Atoi(os.Getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
 	if err != nil {
 		minutes = 60 // Default to 60 minutes if not set
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_email": userEmail,
-		"exp":        time.Now().Add(time.Minute * time.Duration(minutes)).Unix(),
+		"user_uid": UserUid,
+		"exp":      time.Now().Add(time.Minute * time.Duration(minutes)).Unix(),
 	})
 	return token.SignedString(jwtSecret)
 }
@@ -43,12 +43,12 @@ func ExtractUserID(tokenString string) (string, error) {
 		return "", jwt.ErrInvalidKey
 	}
 
-	userEmail, ok := claims["user_email"].(string)
+	userUid, ok := claims["user_uid"].(string)
 	if !ok {
 		return "", jwt.ErrInvalidKey
 	}
 
-	return userEmail, nil
+	return userUid, nil
 }
 
 func AuthMiddleware() gin.HandlerFunc {

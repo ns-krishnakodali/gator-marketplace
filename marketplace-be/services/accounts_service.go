@@ -10,24 +10,34 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func AccountDetailsService(userEmail string) (*models.AccountDetails, error) {
+func GetAccountDetailsService(userUid string) (*models.AccountDetails, error) {
 	var details models.AccountDetails
 
 	result := database.DB.
 		Table("users").
 		Select("image_url, name, display_name, email, mobile").
-		Where("email = ?", userEmail).
+		Where("uid = ?", userUid).
 		First(&details)
 
 	if result.Error != nil {
-		log.Printf("Error fetching user details for userID %s: %v", userEmail, result.Error)
+		log.Printf("Error fetching user details for userID %s: %v", userUid, result.Error)
 		return nil, ErrFailedFetching
 	}
 
 	return &details, nil
 }
 
-func UpdateAccountDetailsService(input *models.AccountDetailsInput, email string) error {
+func UpdateAccountDetailsService(input *models.AccountDetailsInput, userUid string) error {
+	var email string
+	if err := database.DB.
+		Model(&models.User{}).
+		Select("email").
+		Where("uid = ?", userUid).
+		Take(&email).Error; err != nil {
+		log.Printf("Error fetching email for uid %s: %v", userUid, err)
+		return err
+	}
+
 	if err := validateAccountDetailsInput(input, email); err != nil {
 		return err
 	}
@@ -40,7 +50,7 @@ func UpdateAccountDetailsService(input *models.AccountDetailsInput, email string
 	}
 
 	err := database.DB.Model(&models.User{}).
-		Where("email = ?", email).
+		Where("uid = ?", userUid).
 		Updates(newUser).Error
 
 	if err != nil {
@@ -51,15 +61,15 @@ func UpdateAccountDetailsService(input *models.AccountDetailsInput, email string
 	return nil
 }
 
-func UpdatePasswordService(input *models.PasswordInput, userEmail string) error {
+func UpdatePasswordService(input *models.PasswordInput, userUid string) error {
 	var hashedPassword string
 
 	if err := database.DB.
 		Model(&models.User{}).
 		Select("password_hash").
-		Where("email = ?", userEmail).
+		Where("uid = ?", userUid).
 		Take(&hashedPassword).Error; err != nil {
-		log.Printf("Error finding user with email %s: %v", userEmail, err)
+		log.Printf("Error finding user with uid %s: %v", userUid, err)
 		return err
 	}
 
@@ -80,7 +90,7 @@ func UpdatePasswordService(input *models.PasswordInput, userEmail string) error 
 	// Update password in a single query
 	if err := database.DB.
 		Model(&models.User{}).
-		Where("email = ?", userEmail).
+		Where("uid = ?", userUid).
 		Update("password_hash", string(newHashedPassword)).Error; err != nil {
 		log.Printf("Error updating password: %v", err)
 		return err

@@ -75,7 +75,6 @@ export class ProfileService {
     this.apiService.get('api/account-details').subscribe({
       next: (response: unknown) => {
         const userData: AccountDetails = this.processAccountDetails(response)
-        console.log(userData)
         this.userDetailsSubject.next(userData)
       },
       error: (error) => {
