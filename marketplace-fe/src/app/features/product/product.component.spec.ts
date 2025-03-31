@@ -1,21 +1,21 @@
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
+import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { ActivatedRoute } from '@angular/router'
 
-import { of } from 'rxjs';
+import { of } from 'rxjs'
 
-import { ProductComponent } from './product.component';
-import { ProductService } from './services';
+import { ProductComponent } from './product.component'
+import { ProductService } from './services'
 
 describe('ProductComponent', () => {
-  let component: ProductComponent;
-  let fixture: ComponentFixture<ProductComponent>;
-  let productServiceSpy: jasmine.SpyObj<ProductService>;
-  
-  const mockProductId = '84db83a5-7137-4541-9bbf-844c3d162645';
-  
+  let component: ProductComponent
+  let fixture: ComponentFixture<ProductComponent>
+  let productServiceSpy: jasmine.SpyObj<ProductService>
+
+  const mockProductId = '84db83a5-7137-4541-9bbf-844c3d162645'
+
   const mockProductDetails = {
     pid: mockProductId,
     name: 'Sports-product 27',
@@ -34,45 +34,44 @@ describe('ProductComponent', () => {
         isMain: true,
       },
     ],
-  };
+  }
 
   beforeEach(async () => {
     // Create spies
     productServiceSpy = jasmine.createSpyObj('ProductService', ['getProductDetails'], {
       isLoading$: of(false),
-      productDetails$: of({ productDetails: mockProductDetails })
-    });
+      productDetails$: of({ productDetails: mockProductDetails }),
+    })
 
     const activatedRouteSpy = {
       snapshot: {
         paramMap: {
-          get: () => mockProductId
-        }
-      }
-    };
+          get: () => mockProductId,
+        },
+      },
+    }
 
     await TestBed.configureTestingModule({
-      schemas: [CUSTOM_ELEMENTS_SCHEMA], 
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: ProductService, useValue: productServiceSpy },
         { provide: ActivatedRoute, useValue: activatedRouteSpy },
         { provide: 'AppCartService', useValue: {} }, // Empty mock
         provideHttpClient(),
-        provideHttpClientTesting()
-      ]
-    })
-    .compileComponents();
+        provideHttpClientTesting(),
+      ],
+    }).compileComponents()
 
-    fixture = TestBed.createComponent(ProductComponent);
-    component = fixture.componentInstance;
-  });
+    fixture = TestBed.createComponent(ProductComponent)
+    component = fixture.componentInstance
+  })
 
   it('should create the component', () => {
-    expect(component).toBeTruthy();
-  });
+    expect(component).toBeTruthy()
+  })
 
   it('should call getProductDetails with correct ID on init', () => {
-    fixture.detectChanges();
-    expect(productServiceSpy.getProductDetails).toHaveBeenCalledWith(mockProductId);
-  });
-});
+    fixture.detectChanges()
+    expect(productServiceSpy.getProductDetails).toHaveBeenCalledWith(mockProductId)
+  })
+})
