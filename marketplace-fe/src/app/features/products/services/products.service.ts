@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core'
+import { Router } from '@angular/router'
 import { BehaviorSubject } from 'rxjs'
 
 import { APIService } from '../../../core'
 import { NotificationsService } from '../../../shared-ui'
 import { ProductData } from '../models'
 import { stringifyArray } from '../../../utils'
-import { Router } from '@angular/router'
 
 @Injectable({
   providedIn: 'root',

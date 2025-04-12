@@ -147,13 +147,35 @@ func GetProductsService(categoriesParam, sortParam string, page, pageSize int) (
 }
 
 // GetProductByPIDService retrieves a product by PID.
-func GetProductByPIDService(productPID string) (models.Product, error) {
+func GetProductByPIDService(productPID string) (dtos.ProductResponse, error) {
 	var product models.Product
-	err := database.DB.Preload("Images").Omit("id").Where("pid = ?", productPID).First(&product).Error
+	err := database.DB.Preload("PostedBy").Preload("Images").Omit("id").Where("pid = ?", productPID).First(&product).Error
 	if err != nil {
-		return product, fmt.Errorf("product not found")
+		return dtos.ProductResponse{}, fmt.Errorf("product not found")
 	}
-	return product, nil
+
+	imageDTOs := make([]dtos.ProductImageDTO, len(product.Images))
+	for iIndex, image := range product.Images {
+		imageDTOs[iIndex] = dtos.ProductImageDTO{
+			Url:      image.Url,
+			MimeType: image.MimeType,
+			IsMain:   image.IsMain,
+		}
+	}
+
+	return dtos.ProductResponse{
+		Pid:             productPID,
+		UserUID:         product.UserUID,
+		Name:            product.Name,
+		Price:           product.Price,
+		Description:     product.Description,
+		Category:        product.Category,
+		Quantity:        product.Quantity,
+		PopularityScore: product.PopularityScore,
+		PostedAt:        product.CreatedAt,
+		PostedBy:        product.PostedBy.DisplayName,
+		Images:          imageDTOs,
+	}, nil
 }
 
 // UpdateProductService updates a product (and optionally images) in the DB.

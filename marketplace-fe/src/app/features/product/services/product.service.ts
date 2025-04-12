@@ -48,26 +48,25 @@ export class ProductService {
     const productResponse = response as ProductResponseDTO
 
     return {
-      pid: productResponse.Pid || '',
-      name: productResponse.Name || '',
-      description: productResponse.Description || '',
-      price: productResponse.Price || 0,
-      category: productResponse.Category,
-      postedBy: productResponse.PostedBy || '',
-      quantity: productResponse.Quantity || 0,
-      PopularityScore: productResponse.PopularityScore || 0,
-      postedAt: new Date(),
-      updatedAt: new Date(),
-      productImages: this.getProductImages(productResponse.Images),
+      pid: productResponse.pid || '',
+      name: productResponse.name || '',
+      description: productResponse.description || '',
+      price: productResponse.price || 0,
+      category: productResponse.category,
+      postedBy: productResponse.postedBy || '',
+      quantity: productResponse.quantity || 0,
+      popularityScore: productResponse.popularityScore || 0,
+      postedAt: productResponse.postedAt,
+      productImages: this.getProductImages(productResponse.images),
     }
   }
 
   private getProductImages = (productImages: ProductImageDTO[]): ProductImage[] => {
     return (
       productImages?.map((image: ProductImageDTO) => ({
-        isMain: image.IsMain || false,
-        src: image.Url || '',
-        mimeType: image.MimeType || '',
+        isMain: image.isMain || false,
+        src: image.url || '',
+        mimeType: image.mimeType || '',
       })) || []
     )
   }

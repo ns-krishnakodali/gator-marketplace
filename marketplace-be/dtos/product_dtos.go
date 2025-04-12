@@ -29,15 +29,6 @@ type GetProductsResponse struct {
 	TotalPages int32            `json:"totalPages"`
 }
 
-type ProductDetails struct {
-	Pid      string          `json:"pid"`
-	UserUID  string          `json:"userUid"`
-	Name     string          `json:"name"`
-	Price    float64         `json:"price"`
-	PostedAt time.Time       `json:"postedAt"`
-	Image    ProductImageDTO `json:"image"`
-}
-
 type ProductResponse struct {
 	Pid             string            `json:"pid"`
 	UserUID         string            `json:"userUid"`
@@ -52,8 +43,17 @@ type ProductResponse struct {
 	Images          []ProductImageDTO `json:"images"`
 }
 
+type ProductDetails struct {
+	Pid      string          `json:"pid"`
+	UserUID  string          `json:"userUid"`
+	Name     string          `json:"name"`
+	Price    float64         `json:"price"`
+	PostedAt time.Time       `json:"postedAt"`
+	Image    ProductImageDTO `json:"image"`
+}
+
 type ProductImageDTO struct {
-	IsMain   bool   `json:"isMain"`
 	Url      string `json:"url"`
 	MimeType string `json:"mimeType"`
+	IsMain   bool   `json:"isMain"`
 }

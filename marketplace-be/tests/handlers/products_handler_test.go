@@ -278,7 +278,7 @@ func TestGetProductByPID(t *testing.T) {
 
 		require.Equal(t, http.StatusOK, w.Code)
 
-		var p models.Product
+		var p dtos.ProductResponse
 		err := json.Unmarshal(w.Body.Bytes(), &p)
 		require.NoError(t, err)
 		require.Equal(t, "pid-123", p.Pid)

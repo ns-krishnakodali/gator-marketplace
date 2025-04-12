@@ -176,6 +176,75 @@ func TestGetProductByPIDService(t *testing.T) {
 		require.Equal(t, "pid-xyz", product.Pid)
 		require.Len(t, product.Images, 1)
 	})
+
+	t.Run("Product not found returns error", func(t *testing.T) {
+		_, err := services.GetProductByPIDService("non-existent-pid")
+		require.Error(t, err)
+		require.Equal(t, "product not found", err.Error())
+	})
+
+	t.Run("Get product with multiple images", func(t *testing.T) {
+		// Create test product with multiple images
+		db.Create(&models.Product{
+			Pid:         "pid-multi-img",
+			Name:        "Multi Image Product",
+			Category:    models.Electronics,
+			Price:       299.99,
+			Description: "Product with multiple images",
+		})
+
+		// Create multiple images for the product
+		db.Create(&models.ProductImage{Pid: "pid-multi-img", Url: "http://example.com/main.jpg", IsMain: true, MimeType: "image/jpeg"})
+		db.Create(&models.ProductImage{Pid: "pid-multi-img", Url: "http://example.com/side.jpg", IsMain: false, MimeType: "image/jpeg"})
+		db.Create(&models.ProductImage{Pid: "pid-multi-img", Url: "http://example.com/back.jpg", IsMain: false, MimeType: "image/jpeg"})
+
+		product, err := services.GetProductByPIDService("pid-multi-img")
+		require.NoError(t, err)
+		require.Equal(t, "pid-multi-img", product.Pid)
+		require.Equal(t, "Multi Image Product", product.Name)
+		require.Equal(t, models.Electronics, product.Category)
+		require.Equal(t, 299.99, product.Price)
+		require.Len(t, product.Images, 3)
+
+		// Verify one image is marked as main
+		mainImageCount := 0
+		for _, img := range product.Images {
+			if img.IsMain {
+				mainImageCount++
+				require.Equal(t, "image/jpeg", img.MimeType)
+			}
+		}
+		require.Equal(t, 1, mainImageCount)
+	})
+
+	t.Run("Get product with user details", func(t *testing.T) {
+		// Create a user first
+		user := models.User{
+			Uid:         "user-123",
+			DisplayName: "Test User",
+			Email:       "test@example.com",
+		}
+		db.Create(&user)
+
+		// Create a product with the user reference
+		product := models.Product{
+			Pid:         "pid-with-user",
+			Name:        "User Product",
+			Category:    models.Books,
+			Price:       49.99,
+			Description: "Product with user details",
+			UserUID:     "user-123",
+		}
+		db.Create(&product)
+		db.Create(&models.ProductImage{Pid: "pid-with-user", Url: "http://example.com/product.png", IsMain: true})
+
+		// Get the product
+		result, err := services.GetProductByPIDService("pid-with-user")
+		require.NoError(t, err)
+		require.Equal(t, "pid-with-user", result.Pid)
+		require.Equal(t, "user-123", result.UserUID)
+		require.Equal(t, "Test User", result.PostedBy)
+	})
 }
 
 func TestUpdateProductService(t *testing.T) {
