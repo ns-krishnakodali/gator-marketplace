@@ -1,7 +1,8 @@
 package handlers
 
 import (
-	"marketplace-be/models"
+	"marketplace-be/auth"
+	"marketplace-be/dtos"
 	"marketplace-be/services"
 	"net/http"
 	"strconv"
@@ -11,19 +12,21 @@ import (
 
 // CreateProduct handles the HTTP request to create a product.
 func CreateProduct(c *gin.Context) {
-	var input models.ProductInput
+	var input dtos.ProductInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	createdProduct, err := services.CreateProduct(input)
+	userUid, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
+
+	err := services.CreateProduct(input, userUid)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, createdProduct)
+	c.JSON(http.StatusCreated, gin.H{"message": "Product created successfully"})
 }
 
 // GetProducts handles fetching products with optional filtering, sorting, and pagination.
@@ -51,19 +54,13 @@ func GetProducts(c *gin.Context) {
 		}
 	}
 
-	products, totalCount, err := services.GetProductsService(categoriesParam, sortParam, page, pageSize)
+	getProductsResponse, err := services.GetProductsService(categoriesParam, sortParam, page, pageSize)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"data":       products,
-		"page":       page,
-		"pageSize":   pageSize,
-		"totalItems": totalCount,
-		"totalPages": (totalCount + int64(pageSize) - 1) / int64(pageSize), // ceiling
-	})
+	c.JSON(http.StatusOK, getProductsResponse)
 }
 
 // GetProductByPID handles retrieving a single product by PID.
@@ -83,7 +80,7 @@ func GetProductByPID(c *gin.Context) {
 func UpdateProduct(c *gin.Context) {
 	pid := c.Param("pid")
 
-	var input models.ProductInput
+	var input dtos.ProductInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

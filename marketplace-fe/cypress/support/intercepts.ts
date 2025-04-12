@@ -8,9 +8,10 @@ export const setupLoginIntercept = () => {
   }).as('loginRequest')
 }
 
-export const setupProtectedIntercept = () => {
+export const setupProtectedIntercept = (delay = 0) => {
   cy.intercept('GET', '/api/protected', {
     statusCode: 200,
+    delay,
     body: {
       message: 'You have accessed a protected endpoint!',
     },
@@ -32,10 +33,10 @@ export const setupAccountDetailsIntercept = () => {
   }).as('accountDetailsRequest')
 }
 
-export const setupUpdateAccountIntercept = (delay?: number) => {
+export const setupUpdateAccountIntercept = (delay = 0) => {
   cy.intercept('PUT', '/api/update-account', {
     statusCode: 204,
-    delay: delay ?? 0,
+    delay,
   }).as('updateAccountRequest')
 }
 
@@ -49,26 +50,21 @@ export const setupProductDetailsIntercept = () => {
   cy.intercept('GET', '/api/product/*', {
     statusCode: 200,
     body: {
-      ID: 0,
-      Pid: 'cb1aea77-427a-4abe-bf9f-649145369dfa',
-      Name: 'Sports-product 27',
-      Description: 'This is a sample description for product 27',
-      Price: 75.8,
-      Category: 'Sports',
-      PostedBy: 'GatorUser',
-      Quantity: 92,
-      PopularityScore: 9.83,
-      CreatedAt: '2025-03-30T23:48:15.295084-04:00',
-      UpdatedAt: '2025-03-30T23:48:15.295084-04:00',
-      Images: [
+      pid: 'cb1aea77-427a-4abe-bf9f-649145369dfa',
+      userUid: '77ff828f-210e-456b-a1ea-476a3ca9c503',
+      name: 'Sports-product 27',
+      price: 75.8,
+      description: 'This is a sample description for product 27',
+      category: 'Sports',
+      quantity: 92,
+      popularityScore: 9.83,
+      postedAt: '2025-04-12T14:02:00.221882-04:00',
+      postedBy: 'GatorUser',
+      images: [
         {
-          ID: 27,
-          Pid: 'cb1aea77-427a-4abe-bf9f-649145369dfa',
-          MimeType: 'image/jpeg',
-          Url: 'https://cdn.dummyjson.com/products/images/groceries/Apple/1.png',
-          IsMain: true,
-          CreatedAt: '2025-03-30T23:48:15.295602-04:00',
-          UpdatedAt: '2025-03-30T23:48:15.295602-04:00',
+          url: 'https://cdn.dummyjson.com/products/images/groceries/Apple/1.png',
+          mimeType: 'image/jpeg',
+          isMain: true,
         },
       ],
     },

@@ -82,7 +82,7 @@ describe('Product Details Page', () => {
   it('Should show proper date format for posted date', () => {
     cy.get('.product-meta').should('contain', 'Posted On:')
     
-    // Check that the date follows the MMM dd, yyyy format (e.g., "Jan 01, 2023")
+    // Check the date format i.e. MMM dd, yyyy (e.g., "Jan 01, 2023")
     cy.get('.product-meta').contains(/Posted On: \w{3} \d{2}, \d{4}/)
   })
 })

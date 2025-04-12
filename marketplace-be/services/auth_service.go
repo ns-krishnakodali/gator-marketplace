@@ -6,13 +6,14 @@ import (
 
 	"marketplace-be/auth"
 	"marketplace-be/database"
+	"marketplace-be/dtos"
 	"marketplace-be/models"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func LoginService(input *models.LoginInput) (string, error) {
+func LoginService(input *dtos.LoginInput) (string, error) {
 	var user models.User
 
 	if err := database.DB.Where("email = ?", input.Email).First(&user).Error; err != nil {
@@ -32,7 +33,7 @@ func LoginService(input *models.LoginInput) (string, error) {
 	return token, nil
 }
 
-func SignupService(input *models.SignupInput) error {
+func SignupService(input *dtos.SignupInput) error {
 	var user models.User
 
 	if err := validateUserDetails(input); err != nil {
@@ -69,7 +70,7 @@ func SignupService(input *models.SignupInput) error {
 	return nil
 }
 
-func validateUserDetails(input *models.SignupInput) error {
+func validateUserDetails(input *dtos.SignupInput) error {
 	switch {
 	case !validateUFLEmail(input.Email):
 		return ErrInvalidEmailFormat

@@ -3,6 +3,7 @@ package handlers_test
 import (
 	"encoding/json"
 	"marketplace-be/auth"
+	"marketplace-be/dtos"
 	"marketplace-be/handlers"
 	"marketplace-be/models"
 	"marketplace-be/test_utils"
@@ -35,12 +36,12 @@ func TestCreateProduct(t *testing.T) {
 	token, _ := auth.GenerateToken(user.Uid)
 
 	t.Run("Create product successfully", func(t *testing.T) {
-		input := models.ProductInput{
+		input := dtos.ProductInput{
 			Name:     "Test Product",
 			Category: models.Books,
 			Price:    10.99,
 			Quantity: 5,
-			Images: []models.ProductImageInput{
+			Images: []dtos.ProductImageInput{
 				{MimeType: "image/png", URL: "http://example.com/img1.png", IsMain: true},
 				{MimeType: "image/png", URL: "http://example.com/img2.png", IsMain: false},
 			},
@@ -54,14 +55,6 @@ func TestCreateProduct(t *testing.T) {
 		handlers.CreateProduct(c)
 
 		require.Equal(t, http.StatusCreated, w.Code)
-
-		var created models.Product
-		err := json.Unmarshal(w.Body.Bytes(), &created)
-		require.NoError(t, err)
-		require.Equal(t, "Test Product", created.Name)
-		require.Equal(t, models.Books, created.Category)
-		require.Len(t, created.Images, 2)
-		require.Equal(t, "http://example.com/img1.png", created.Images[0].Url)
 	})
 
 	t.Run("Invalid Input Format", func(t *testing.T) {
@@ -74,7 +67,7 @@ func TestCreateProduct(t *testing.T) {
 	})
 
 	t.Run("Invalid Category", func(t *testing.T) {
-		input := models.ProductInput{
+		input := dtos.ProductInput{
 			Name:     "Invalid Cat Product",
 			Category: "NonExistentCategory", // Invalid
 			Price:    15.0,
@@ -112,9 +105,9 @@ func TestGetProducts(t *testing.T) {
 	token, _ := auth.GenerateToken(user.Uid)
 
 	// Insert test products
-	db.Create(&models.Product{Pid: "pid-1", Name: "P1", Category: models.Electronics, Price: 100, PopularityScore: 10})
-	db.Create(&models.Product{Pid: "pid-2", Name: "P2", Category: models.Books, Price: 50, PopularityScore: 20})
-	db.Create(&models.Product{Pid: "pid-3", Name: "Book B", Category: models.Books, Price: 30, PopularityScore: 5})
+	db.Create(&models.Product{Pid: "pid-1", UserUID: user.Uid, Name: "P1", Category: models.Electronics, Price: 100, PopularityScore: 10})
+	db.Create(&models.Product{Pid: "pid-2", UserUID: user.Uid, Name: "P2", Category: models.Books, Price: 50, PopularityScore: 20})
+	db.Create(&models.Product{Pid: "pid-3", UserUID: user.Uid, Name: "Book B", Category: models.Books, Price: 30, PopularityScore: 5})
 
 	t.Run("Default Params", func(t *testing.T) {
 		c, w := test_utils.CreateTestContext("GET", "/api/products", nil)
@@ -124,15 +117,21 @@ func TestGetProducts(t *testing.T) {
 
 		require.Equal(t, http.StatusOK, w.Code)
 
-		var resp map[string]interface{}
+		var resp dtos.GetProductsResponse
 		err := json.Unmarshal(w.Body.Bytes(), &resp)
 		require.NoError(t, err)
 
-		data := resp["data"].([]interface{})
-		require.Len(t, data, 3) // All 3 products
-		require.EqualValues(t, 1, resp["page"])
-		require.EqualValues(t, 10, resp["pageSize"])
-		require.EqualValues(t, 3, resp["totalItems"])
+		require.Len(t, resp.Products, 3) // All 3 products
+		require.EqualValues(t, 1, resp.Page)
+		require.EqualValues(t, 10, resp.PageSize)
+		require.EqualValues(t, 3, resp.TotalItems)
+
+		// Verify product details structure
+		product := resp.Products[0]
+		require.NotEmpty(t, product.Pid)
+		require.NotEmpty(t, product.Name)
+		require.NotEmpty(t, product.Price)
+		// Image might be empty since we didn't create test images
 	})
 
 	t.Run("With Pagination", func(t *testing.T) {
@@ -143,16 +142,15 @@ func TestGetProducts(t *testing.T) {
 
 		require.Equal(t, http.StatusOK, w.Code)
 
-		var resp map[string]interface{}
+		var resp dtos.GetProductsResponse
 		err := json.Unmarshal(w.Body.Bytes(), &resp)
 		require.NoError(t, err)
 
-		data := resp["data"].([]interface{})
-		require.Len(t, data, 2) // Only 2 per page
-		require.EqualValues(t, 1, resp["page"])
-		require.EqualValues(t, 2, resp["pageSize"])
-		require.EqualValues(t, 3, resp["totalItems"])
-		require.EqualValues(t, 2, resp["totalPages"]) // 3 items with pageSize=2 = 2 pages
+		require.Len(t, resp.Products, 2) // Only 2 per page
+		require.EqualValues(t, 1, resp.Page)
+		require.EqualValues(t, 2, resp.PageSize)
+		require.EqualValues(t, 3, resp.TotalItems)
+		require.EqualValues(t, 2, resp.TotalPages) // 3 items with pageSize=2 = 2 pages
 	})
 
 	t.Run("Filter By Category", func(t *testing.T) {
@@ -163,12 +161,16 @@ func TestGetProducts(t *testing.T) {
 
 		require.Equal(t, http.StatusOK, w.Code)
 
-		var resp map[string]interface{}
+		var resp dtos.GetProductsResponse
 		err := json.Unmarshal(w.Body.Bytes(), &resp)
 		require.NoError(t, err)
 
-		data := resp["data"].([]interface{})
-		require.Len(t, data, 2) // Only the 2 books
+		require.Len(t, resp.Products, 2) // Only the 2 books
+
+		// Verify all returned products are in the Books category
+		for _, product := range resp.Products {
+			require.Contains(t, []string{"P2", "Book B"}, product.Name)
+		}
 	})
 
 	t.Run("Sort By Price", func(t *testing.T) {
@@ -179,19 +181,21 @@ func TestGetProducts(t *testing.T) {
 
 		require.Equal(t, http.StatusOK, w.Code)
 
-		var resp map[string]interface{}
+		var resp dtos.GetProductsResponse
 		err := json.Unmarshal(w.Body.Bytes(), &resp)
 		require.NoError(t, err)
 
-		data := resp["data"].([]interface{})
-		first := data[0].(map[string]interface{})
-		second := data[1].(map[string]interface{})
-		third := data[2].(map[string]interface{})
+		require.Len(t, resp.Products, 3)
 
 		// Should be sorted by price descending: P1(100) > P2(50) > Book B(30)
-		require.Equal(t, "P1", first["Name"])
-		require.Equal(t, "P2", second["Name"])
-		require.Equal(t, "Book B", third["Name"])
+		require.Equal(t, "P1", resp.Products[0].Name)
+		require.Equal(t, "P2", resp.Products[1].Name)
+		require.Equal(t, "Book B", resp.Products[2].Name)
+
+		// Double check actual price values
+		require.EqualValues(t, 100, resp.Products[0].Price)
+		require.EqualValues(t, 50, resp.Products[1].Price)
+		require.EqualValues(t, 30, resp.Products[2].Price)
 	})
 
 	t.Run("Filter And Sort Combined", func(t *testing.T) {
@@ -202,19 +206,35 @@ func TestGetProducts(t *testing.T) {
 
 		require.Equal(t, http.StatusOK, w.Code)
 
+		var resp dtos.GetProductsResponse
+		err := json.Unmarshal(w.Body.Bytes(), &resp)
+		require.NoError(t, err)
+
+		require.Len(t, resp.Products, 2) // Only the 2 books
+
+		// Books sorted by price: P2(50) > Book B(30)
+		require.Equal(t, "P2", resp.Products[0].Name)
+		require.Equal(t, "Book B", resp.Products[1].Name)
+
+		// Verify prices
+		require.EqualValues(t, 50, resp.Products[0].Price)
+		require.EqualValues(t, 30, resp.Products[1].Price)
+	})
+
+	t.Run("Invalid Category", func(t *testing.T) {
+		c, w := test_utils.CreateTestContext("GET", "/api/products?categories=InvalidCategory", nil)
+		c.Request.Header.Set("Authorization", token)
+
+		handlers.GetProducts(c)
+
+		require.Equal(t, http.StatusBadRequest, w.Code)
+
 		var resp map[string]interface{}
 		err := json.Unmarshal(w.Body.Bytes(), &resp)
 		require.NoError(t, err)
 
-		data := resp["data"].([]interface{})
-		require.Len(t, data, 2) // Only the 2 books
-
-		first := data[0].(map[string]interface{})
-		second := data[1].(map[string]interface{})
-
-		// Books sorted by price: P2(50) > Book B(30)
-		require.Equal(t, "P2", first["Name"])
-		require.Equal(t, "Book B", second["Name"])
+		// Verify error message contains information about invalid category
+		require.Contains(t, resp["error"].(string), "invalid categories")
 	})
 }
 
@@ -258,7 +278,7 @@ func TestGetProductByPID(t *testing.T) {
 
 		require.Equal(t, http.StatusOK, w.Code)
 
-		var p models.Product
+		var p dtos.ProductResponse
 		err := json.Unmarshal(w.Body.Bytes(), &p)
 		require.NoError(t, err)
 		require.Equal(t, "pid-123", p.Pid)
@@ -307,12 +327,12 @@ func TestUpdateProduct(t *testing.T) {
 	})
 
 	t.Run("Update Product details Success", func(t *testing.T) {
-		updateInput := models.ProductInput{
+		updateInput := dtos.ProductInput{
 			Name:     "New Product Name",
 			Category: models.Books,
 			Price:    30,
 			Quantity: 10,
-			Images: []models.ProductImageInput{
+			Images: []dtos.ProductImageInput{
 				{MimeType: "image/jpeg", URL: "http://example.com/new1.jpg", IsMain: true},
 				{MimeType: "image/jpeg", URL: "http://example.com/new2.jpg", IsMain: false},
 			},
@@ -337,7 +357,7 @@ func TestUpdateProduct(t *testing.T) {
 	})
 
 	t.Run("Product Not Found", func(t *testing.T) {
-		updateInput := models.ProductInput{
+		updateInput := dtos.ProductInput{
 			Name:     "Updated Name",
 			Category: models.Books,
 			Price:    25,

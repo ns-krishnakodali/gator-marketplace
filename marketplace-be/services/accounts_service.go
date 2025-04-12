@@ -5,13 +5,14 @@ import (
 	"strings"
 
 	"marketplace-be/database"
+	"marketplace-be/dtos"
 	"marketplace-be/models"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-func GetAccountDetailsService(userUid string) (*models.AccountDetailsResponse, error) {
-	var details models.AccountDetailsResponse
+func GetAccountDetailsService(userUid string) (*dtos.AccountDetailsResponse, error) {
+	var details dtos.AccountDetailsResponse
 
 	result := database.DB.
 		Table("users").
@@ -27,7 +28,7 @@ func GetAccountDetailsService(userUid string) (*models.AccountDetailsResponse, e
 	return &details, nil
 }
 
-func UpdateAccountDetailsService(input *models.AccountDetailsInput, userUid string) error {
+func UpdateAccountDetailsService(input *dtos.AccountDetailsInput, userUid string) error {
 	var email string
 	if err := database.DB.
 		Model(&models.User{}).
@@ -61,7 +62,7 @@ func UpdateAccountDetailsService(input *models.AccountDetailsInput, userUid stri
 	return nil
 }
 
-func UpdatePasswordService(input *models.PasswordInput, userUid string) error {
+func UpdatePasswordService(input *dtos.PasswordInput, userUid string) error {
 	var hashedPassword string
 
 	if err := database.DB.
@@ -99,7 +100,7 @@ func UpdatePasswordService(input *models.PasswordInput, userUid string) error {
 	return nil
 }
 
-func validateAccountDetailsInput(input *models.AccountDetailsInput, email string) error {
+func validateAccountDetailsInput(input *dtos.AccountDetailsInput, email string) error {
 	switch {
 	case !validateUFLEmail(input.Email):
 		return ErrInvalidEmailFormat

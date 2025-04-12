@@ -25,12 +25,11 @@ describe('ProductComponent', () => {
     postedBy: 'GatorUser',
     postedAt: new Date('2025-03-30T23:48:15.295084-04:00'),
     quantity: 92,
-    PopularityScore: 9.83,
-    updatedAt: new Date('2025-03-30T23:48:15.295084-04:00'),
+    popularityScore: 9.83,
     productImages: [
       {
         id: 27,
-        src: 'https://cdn.dummyjson.com/products/images/groceries/Apple/1.png',
+        url: 'https://cdn.dummyjson.com/products/images/groceries/Apple/1.png',
         isMain: true,
       },
     ],

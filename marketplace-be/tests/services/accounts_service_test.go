@@ -1,6 +1,7 @@
 package services_test
 
 import (
+	"marketplace-be/dtos"
 	"marketplace-be/models"
 	"marketplace-be/services"
 	"marketplace-be/test_utils"
@@ -22,7 +23,6 @@ func TestAccountDetailsService(t *testing.T) {
 	})
 
 	t.Run("Successful Fetch", func(t *testing.T) {
-		// Create test user
 		user := &models.User{
 			Uid:             "user-uid",
 			Email:           "details-test@ufl.edu",
@@ -59,7 +59,7 @@ func TestUpdateAccountDetailsService(t *testing.T) {
 	db.Create(user)
 
 	t.Run("Email Not Matching", func(t *testing.T) {
-		input := &models.AccountDetailsInput{
+		input := &dtos.AccountDetailsInput{
 			Email:       "different@ufl.edu",
 			Name:        "Updated User",
 			DisplayName: "Updated Test",
@@ -70,7 +70,7 @@ func TestUpdateAccountDetailsService(t *testing.T) {
 	})
 
 	t.Run("Invalid Email Format (Not UFL domain)", func(t *testing.T) {
-		input := &models.AccountDetailsInput{
+		input := &dtos.AccountDetailsInput{
 			Email:       "update-test@gmail.com",
 			Name:        "Updated User",
 			DisplayName: "Updated",
@@ -81,7 +81,7 @@ func TestUpdateAccountDetailsService(t *testing.T) {
 	})
 
 	t.Run("Empty Name", func(t *testing.T) {
-		input := &models.AccountDetailsInput{
+		input := &dtos.AccountDetailsInput{
 			Email:       "update-test@ufl.edu",
 			Name:        "",
 			DisplayName: "Updated",
@@ -92,7 +92,7 @@ func TestUpdateAccountDetailsService(t *testing.T) {
 	})
 
 	t.Run("Empty Mobile Number", func(t *testing.T) {
-		input := &models.AccountDetailsInput{
+		input := &dtos.AccountDetailsInput{
 			Email:       "update-test@ufl.edu",
 			Name:        "Updated User",
 			DisplayName: "Updated",
@@ -103,7 +103,7 @@ func TestUpdateAccountDetailsService(t *testing.T) {
 	})
 
 	t.Run("Invalid Mobile Number Format", func(t *testing.T) {
-		input := &models.AccountDetailsInput{
+		input := &dtos.AccountDetailsInput{
 			Email:       "update-test@ufl.edu",
 			Name:        "Updated User",
 			DisplayName: "Updated",
@@ -114,7 +114,7 @@ func TestUpdateAccountDetailsService(t *testing.T) {
 	})
 
 	t.Run("Successful Update", func(t *testing.T) {
-		input := &models.AccountDetailsInput{
+		input := &dtos.AccountDetailsInput{
 			Email:       "update-test@ufl.edu",
 			Name:        "Updated User",
 			DisplayName: "Updated Test",
@@ -148,7 +148,7 @@ func TestUpdatePasswordService(t *testing.T) {
 	db.Create(user)
 
 	t.Run("User Not Found", func(t *testing.T) {
-		input := &models.PasswordInput{
+		input := &dtos.PasswordInput{
 			CurrentPassword: "currentPassword",
 			NewPassword:     "newPassword",
 		}
@@ -157,7 +157,7 @@ func TestUpdatePasswordService(t *testing.T) {
 	})
 
 	t.Run("Invalid Current Password", func(t *testing.T) {
-		input := &models.PasswordInput{
+		input := &dtos.PasswordInput{
 			CurrentPassword: "wrongPassword",
 			NewPassword:     "newPassword",
 		}
@@ -166,7 +166,7 @@ func TestUpdatePasswordService(t *testing.T) {
 	})
 
 	t.Run("Same Password", func(t *testing.T) {
-		input := &models.PasswordInput{
+		input := &dtos.PasswordInput{
 			CurrentPassword: "currentPassword",
 			NewPassword:     "currentPassword",
 		}
@@ -175,7 +175,7 @@ func TestUpdatePasswordService(t *testing.T) {
 	})
 
 	t.Run("Successful Password Update", func(t *testing.T) {
-		input := &models.PasswordInput{
+		input := &dtos.PasswordInput{
 			CurrentPassword: "currentPassword",
 			NewPassword:     "newPassword",
 		}

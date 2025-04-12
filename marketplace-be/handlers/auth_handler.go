@@ -5,14 +5,14 @@ import (
 	"log"
 	"net/http"
 
-	"marketplace-be/models"
+	"marketplace-be/dtos"
 	"marketplace-be/services"
 
 	"github.com/gin-gonic/gin"
 )
 
 func Login(c *gin.Context) {
-	var input models.LoginInput
+	var input dtos.LoginInput
 
 	// Bind JSON input to struct
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -40,7 +40,7 @@ func Login(c *gin.Context) {
 }
 
 func Signup(c *gin.Context) {
-	var input models.SignupInput
+	var input dtos.SignupInput
 
 	// Bind JSON input to struct
 	if err := c.ShouldBindJSON(&input); err != nil {

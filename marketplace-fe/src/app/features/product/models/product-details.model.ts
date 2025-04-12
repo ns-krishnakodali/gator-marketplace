@@ -10,8 +10,7 @@ export interface ProductDetails {
   category: Categories
   postedBy: string
   quantity: number
-  PopularityScore: number
+  popularityScore: number
   postedAt: Date
-  updatedAt: Date
   productImages: ProductImage[]
 }

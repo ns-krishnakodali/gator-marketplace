@@ -3,6 +3,7 @@ package handlers_test
 import (
 	"encoding/json"
 	"marketplace-be/auth"
+	"marketplace-be/dtos"
 	"marketplace-be/handlers"
 	"marketplace-be/models"
 	"marketplace-be/test_utils"
@@ -38,11 +39,12 @@ func TestAddToCart(t *testing.T) {
 	product := &models.Product{
 		ID:          1,
 		Pid:         "product-pid",
+		UserUID:     user.Uid,
 		Name:        "Test Product",
 		Description: "Test Description",
 		Price:       99.99,
 		Category:    models.Electronics,
-		PostedBy:    "seller-uid",
+		PostedBy:    *user,
 		Quantity:    10,
 	}
 	db.Create(product)
@@ -125,11 +127,12 @@ func TestGetCartItems(t *testing.T) {
 	db.Create(&models.Product{
 		ID:          1,
 		Pid:         "product-pid",
+		UserUID:     user.Uid,
 		Name:        "Test Product",
 		Description: "Test Description",
 		Price:       99.99,
 		Category:    models.Electronics,
-		PostedBy:    "seller-uid",
+		PostedBy:    *user,
 		Quantity:    10,
 		Images: []models.ProductImage{
 			{
@@ -157,7 +160,7 @@ func TestGetCartItems(t *testing.T) {
 		handlers.GetCartItems(c)
 		require.Equal(t, http.StatusOK, w.Code)
 
-		var response models.CartResponse
+		var response dtos.CartResponse
 		err := json.Unmarshal(w.Body.Bytes(), &response)
 		require.NoError(t, err)
 
@@ -191,11 +194,12 @@ func TestUpdateCartItem(t *testing.T) {
 	db.Create(&models.Product{
 		ID:          1,
 		Pid:         "product-pid",
+		UserUID:     user.Uid,
 		Name:        "Test Product",
 		Description: "Test Description",
 		Price:       99.99,
 		Category:    models.Electronics,
-		PostedBy:    "seller-uid",
+		PostedBy:    *user,
 		Quantity:    10,
 	})
 
@@ -276,11 +280,12 @@ func TestRemoveCartItem(t *testing.T) {
 	product := &models.Product{
 		ID:          1,
 		Pid:         "product-pid",
+		UserUID:     user.Uid,
 		Name:        "Test Product",
 		Description: "Test Description",
 		Price:       99.99,
 		Category:    models.Electronics,
-		PostedBy:    "seller-uid",
+		PostedBy:    *user,
 		Quantity:    10,
 	}
 	db.Create(product)
@@ -335,11 +340,12 @@ func TestClearCart(t *testing.T) {
 	product := &models.Product{
 		ID:          1,
 		Pid:         "product-pid",
+		UserUID:     user.Uid,
 		Name:        "Test Product",
 		Description: "Test Description",
 		Price:       99.99,
 		Category:    models.Electronics,
-		PostedBy:    "seller-uid",
+		PostedBy:    *user,
 		Quantity:    10,
 	}
 	db.Create(product)
