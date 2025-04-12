@@ -20,13 +20,13 @@ func CreateProduct(c *gin.Context) {
 
 	userUid, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
 
-	createdProduct, err := services.CreateProduct(input, userUid)
+	err := services.CreateProduct(input, userUid)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, createdProduct)
+	c.JSON(http.StatusCreated, gin.H{"message": "Product created successfully"})
 }
 
 // GetProducts handles fetching products with optional filtering, sorting, and pagination.
@@ -54,19 +54,13 @@ func GetProducts(c *gin.Context) {
 		}
 	}
 
-	products, totalCount, err := services.GetProductsService(categoriesParam, sortParam, page, pageSize)
+	getProductsResponse, err := services.GetProductsService(categoriesParam, sortParam, page, pageSize)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"data":       products,
-		"page":       page,
-		"pageSize":   pageSize,
-		"totalItems": totalCount,
-		"totalPages": (totalCount + int64(pageSize) - 1) / int64(pageSize), // ceiling
-	})
+	c.JSON(http.StatusOK, getProductsResponse)
 }
 
 // GetProductByPID handles retrieving a single product by PID.

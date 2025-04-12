@@ -75,18 +75,19 @@ export class ProductsService {
   }
 
   private processProductsResponse = (response: unknown): ProductData[] => {
-    const data = (response as { data: unknown })?.data
+    const productsData = (response as { products: unknown })?.products
 
-    if (!data || !Array.isArray(data)) {
+    if (!productsData || !Array.isArray(productsData)) {
       return []
     }
 
-    return data.map((product) => ({
-      pid: product.Pid,
-      imageSrc: product.Images?.[0]?.Url,
-      name: product.Name,
-      price: product.Price,
-      postDate: product.CreatedAt,
+    return productsData.map((product) => ({
+      pid: product.pid,
+      userId: product.userUid,
+      name: product.name,
+      price: product.price,
+      postedAt: product.postedAt,
+      imageSrc: product.image?.url,
     }))
   }
 

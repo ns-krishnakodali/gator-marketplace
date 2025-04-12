@@ -37,13 +37,8 @@ func TestCreateProductService(t *testing.T) {
 			},
 		}
 
-		created, err := services.CreateProduct(input, user.Uid)
+		err := services.CreateProduct(input, user.Uid)
 		require.NoError(t, err)
-		require.NotEmpty(t, created.Pid)
-		require.Equal(t, "Service Product", created.Name)
-		require.Equal(t, models.Books, created.Category)
-		require.Len(t, created.Images, 1)
-		require.Equal(t, "http://example.com/book.png", created.Images[0].Url)
 	})
 
 	t.Run("Invalid Category", func(t *testing.T) {
@@ -53,7 +48,7 @@ func TestCreateProductService(t *testing.T) {
 			Price:    10.0,
 		}
 
-		_, err := services.CreateProduct(input, user.Uid)
+		err := services.CreateProduct(input, user.Uid)
 		require.Error(t, err)
 		require.Contains(t, err.Error(), "invalid category")
 	})
@@ -66,10 +61,10 @@ func TestGetProductsService(t *testing.T) {
 		db.Create(&models.Product{Pid: "p1", Name: "P1", Category: models.Electronics, Price: 100, PopularityScore: 10})
 		db.Create(&models.Product{Pid: "p2", Name: "P2", Category: models.Books, Price: 50, PopularityScore: 20})
 
-		products, totalCount, err := services.GetProductsService("", "", 1, 10)
+		products, err := services.GetProductsService("", "", 1, 10)
 		require.NoError(t, err)
-		require.EqualValues(t, 2, totalCount)
-		require.Len(t, products, 2)
+		require.EqualValues(t, 2, products.TotalItems)
+		require.Len(t, products.Products, 2)
 
 		// Optionally check JSON fields
 		raw, _ := json.Marshal(products)
@@ -87,16 +82,84 @@ func TestGetProductsService(t *testing.T) {
 		db.Create(&models.Product{Pid: "p8", Name: "Socks", Category: models.Clothing, Price: 5, PopularityScore: 5})
 
 		// Filter=Books, sort=price_desc
-		products, totalCount, err := services.GetProductsService("Books", "price_desc", 1, 10)
+		products, err := services.GetProductsService("Books", "price_desc", 1, 10)
 		require.NoError(t, err)
-		require.Len(t, products, 2)
-		require.EqualValues(t, 2, totalCount)
+		require.Len(t, products.Products, 2)
+		require.EqualValues(t, 2, products.TotalItems)
 
 		// Should be [Book A(20), Book B(10)]
-		require.Equal(t, "Book A", products[0].Name)
-		require.EqualValues(t, 20, products[0].Price)
-		require.Equal(t, "Book B", products[1].Name)
-		require.EqualValues(t, 10, products[1].Price)
+		require.Equal(t, "Book A", products.Products[0].Name)
+		require.EqualValues(t, 20, products.Products[0].Price)
+		require.Equal(t, "Book B", products.Products[1].Name)
+		require.EqualValues(t, 10, products.Products[1].Price)
+	})
+
+	t.Run("Pagination", func(t *testing.T) {
+		// Clear existing products
+		db.Exec("DELETE FROM products")
+
+		// Create 5 products
+		db.Create(&models.Product{Pid: "p10", Name: "Product 1", Category: models.Electronics, Price: 100})
+		db.Create(&models.Product{Pid: "p11", Name: "Product 2", Category: models.Electronics, Price: 200})
+		db.Create(&models.Product{Pid: "p12", Name: "Product 3", Category: models.Electronics, Price: 300})
+		db.Create(&models.Product{Pid: "p13", Name: "Product 4", Category: models.Electronics, Price: 400})
+		db.Create(&models.Product{Pid: "p14", Name: "Product 5", Category: models.Electronics, Price: 500})
+
+		// Test page 1 with page size 2
+		page1, err := services.GetProductsService("", "price_asc", 1, 2)
+		require.NoError(t, err)
+		require.Len(t, page1.Products, 2)
+		require.EqualValues(t, 5, page1.TotalItems)
+		require.EqualValues(t, 3, page1.TotalPages)
+		require.EqualValues(t, 1, page1.Page)
+		require.EqualValues(t, 2, page1.PageSize)
+
+		// Verify correct items on page 1 (sorted by price ascending)
+		require.Equal(t, "Product 1", page1.Products[0].Name)
+		require.Equal(t, "Product 2", page1.Products[1].Name)
+
+		// Test page 2 with page size 2
+		page2, err := services.GetProductsService("", "price_asc", 2, 2)
+		require.NoError(t, err)
+		require.Len(t, page2.Products, 2)
+		require.EqualValues(t, 2, page2.Page)
+
+		// Verify correct items on page 2
+		require.Equal(t, "Product 3", page2.Products[0].Name)
+		require.Equal(t, "Product 4", page2.Products[1].Name)
+	})
+
+	t.Run("Multiple Categories Filter", func(t *testing.T) {
+		// Clear existing products
+		db.Exec("DELETE FROM products")
+
+		// Create products across different categories
+		db.Create(&models.Product{Pid: "p20", Name: "TV", Category: models.Electronics, Price: 500})
+		db.Create(&models.Product{Pid: "p21", Name: "Novel", Category: models.Books, Price: 20})
+		db.Create(&models.Product{Pid: "p22", Name: "T-Shirt", Category: models.Clothing, Price: 30})
+		db.Create(&models.Product{Pid: "p23", Name: "Headphones", Category: models.Electronics, Price: 100})
+		db.Create(&models.Product{Pid: "p24", Name: "Textbook", Category: models.Books, Price: 50})
+
+		// Filter by multiple categories (Electronics,Books)
+		products, err := services.GetProductsService("Electronics,Books", "price_desc", 1, 10)
+		require.NoError(t, err)
+		require.Len(t, products.Products, 4)
+		require.EqualValues(t, 4, products.TotalItems)
+
+		// Should NOT contain Clothing items
+		for _, p := range products.Products {
+			require.NotEqual(t, "T-Shirt", p.Name)
+		}
+
+		// First item should be TV (highest price in Electronics)
+		require.Equal(t, "TV", products.Products[0].Name)
+	})
+
+	t.Run("Invalid Category Filter", func(t *testing.T) {
+		// Test with an invalid category
+		_, err := services.GetProductsService("InvalidCategory", "", 1, 10)
+		require.Error(t, err)
+		require.Contains(t, err.Error(), "invalid categories")
 	})
 }
 

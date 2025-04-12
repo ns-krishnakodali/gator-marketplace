@@ -3,7 +3,6 @@
   height: fit-content;
   width: 15rem;
   height: 18.75rem;
-  box-shadow: none;
   box-shadow: var(--box-shadow-rounded);
 }
 
@@ -27,13 +26,13 @@
 }
 
 .product-name {
-  margin: 0;
-  margin-bottom: var(--spacing-quarter);
+  display: block;
+  max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%; /* Ensure it respects the container width */
-  display: block; /* or inline-block */
+  margin: 0;
+  margin-bottom: var(--spacing-quarter);
 }
 
 .product-price {

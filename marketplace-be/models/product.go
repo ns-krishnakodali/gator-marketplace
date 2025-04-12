@@ -37,9 +37,9 @@ type Product struct {
 type ProductImage struct {
 	ID        int       `gorm:"primaryKey;autoIncrement"`
 	Pid       string    `gorm:"type:varchar(36);not null;index"`
-	MimeType  string    `gorm:"type:varchar(100);not null"`
-	Url       string    `gorm:"type:text;not null;"`
 	IsMain    bool      `gorm:"not null;default:false"`
+	Url       string    `gorm:"type:text;not null;"`
+	MimeType  string    `gorm:"type:varchar(100);not null"`
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
 }

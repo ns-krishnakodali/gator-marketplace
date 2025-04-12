@@ -1,7 +1,8 @@
 export interface ProductData {
   pid: string
+  userId: string
   imageSrc: string
   name: string
   price: number
-  postDate: string
+  postedAt: string
 }

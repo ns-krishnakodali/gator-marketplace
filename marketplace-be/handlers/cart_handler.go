@@ -39,7 +39,7 @@ func AddToCart(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, "Added to cart")
+	c.JSON(http.StatusCreated, gin.H{"message": "Added to cart"})
 }
 
 func GetCartItems(c *gin.Context) {

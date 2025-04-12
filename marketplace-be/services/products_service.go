@@ -5,6 +5,7 @@ import (
 	"marketplace-be/database"
 	"marketplace-be/dtos"
 	"marketplace-be/models"
+	"math"
 	"strings"
 	"time"
 
@@ -12,9 +13,9 @@ import (
 )
 
 // CreateProduct creates a product (and optional images) in the database.
-func CreateProduct(input dtos.ProductInput, userUid string) (models.Product, error) {
+func CreateProduct(input dtos.ProductInput, userUid string) error {
 	if !validCategory(input.Category) {
-		return models.Product{}, fmt.Errorf("invalid category: %s", input.Category)
+		return fmt.Errorf("invalid category: %s", input.Category)
 	}
 
 	newPID := uuid.NewString()
@@ -31,7 +32,7 @@ func CreateProduct(input dtos.ProductInput, userUid string) (models.Product, err
 
 	// Create the product
 	if err := database.DB.Create(&product).Error; err != nil {
-		return models.Product{}, fmt.Errorf("could not create product: %v", err)
+		return fmt.Errorf("could not create product: %v", err)
 	}
 
 	// Create images if provided
@@ -43,29 +44,28 @@ func CreateProduct(input dtos.ProductInput, userUid string) (models.Product, err
 			IsMain:   img.IsMain,
 		}
 		if err := database.DB.Create(&imageModel).Error; err != nil {
-			return models.Product{}, fmt.Errorf("could not create product images: %v", err)
+			return fmt.Errorf("could not create product images: %v", err)
 		}
 	}
 
 	// Fetch the newly created product with images
 	var createdProduct models.Product
 	if err := database.DB.Where("pid = ?", newPID).Preload("Images").First(&createdProduct).Error; err != nil {
-		return models.Product{}, fmt.Errorf("could not fetch created product")
+		return fmt.Errorf("could not fetch created product")
 	}
 
-	return createdProduct, nil
+	return nil
 }
 
 // GetProductsService fetches products with filtering, sorting, and pagination.
-func GetProductsService(categoriesParam, sortParam string, page, pageSize int) ([]models.Product, int64, error) {
-	query := database.DB.Model(&models.Product{}).Preload("Images")
+func GetProductsService(categoriesParam, sortParam string, page, pageSize int) (dtos.GetProductsResponse, error) {
+	query := database.DB.Model(&models.Product{}).Preload("PostedBy").Preload("Images", "is_main = true")
 
 	// =========== Filtering ===========
-
 	if categoriesParam != "" {
 		validCategories, invalidCategories := parseCategories(categoriesParam)
 		if len(invalidCategories) > 0 {
-			return nil, 0, fmt.Errorf("invalid categories: %v", invalidCategories)
+			return dtos.GetProductsResponse{}, fmt.Errorf("invalid categories: %v", invalidCategories)
 		}
 		if len(validCategories) > 0 {
 			query = query.Where("category IN ?", validCategories)
@@ -87,13 +87,13 @@ func GetProductsService(categoriesParam, sortParam string, page, pageSize int) (
 	case "most_popular", "":
 		query = query.Order("popularity_score DESC")
 	default:
-		return nil, 0, fmt.Errorf("invalid sort parameter")
+		return dtos.GetProductsResponse{}, fmt.Errorf("invalid sort parameter")
 	}
 
 	// Execute the count query first (for total items)
 	var totalCount int64
 	if err := query.Count(&totalCount).Error; err != nil {
-		return nil, 0, fmt.Errorf("could not fetch products count")
+		return dtos.GetProductsResponse{}, fmt.Errorf("could not fetch products count")
 	}
 
 	// =========== Pagination ===========
@@ -101,11 +101,49 @@ func GetProductsService(categoriesParam, sortParam string, page, pageSize int) (
 	query = query.Limit(pageSize).Offset(offset)
 
 	var products []models.Product
-	if err := query.Omit("id").Find(&products).Error; err != nil {
-		return nil, 0, fmt.Errorf("could not fetch products")
+	if err := query.Find(&products).Error; err != nil {
+		return dtos.GetProductsResponse{}, fmt.Errorf("could not fetch products")
 	}
 
-	return products, totalCount, nil
+	// Convert products to DTOs
+	productDTOs := make([]dtos.ProductDetails, len(products))
+	for i, product := range products {
+		// Convert images to DTOs
+		var imageDTO dtos.ProductImageDTO
+		if len(product.Images) > 0 {
+			imageDTO = dtos.ProductImageDTO{
+				IsMain:   true,
+				Url:      product.Images[0].Url,
+				MimeType: product.Images[0].MimeType,
+			}
+		}
+
+		productDTOs[i] = dtos.ProductDetails{
+			Pid:      product.Pid,
+			UserUID:  product.UserUID,
+			Name:     product.Name,
+			Price:    product.Price,
+			PostedAt: product.CreatedAt,
+			Image:    imageDTO,
+		}
+	}
+
+	// Calculate total pages
+	totalPages := int32(0)
+	if pageSize > 0 {
+		totalPages = int32(math.Ceil(float64(totalCount) / float64(pageSize)))
+	}
+
+	// Create the response
+	response := dtos.GetProductsResponse{
+		Products:   productDTOs,
+		Page:       int32(page),
+		PageSize:   int32(pageSize),
+		TotalItems: int32(totalCount),
+		TotalPages: totalPages,
+	}
+
+	return response, nil
 }
 
 // GetProductByPIDService retrieves a product by PID.
