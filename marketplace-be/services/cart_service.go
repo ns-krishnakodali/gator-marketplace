@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"marketplace-be/database"
+	"marketplace-be/dtos"
 	"marketplace-be/models"
 )
 
@@ -41,15 +42,15 @@ func AddToCartService(userUID, productPID string, requestedQty int) error {
 }
 
 // GetCartItemsService returns all items in a user's cart.
-func GetCartItemsService(userUID string) (models.CartResponse, error) {
+func GetCartItemsService(userUID string) (dtos.CartResponse, error) {
 	var cartProducts []models.CartProduct
 	if err := database.DB.Where("user_uid = ?", userUID).
 		Preload("Product.Images", "is_main = ?", true).
 		Find(&cartProducts).Error; err != nil {
-		return models.CartResponse{}, fmt.Errorf("failed to fetch cart items: %v", err)
+		return dtos.CartResponse{}, fmt.Errorf("failed to fetch cart items: %v", err)
 	}
 
-	var responses []models.CartItemResponse
+	var responses []dtos.CartItemResponse
 	var cartProductsTotal float64
 
 	for _, cartProduct := range cartProducts {
@@ -58,7 +59,7 @@ func GetCartItemsService(userUID string) (models.CartResponse, error) {
 			primaryImage = cartProduct.Product.Images[0].Url
 		}
 
-		response := models.CartItemResponse{
+		response := dtos.CartItemResponse{
 			AddedQuantity: cartProduct.Quantity,
 			MaxQuantity:   cartProduct.Product.Quantity,
 			PID:           cartProduct.Product.Pid,
@@ -75,7 +76,7 @@ func GetCartItemsService(userUID string) (models.CartResponse, error) {
 	// Calculate final totalCost
 	totalCost := cartProductsTotal + HandlingFees
 
-	return models.CartResponse{
+	return dtos.CartResponse{
 		CartProducts:  responses,
 		ProductsTotal: cartProductsTotal,
 		HandlingFee:   HandlingFees,
@@ -83,7 +84,7 @@ func GetCartItemsService(userUID string) (models.CartResponse, error) {
 	}, nil
 }
 
-func UpdateCartItemService(productPID string, newQty int) (models.CartUpdateResponse, error) {
+func UpdateCartItemService(productPID string, newQty int) (dtos.CartUpdateResponse, error) {
 	if newQty <= 0 {
 		newQty = 1
 	}
@@ -91,25 +92,25 @@ func UpdateCartItemService(productPID string, newQty int) (models.CartUpdateResp
 	// Fetch the cart item by productPID
 	var cartItem models.CartProduct
 	if err := database.DB.Where("product_p_id = ?", productPID).First(&cartItem).Error; err != nil {
-		return models.CartUpdateResponse{}, ErrCartItemNotFound
+		return dtos.CartUpdateResponse{}, ErrCartItemNotFound
 	}
 
 	// Fetch the product data only once
 	var product models.Product
 	if err := database.DB.Where("pid = ?", cartItem.ProductPID).First(&product).Error; err != nil {
-		return models.CartUpdateResponse{}, ErrProductNotFound
+		return dtos.CartUpdateResponse{}, ErrProductNotFound
 	}
 
 	// Calculate the difference between the new quantity and the existing quantity
 	diff := newQty - cartItem.Quantity
 	if diff > 0 && product.Quantity < diff {
-		return models.CartUpdateResponse{}, ErrInsufficientProductQuantity
+		return dtos.CartUpdateResponse{}, ErrInsufficientProductQuantity
 	}
 
 	// Update the cart item quantity
 	cartItem.Quantity = newQty
 	if err := database.DB.Save(&cartItem).Error; err != nil {
-		return models.CartUpdateResponse{}, fmt.Errorf("failed to update cart item")
+		return dtos.CartUpdateResponse{}, fmt.Errorf("failed to update cart item")
 	}
 
 	// Now, calculate the total cost, handling fees, and other necessary details
@@ -117,7 +118,7 @@ func UpdateCartItemService(productPID string, newQty int) (models.CartUpdateResp
 	if err := database.DB.Where("user_uid = ?", cartItem.UserUID).
 		Preload("Product.Images", "is_main = ?", true).
 		Find(&cartProducts).Error; err != nil {
-		return models.CartUpdateResponse{}, fmt.Errorf("failed to fetch cart items: %v", err)
+		return dtos.CartUpdateResponse{}, fmt.Errorf("failed to fetch cart items: %v", err)
 	}
 
 	var cartProductsTotal float64
@@ -128,7 +129,7 @@ func UpdateCartItemService(productPID string, newQty int) (models.CartUpdateResp
 	// Calculate final totalCost
 	totalCost := cartProductsTotal + HandlingFees
 
-	return models.CartUpdateResponse{
+	return dtos.CartUpdateResponse{
 		ProductsTotal: cartProductsTotal,
 		HandlingFee:   HandlingFees,
 		TotalCost:     totalCost,

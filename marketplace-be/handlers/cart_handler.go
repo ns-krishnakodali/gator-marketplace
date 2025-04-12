@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"marketplace-be/auth"
-	"marketplace-be/models"
+	"marketplace-be/dtos"
 	"marketplace-be/services"
 
 	"github.com/gin-gonic/gin"
@@ -13,7 +13,7 @@ import (
 func AddToCart(c *gin.Context) {
 	userUid, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
 
-	var input models.AddToCartInput
+	var input dtos.AddToCartInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid input"})
 		return
@@ -54,7 +54,7 @@ func GetCartItems(c *gin.Context) {
 }
 
 func UpdateCartItem(c *gin.Context) {
-	var input models.UpdateCartItemInput
+	var input dtos.UpdateCartItemInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid input"})
 		return

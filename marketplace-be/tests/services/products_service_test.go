@@ -6,6 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"marketplace-be/dtos"
 	"marketplace-be/models"
 	"marketplace-be/services"
 	"marketplace-be/test_utils"
@@ -14,20 +15,29 @@ import (
 func TestCreateProductService(t *testing.T) {
 	// Setup test DB
 	db := test_utils.SetupTestDB(t)
-	_ = db
+
+	user := &models.User{
+		Uid:             "user-pid",
+		Email:           "product-test@ufl.edu",
+		Name:            "Test Product User",
+		DisplayName:     "TestProductUser123",
+		Mobile:          "123-456-7890",
+		DisplayImageUrl: "https://example.com/image.jpg",
+	}
+	db.Create(user)
 
 	t.Run("Created product Success", func(t *testing.T) {
-		input := models.ProductInput{
+		input := dtos.ProductInput{
 			Name:     "Service Product",
 			Category: models.Books,
 			Price:    12.34,
 			Quantity: 2,
-			Images: []models.ProductImageInput{
+			Images: []dtos.ProductImageInput{
 				{MimeType: "image/png", URL: "http://example.com/book.png", IsMain: true},
 			},
 		}
 
-		created, err := services.CreateProduct(input)
+		created, err := services.CreateProduct(input, user.Uid)
 		require.NoError(t, err)
 		require.NotEmpty(t, created.Pid)
 		require.Equal(t, "Service Product", created.Name)
@@ -37,13 +47,13 @@ func TestCreateProductService(t *testing.T) {
 	})
 
 	t.Run("Invalid Category", func(t *testing.T) {
-		input := models.ProductInput{
+		input := dtos.ProductInput{
 			Name:     "Invalid Category",
 			Category: "NoSuchCategory",
 			Price:    10.0,
 		}
 
-		_, err := services.CreateProduct(input)
+		_, err := services.CreateProduct(input, user.Uid)
 		require.Error(t, err)
 		require.Contains(t, err.Error(), "invalid category")
 	})
@@ -121,13 +131,13 @@ func TestUpdateProductService(t *testing.T) {
 			Pid: "pid-upd", MimeType: "image/png", Url: "http://example.com/old.png", IsMain: true,
 		})
 
-		input := models.ProductInput{
+		input := dtos.ProductInput{
 			Name:        "New Name",
 			Description: "New Desc",
 			Category:    models.Books,
 			Price:       20.0,
 			Quantity:    5,
-			Images: []models.ProductImageInput{
+			Images: []dtos.ProductImageInput{
 				{MimeType: "image/jpeg", URL: "http://example.com/new1.jpg", IsMain: true},
 				{MimeType: "image/jpeg", URL: "http://example.com/new2.jpg", IsMain: false},
 			},

@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"strings"
 	"time"
 
 	"marketplace-be/database"
 	"marketplace-be/models"
 
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Product struct {
@@ -30,6 +32,11 @@ var categories = []models.Category{
 	models.Sports,
 	models.Appliances,
 	models.Miscellaneous,
+}
+
+func sanitizeString(s string) string {
+	s = strings.ReplaceAll(s, " ", "_")
+	return strings.ReplaceAll(s, "-", "_")
 }
 
 func getRandomProductImage(data ProductsData) string {
@@ -55,6 +62,22 @@ func GenerateMockProductsData(numProducts int) {
 		fmt.Printf("Error parsing JSON: %v\n", err)
 	}
 
+	userUid := uuid.New().String()
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("mocktestpassword"), bcrypt.DefaultCost)
+	mockUser := models.User{
+		Name:         "MockUser",
+		DisplayName:  sanitizeString("GatorUser" + userUid[:6]),
+		Uid:          userUid,
+		Email:        "mock-test@ufl.edu",
+		Mobile:       "289-128-9342",
+		PasswordHash: string(hashedPassword),
+	}
+
+	if err := database.DB.Create(&mockUser).Error; err != nil {
+		fmt.Printf("Error creating mock user: %v\n", err)
+		return
+	}
+
 	for i := range numProducts {
 		product_uuid := uuid.New().String()
 		category := categories[rand.Intn(len(categories))]
@@ -65,7 +88,7 @@ func GenerateMockProductsData(numProducts int) {
 			Description:     fmt.Sprintf("This is a sample description for product %d", i+1),
 			Price:           float64(rand.Intn(10000)) / 100,
 			Category:        category,
-			PostedBy:        "GatorUser",
+			PostedBy:        mockUser,
 			Quantity:        rand.Intn(100) + 1,
 			PopularityScore: float64(rand.Intn(1000)) / 100,
 		}

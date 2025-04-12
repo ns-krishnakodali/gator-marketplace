@@ -1,6 +1,7 @@
 package services
 
 import (
+	"marketplace-be/dtos"
 	"marketplace-be/models"
 	"marketplace-be/services"
 	"marketplace-be/test_utils"
@@ -40,13 +41,13 @@ func TestLoginService(t *testing.T) {
 	db.Create(user)
 
 	t.Run("User Not Found", func(t *testing.T) {
-		token, err := services.LoginService(&models.LoginInput{Email: "nonexistent@example.com", Password: "password"})
+		token, err := services.LoginService(&dtos.LoginInput{Email: "nonexistent@example.com", Password: "password"})
 		require.Empty(t, token)
 		require.EqualError(t, err, services.ErrUserNotFound.Error())
 	})
 
 	t.Run("Invalid Credentials", func(t *testing.T) {
-		token, err := services.LoginService(&models.LoginInput{Email: "test@example.com", Password: "wrongpassword"})
+		token, err := services.LoginService(&dtos.LoginInput{Email: "test@example.com", Password: "wrongpassword"})
 		require.Empty(t, token)
 		require.EqualError(t, err, services.ErrInvalidCredentials.Error())
 	})
@@ -63,7 +64,7 @@ func TestLoginService(t *testing.T) {
 		}
 		db.Create(user)
 
-		token, err := services.LoginService(&models.LoginInput{Email: "login-test@ufl.edu", Password: "password"})
+		token, err := services.LoginService(&dtos.LoginInput{Email: "login-test@ufl.edu", Password: "password"})
 		require.NotEmpty(t, token)
 		require.NoError(t, err)
 	})
@@ -74,23 +75,23 @@ func TestSignupService(t *testing.T) {
 	db := test_utils.SetupTestDB(t)
 
 	t.Run("Invalid Email format (empty and non ufl.edu domain)", func(t *testing.T) {
-		err1 := services.SignupService(&models.SignupInput{Email: "", Password: "password", Name: "Test User", Mobile: "123-456-7890"})
+		err1 := services.SignupService(&dtos.SignupInput{Email: "", Password: "password", Name: "Test User", Mobile: "123-456-7890"})
 		require.EqualError(t, err1, services.ErrInvalidEmailFormat.Error())
 
-		err2 := services.SignupService(&models.SignupInput{Email: "test@email.edu", Password: "password", Name: "Test User", Mobile: "123-456-7890"})
+		err2 := services.SignupService(&dtos.SignupInput{Email: "test@email.edu", Password: "password", Name: "Test User", Mobile: "123-456-7890"})
 		require.EqualError(t, err2, services.ErrInvalidEmailFormat.Error())
 	})
 
 	t.Run("Empty User Name and mobile number", func(t *testing.T) {
-		err := services.SignupService(&models.SignupInput{Email: "test@ufl.edu", Password: "password", Name: "", Mobile: "123-456-7890"})
+		err := services.SignupService(&dtos.SignupInput{Email: "test@ufl.edu", Password: "password", Name: "", Mobile: "123-456-7890"})
 		require.EqualError(t, err, services.ErrEmptyName.Error())
 	})
 
 	t.Run("Invalid mobile number (empty and incorrect format)", func(t *testing.T) {
-		err1 := services.SignupService(&models.SignupInput{Email: "test@ufl.edu", Password: "password", Name: "Test User", Mobile: ""})
+		err1 := services.SignupService(&dtos.SignupInput{Email: "test@ufl.edu", Password: "password", Name: "Test User", Mobile: ""})
 		require.EqualError(t, err1, services.ErrEmptyMobileNumber.Error())
 
-		err2 := services.SignupService(&models.SignupInput{Email: "test@ufl.edu", Password: "password", Name: "Test User", Mobile: "1234567890"})
+		err2 := services.SignupService(&dtos.SignupInput{Email: "test@ufl.edu", Password: "password", Name: "Test User", Mobile: "1234567890"})
 		require.EqualError(t, err2, services.ErrInvalidMobileNumber.Error())
 	})
 
@@ -101,12 +102,12 @@ func TestSignupService(t *testing.T) {
 		}
 		db.Create(user)
 
-		err := services.SignupService(&models.SignupInput{Email: "test@ufl.edu", Password: "password", Name: "Test User", Mobile: "123-456-7890"})
+		err := services.SignupService(&dtos.SignupInput{Email: "test@ufl.edu", Password: "password", Name: "Test User", Mobile: "123-456-7890"})
 		require.EqualError(t, err, services.ErrEmailExists.Error())
 	})
 
 	t.Run("Successful Signup", func(t *testing.T) {
-		err := services.SignupService(&models.SignupInput{Email: "signup-test@ufl.edu", Password: "password", Name: "Test User", Mobile: "123-456-7890"})
+		err := services.SignupService(&dtos.SignupInput{Email: "signup-test@ufl.edu", Password: "password", Name: "Test User", Mobile: "123-456-7890"})
 		require.NoError(t, err)
 
 		var user models.User

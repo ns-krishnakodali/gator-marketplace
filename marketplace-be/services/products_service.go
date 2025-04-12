@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"marketplace-be/database"
+	"marketplace-be/dtos"
 	"marketplace-be/models"
 	"strings"
 	"time"
@@ -10,55 +11,22 @@ import (
 	"github.com/google/uuid"
 )
 
-// validCategory checks if a category is valid according to the ones defined in your models.
-func validCategory(category models.Category) bool {
-	switch category {
-	case models.Appliances,
-		models.Books,
-		models.Clothing,
-		models.Electronics,
-		models.Entertainment,
-		models.Furniture,
-		models.Miscellaneous,
-		models.Sports,
-		models.Tickets:
-		return true
-	}
-	return false
-}
-
-// ParseCategories parses a comma-separated list of category strings into a slice of valid categories.
-// Invalid categories are collected in `invalidCats`.
-func ParseCategories(catString string) (validCats []models.Category, invalidCats []string) {
-	cats := strings.Split(catString, ",")
-	for _, c := range cats {
-		c = strings.TrimSpace(c)
-		category := models.Category(c)
-		if validCategory(category) {
-			validCats = append(validCats, category)
-		} else {
-			invalidCats = append(invalidCats, c)
-		}
-	}
-	return validCats, invalidCats
-}
-
 // CreateProduct creates a product (and optional images) in the database.
-func CreateProduct(input models.ProductInput) (models.Product, error) {
-	// Validate category
+func CreateProduct(input dtos.ProductInput, userUid string) (models.Product, error) {
 	if !validCategory(input.Category) {
 		return models.Product{}, fmt.Errorf("invalid category: %s", input.Category)
 	}
 
 	newPID := uuid.NewString()
 	product := models.Product{
-		Pid:         newPID,
-		Name:        input.Name,
-		Description: input.Description,
-		Price:       input.Price,
-		Category:    input.Category,
-		Quantity:    input.Quantity,
-		// popularity_score will default to 0 (if that's in your model)
+		Pid:             newPID,
+		UserUID:         userUid,
+		Name:            input.Name,
+		Description:     input.Description,
+		Price:           input.Price,
+		Category:        input.Category,
+		Quantity:        input.Quantity,
+		PopularityScore: 0,
 	}
 
 	// Create the product
@@ -95,7 +63,7 @@ func GetProductsService(categoriesParam, sortParam string, page, pageSize int) (
 	// =========== Filtering ===========
 
 	if categoriesParam != "" {
-		validCategories, invalidCategories := ParseCategories(categoriesParam)
+		validCategories, invalidCategories := parseCategories(categoriesParam)
 		if len(invalidCategories) > 0 {
 			return nil, 0, fmt.Errorf("invalid categories: %v", invalidCategories)
 		}
@@ -151,7 +119,7 @@ func GetProductByPIDService(productPID string) (models.Product, error) {
 }
 
 // UpdateProductService updates a product (and optionally images) in the DB.
-func UpdateProductService(productPID string, input models.ProductInput) (models.Product, error) {
+func UpdateProductService(productPID string, input dtos.ProductInput) (models.Product, error) {
 	// Fetch existing product
 	var existingProduct models.Product
 	if err := database.DB.Preload("Images").Where("pid = ?", productPID).First(&existingProduct).Error; err != nil {
@@ -196,7 +164,6 @@ func UpdateProductService(productPID string, input models.ProductInput) (models.
 		}
 	}
 
-	// Reload product with images
 	if err := database.DB.Preload("Images").Where("pid = ?", productPID).First(&existingProduct).Error; err != nil {
 		return existingProduct, fmt.Errorf("error reloading product")
 	}
@@ -206,7 +173,6 @@ func UpdateProductService(productPID string, input models.ProductInput) (models.
 
 // DeleteProductService deletes a product by PID (and its related images).
 func DeleteProductService(productPID string) error {
-	// First check if the product exists
 	var product models.Product
 	result := database.DB.Where("pid = ?", productPID).First(&product)
 	if result.Error != nil {
@@ -218,10 +184,42 @@ func DeleteProductService(productPID string) error {
 		return ErrDeleteProductImages
 	}
 
-	// Delete the product
 	if err := database.DB.Where("pid = ?", productPID).Delete(&models.Product{}).Error; err != nil {
 		return ErrDeleteProduct
 	}
 
 	return nil
+}
+
+// validCategory checks if a category is valid according to the ones defined in your models.
+func validCategory(category models.Category) bool {
+	switch category {
+	case models.Appliances,
+		models.Books,
+		models.Clothing,
+		models.Electronics,
+		models.Entertainment,
+		models.Furniture,
+		models.Miscellaneous,
+		models.Sports,
+		models.Tickets:
+		return true
+	}
+	return false
+}
+
+// parseCategories parses a comma-separated list of category strings into a slice of valid categories.
+// Invalid categories are collected in `invalidCats`.
+func parseCategories(catString string) (validCats []models.Category, invalidCats []string) {
+	cats := strings.Split(catString, ",")
+	for _, c := range cats {
+		c = strings.TrimSpace(c)
+		category := models.Category(c)
+		if validCategory(category) {
+			validCats = append(validCats, category)
+		} else {
+			invalidCats = append(invalidCats, c)
+		}
+	}
+	return validCats, invalidCats
 }

@@ -3,6 +3,7 @@ package handlers_test
 import (
 	"encoding/json"
 	"marketplace-be/auth"
+	"marketplace-be/dtos"
 	"marketplace-be/handlers"
 	"marketplace-be/models"
 	"marketplace-be/test_utils"
@@ -35,12 +36,12 @@ func TestCreateProduct(t *testing.T) {
 	token, _ := auth.GenerateToken(user.Uid)
 
 	t.Run("Create product successfully", func(t *testing.T) {
-		input := models.ProductInput{
+		input := dtos.ProductInput{
 			Name:     "Test Product",
 			Category: models.Books,
 			Price:    10.99,
 			Quantity: 5,
-			Images: []models.ProductImageInput{
+			Images: []dtos.ProductImageInput{
 				{MimeType: "image/png", URL: "http://example.com/img1.png", IsMain: true},
 				{MimeType: "image/png", URL: "http://example.com/img2.png", IsMain: false},
 			},
@@ -74,7 +75,7 @@ func TestCreateProduct(t *testing.T) {
 	})
 
 	t.Run("Invalid Category", func(t *testing.T) {
-		input := models.ProductInput{
+		input := dtos.ProductInput{
 			Name:     "Invalid Cat Product",
 			Category: "NonExistentCategory", // Invalid
 			Price:    15.0,
@@ -307,12 +308,12 @@ func TestUpdateProduct(t *testing.T) {
 	})
 
 	t.Run("Update Product details Success", func(t *testing.T) {
-		updateInput := models.ProductInput{
+		updateInput := dtos.ProductInput{
 			Name:     "New Product Name",
 			Category: models.Books,
 			Price:    30,
 			Quantity: 10,
-			Images: []models.ProductImageInput{
+			Images: []dtos.ProductImageInput{
 				{MimeType: "image/jpeg", URL: "http://example.com/new1.jpg", IsMain: true},
 				{MimeType: "image/jpeg", URL: "http://example.com/new2.jpg", IsMain: false},
 			},
@@ -337,7 +338,7 @@ func TestUpdateProduct(t *testing.T) {
 	})
 
 	t.Run("Product Not Found", func(t *testing.T) {
-		updateInput := models.ProductInput{
+		updateInput := dtos.ProductInput{
 			Name:     "Updated Name",
 			Category: models.Books,
 			Price:    25,

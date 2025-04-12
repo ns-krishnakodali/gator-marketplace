@@ -1,7 +1,8 @@
 package handlers
 
 import (
-	"marketplace-be/models"
+	"marketplace-be/auth"
+	"marketplace-be/dtos"
 	"marketplace-be/services"
 	"net/http"
 	"strconv"
@@ -11,13 +12,15 @@ import (
 
 // CreateProduct handles the HTTP request to create a product.
 func CreateProduct(c *gin.Context) {
-	var input models.ProductInput
+	var input dtos.ProductInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	createdProduct, err := services.CreateProduct(input)
+	userUid, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
+
+	createdProduct, err := services.CreateProduct(input, userUid)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -83,7 +86,7 @@ func GetProductByPID(c *gin.Context) {
 func UpdateProduct(c *gin.Context) {
 	pid := c.Param("pid")
 
-	var input models.ProductInput
+	var input dtos.ProductInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

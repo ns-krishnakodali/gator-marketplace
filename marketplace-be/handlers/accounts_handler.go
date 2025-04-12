@@ -3,7 +3,7 @@ package handlers
 import (
 	"errors"
 	"marketplace-be/auth"
-	"marketplace-be/models"
+	"marketplace-be/dtos"
 	"marketplace-be/services"
 	"net/http"
 
@@ -29,7 +29,7 @@ func GetAccountDetails(c *gin.Context) {
 }
 
 func UpdateAccountDetails(c *gin.Context) {
-	var input models.AccountDetailsInput
+	var input dtos.AccountDetailsInput
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid input format"})
@@ -60,7 +60,7 @@ func UpdateAccountDetails(c *gin.Context) {
 }
 
 func UpdatePassword(c *gin.Context) {
-	var input models.PasswordInput
+	var input dtos.PasswordInput
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid input format"})
