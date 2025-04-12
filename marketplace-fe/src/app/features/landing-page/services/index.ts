@@ -1,1 +1,1 @@
-export * from './landing-page/landing-page.service'
+export * from './landing-page.service'

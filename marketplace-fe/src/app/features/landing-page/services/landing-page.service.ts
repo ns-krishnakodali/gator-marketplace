@@ -3,8 +3,8 @@ import { Router } from '@angular/router'
 
 import { BehaviorSubject } from 'rxjs'
 
-import { APIService } from '../../../../core'
-import { NotificationsService } from '../../../../shared-ui'
+import { APIService } from '../../../core'
+import { NotificationsService } from '../../../shared-ui'
 
 @Injectable({
   providedIn: 'root',
