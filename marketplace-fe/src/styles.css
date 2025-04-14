@@ -19,7 +19,9 @@
 
   --color-border-1: #3e4c59;
   --color-border-2: #dee2e6;
+  --color-border-3: #d1d5db;
   --color-background: #fff;
+  --color-background-gray: #f9fafb;
   --color-background-hover: #f0f4f8;
   --color-background-scrollbar: #c7ccd8b9;
   --color-background-scrollbar-hover: #c7ccd8;
@@ -29,7 +31,10 @@
   --color-blue-hover: #005dbbc1;
   --color-blue-light: #005498a0;
   --color-currency: #157811;
+  --color-gray: #6b7280;
+  --color-gray-light: #89909e;
   --colot-logout: #b22222;
+  --color-label: #374151;
   --color-notification-error: #f44336;
   --color-notification-info: #2196f3;
   --color-notification-success: #4caf50;
@@ -43,6 +48,8 @@
   --border-bottom-navbar: 1px solid var(--color-blue);
 
   --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --box-shadow-form: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --box-shadow-input: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --box-shadow-rounded: inset 0 2px 6px rgba(0, 0, 0, 0.07);
   --box-shadow-rounded-hover: inset 0 2px 6px rgba(0, 0, 0, 0.18);
 }

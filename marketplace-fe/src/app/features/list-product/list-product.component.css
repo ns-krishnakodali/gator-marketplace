@@ -1,0 +1,28 @@
+.list-product-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100vw;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+.list-product-container form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.list-product-heading {
+  text-align: center;
+  font-size: 28px;
+  letter-spacing: 0.5px;
+  margin: var(--spacing-2) 0;
+}
+
+.list-product-button {
+  width: fit-content;
+  min-width: 30%;
+  align-self: center;
+  margin-bottom: 7rem;
+}
