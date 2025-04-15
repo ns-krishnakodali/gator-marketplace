@@ -2,11 +2,15 @@ package services
 
 import (
 	"fmt"
+	"marketplace-be/aws"
 	"marketplace-be/database"
 	"marketplace-be/dtos"
 	"marketplace-be/models"
 	"math"
+	"mime/multipart"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 // GetProductsService fetches products with filtering, sorting, and pagination.
@@ -131,46 +135,41 @@ func GetProductByPIDService(productPID string) (dtos.ProductResponse, error) {
 }
 
 // CreateProduct creates a product (and optional images) in the database.
-func CreateProduct(input dtos.ProductInput, userUid string) error {
-	// if !validCategory(input.Category) {
-	// 	return fmt.Errorf("invalid category: %s", input.Category)
-	// }
+func CreateProduct(input dtos.ProductInput, files []*multipart.FileHeader, userUid string) error {
+	newPID := uuid.NewString()
+	product := models.Product{
+		Pid:             newPID,
+		UserUID:         userUid,
+		Name:            input.Name,
+		Description:     input.Description,
+		Price:           input.Price,
+		Category:        input.Category,
+		Quantity:        input.Quantity,
+		PopularityScore: 0,
+	}
 
-	// newPID := uuid.NewString()
-	// product := models.Product{
-	// 	Pid:             newPID,
-	// 	UserUID:         userUid,
-	// 	Name:            input.Name,
-	// 	Description:     input.Description,
-	// 	Price:           input.Price,
-	// 	Category:        input.Category,
-	// 	Quantity:        input.Quantity,
-	// 	PopularityScore: 0,
-	// }
+	if err := database.DB.Create(&product).Error; err != nil {
+		return fmt.Errorf("could not create product: %v", err)
+	}
 
-	// // Create the product
-	// if err := database.DB.Create(&product).Error; err != nil {
-	// 	return fmt.Errorf("could not create product: %v", err)
-	// }
+	imageURLs, errs := aws.UploadImages(files, "products", newPID)
+	if errs != nil {
+		fmt.Printf("Image uploading failed to S3: %s\n", errs[0])
+		return ErrImageUploadFailed
+	}
 
-	// // Create images if provided
-	// for _, img := range input.Images {
-	// 	imageModel := models.ProductImage{
-	// 		Pid:      newPID,
-	// 		MimeType: img.MimeType,
-	// 		Url:      img.URL,
-	// 		IsMain:   img.IsMain,
-	// 	}
-	// 	if err := database.DB.Create(&imageModel).Error; err != nil {
-	// 		return fmt.Errorf("could not create product images: %v", err)
-	// 	}
-	// }
+	for idx, url := range imageURLs {
+		imageModel := models.ProductImage{
+			Pid:      newPID,
+			MimeType: files[idx].Header.Get("Content-Type"),
+			Url:      url,
+			IsMain:   idx == 0,
+		}
 
-	// // Fetch the newly created product with images
-	// var createdProduct models.Product
-	// if err := database.DB.Where("pid = ?", newPID).Preload("Images").First(&createdProduct).Error; err != nil {
-	// 	return fmt.Errorf("could not fetch created product")
-	// }
+		if err := database.DB.Create(&imageModel).Error; err != nil {
+			return fmt.Errorf("could not save image record: %v", err)
+		}
+	}
 
 	return nil
 }
@@ -243,7 +242,6 @@ func DeleteProductService(productPID string) error {
 	return nil
 }
 
-// ValidCategory checks if a category is valid according to the ones defined in your models.
 func ValidCategory(category models.Category) bool {
 	switch category {
 	case models.Appliances,
@@ -261,7 +259,6 @@ func ValidCategory(category models.Category) bool {
 }
 
 // parseCategories parses a comma-separated list of category strings into a slice of valid categories.
-// Invalid categories are collected in `invalidCats`.
 func parseCategories(catString string) (validCats []models.Category, invalidCats []string) {
 	cats := strings.Split(catString, ",")
 	for _, c := range cats {

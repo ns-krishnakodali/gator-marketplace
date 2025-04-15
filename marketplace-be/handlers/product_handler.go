@@ -67,8 +67,9 @@ func CreateProduct(c *gin.Context) {
 	}
 
 	categoryStr := c.PostForm("category")
-	// Validate category
 	category := models.Category(categoryStr)
+
+	// Validate category
 	if !services.ValidCategory(category) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Invalid category: %s", categoryStr)})
 		return
@@ -105,15 +106,11 @@ func CreateProduct(c *gin.Context) {
 	files := form.File["files"]
 	userUid, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
 
-	fmt.Println("Files: ", files)
-	fmt.Println("UserUID: ", userUid)
-
-	// Call the service function with files
-	// err = services.CreateProduct(input, files, userUid, c)
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
+	err = services.CreateProduct(input, files, userUid)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusCreated, gin.H{"message": "Product created successfully"})
 }
