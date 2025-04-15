@@ -37,7 +37,7 @@ export class ListProductService {
       return
     }
 
-    const formData = new FormData()
+    const formData: FormData = new FormData()
 
     formData.append('name', productDetails.name)
     formData.append('description', productDetails.description)
@@ -50,27 +50,25 @@ export class ListProductService {
     })
 
     this.isLoadingSubject.next(true)
-    this.apiService
-      .post('api/product', formData)
-      .subscribe({
-        next: () => {
-          this.notificationsService.addNotification({
-            message: PRODUCT_LISTING_SUCCESSFUL,
-            type: 'success',
-          })
-          this.router.navigate(['/'])
-        },
-        error: (error) => {
-          this.notificationsService.addNotification({
-            message: error.message,
-            type: 'error',
-          })
-          this.isLoadingSubject.next(false)
-        },
-        complete: () => {
-          this.isLoadingSubject.next(false)
-        },
-      })
+    this.apiService.post('api/product', formData).subscribe({
+      next: () => {
+        this.notificationsService.addNotification({
+          message: PRODUCT_LISTING_SUCCESSFUL,
+          type: 'success',
+        })
+        this.router.navigate(['/'])
+      },
+      error: (error) => {
+        this.notificationsService.addNotification({
+          message: error.message,
+          type: 'error',
+        })
+        this.isLoadingSubject.next(false)
+      },
+      complete: () => {
+        this.isLoadingSubject.next(false)
+      },
+    })
   }
 
   public processImages = (

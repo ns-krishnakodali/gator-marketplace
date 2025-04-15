@@ -20,9 +20,15 @@
   margin: var(--spacing-2) 0;
 }
 
+.list-product-button-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 7rem;
+}
+
 .list-product-button {
   width: fit-content;
-  min-width: 30%;
+  min-width: 10rem;
   align-self: center;
-  margin-bottom: 7rem;
 }
