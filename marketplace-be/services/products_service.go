@@ -152,7 +152,7 @@ func CreateProduct(input dtos.ProductInput, files []*multipart.FileHeader, userU
 		return fmt.Errorf("could not create product: %v", err)
 	}
 
-	imageURLs, errs := aws.UploadImages(files, "products", newPID)
+	imageURLs, errs := aws.UploadImages(aws.S3Client, files, "products", newPID)
 	if errs != nil {
 		fmt.Printf("Image uploading failed to S3: %s\n", errs[0])
 		return ErrImageUploadFailed

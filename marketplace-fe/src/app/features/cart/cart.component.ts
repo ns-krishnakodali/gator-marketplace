@@ -30,7 +30,7 @@ export class CartComponent implements OnInit {
   cartDetails!: CartDetails
 
   constructor(private cartService: CartService) {
-    this.isLoading$ = this.cartService.getCartItemsIsLoading$
+    this.isLoading$ = this.cartService.getCartProductsIsLoading$
   }
 
   ngOnInit(): void {
@@ -38,7 +38,7 @@ export class CartComponent implements OnInit {
       this.cartDetails = data.cartDetails
     })
 
-    this.cartService.getCartItems()
+    this.cartService.getCartProducts()
   }
 
   get isEmptyCart(): boolean {

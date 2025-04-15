@@ -51,6 +51,6 @@ describe('CartComponent', () => {
 
   it('should call getCartItems on init', () => {
     fixture.detectChanges()
-    expect(cartServiceSpy.getCartItems).toHaveBeenCalled()
+    expect(cartServiceSpy.getCartProducts).toHaveBeenCalled()
   })
 })

@@ -13,8 +13,12 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
+type S3Uploader interface {
+	PutObject(ctx context.Context, params *s3.PutObjectInput, optFns ...func(*s3.Options)) (*s3.PutObjectOutput, error)
+}
+
 // UploadImages uploads multiple image files to S3 and returns their public URLs
-func UploadImages(files []*multipart.FileHeader, filePrefix string, fileParent string) ([]string, []error) {
+func UploadImages(s3Client S3Uploader, files []*multipart.FileHeader, filePrefix string, fileParent string) ([]string, []error) {
 	var wg sync.WaitGroup
 	urls := make([]string, len(files))
 	errs := make([]error, len(files))
@@ -59,7 +63,7 @@ func UploadImages(files []*multipart.FileHeader, filePrefix string, fileParent s
 				Key:         &s3Key,
 				Body:        fileObj,
 				ContentType: &contentType,
-				ACL:         types.ObjectCannedACLPublicRead, // Keep this for public access
+				ACL:         types.ObjectCannedACLPublicRead,
 			})
 			if err != nil {
 				errs[idx] = fmt.Errorf("failed to upload to S3: %v", err)
@@ -72,7 +76,6 @@ func UploadImages(files []*multipart.FileHeader, filePrefix string, fileParent s
 
 	wg.Wait()
 
-	// Filter out nil errors
 	var actualErrs []error
 	for _, err := range errs {
 		if err != nil {

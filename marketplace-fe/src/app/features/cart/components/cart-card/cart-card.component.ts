@@ -20,7 +20,7 @@ export class CartCardComponent {
   isRemoveItemLoading$: Observable<boolean>
 
   constructor(private cartService: CartService) {
-    this.isRemoveItemLoading$ = this.cartService.removeCartItemIsLoading$
+    this.isRemoveItemLoading$ = this.cartService.removeCartProductIsLoading$
   }
 
   navigateToProductPage = (): void => {
@@ -40,6 +40,6 @@ export class CartCardComponent {
       )
     )
 
-    this.cartService.updateCartItems(this.cartProduct.productId, this.cartProduct.quantity)
+    this.cartService.updateCartProducts(this.cartProduct.productId, this.cartProduct.quantity)
   }
 }

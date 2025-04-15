@@ -107,7 +107,7 @@ func TestAddToCart(t *testing.T) {
 	})
 }
 
-func TestGetCartItems(t *testing.T) {
+func TestGetCartProducts(t *testing.T) {
 	db := tests.SetupTestDB(t)
 
 	// Prepare test user
@@ -153,11 +153,11 @@ func TestGetCartItems(t *testing.T) {
 	handlers.AddToCart(c)
 	require.Equal(t, http.StatusCreated, w.Code)
 
-	t.Run("Successfully Get Cart Items", func(t *testing.T) {
+	t.Run("Successfully Get Cart Products", func(t *testing.T) {
 		c, w := tests.CreateTestContext("GET", "/api/cart", nil)
 		c.Request.Header.Set("Authorization", token)
 
-		handlers.GetCartItems(c)
+		handlers.GetCartProducts(c)
 		require.Equal(t, http.StatusOK, w.Code)
 
 		var response dtos.CartResponse
@@ -174,7 +174,67 @@ func TestGetCartItems(t *testing.T) {
 	})
 }
 
-func TestUpdateCartItem(t *testing.T) {
+func TestGetCartProductsCount(t *testing.T) {
+	db := tests.SetupTestDB(t)
+
+	// Prepare test user
+	user := &models.User{
+		ID:              1,
+		Uid:             "user-uid",
+		Email:           "test@ufl.edu",
+		DisplayImageUrl: "",
+		Name:            "Test User",
+		DisplayName:     "GatorUser",
+		Mobile:          "123-456-7890",
+		PasswordHash:    "$2a$10$examplehashedpassword",
+	}
+	db.Create(user)
+
+	// Prepare test product
+	db.Create(&models.Product{
+		ID:          1,
+		Pid:         "product-pid",
+		UserUID:     user.Uid,
+		Name:        "Test Product",
+		Description: "Test Description",
+		Price:       99.99,
+		Category:    models.Electronics,
+		PostedBy:    *user,
+		Quantity:    10,
+		Images: []models.ProductImage{
+			{
+				Pid:      "product-pid",
+				MimeType: "image/jpeg",
+				Url:      "test-image-url.jpg",
+				IsMain:   true,
+			},
+		},
+	})
+
+	// Create test token
+	token, _ := auth.GenerateToken(user.Uid)
+
+	// Add product to cart first
+	c, w := tests.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"product-pid","quantity":5}`))
+	c.Request.Header.Set("Authorization", token)
+	handlers.AddToCart(c)
+	require.Equal(t, http.StatusCreated, w.Code)
+
+	t.Run("Successfully Get Cart Products Count", func(t *testing.T) {
+		c, w := tests.CreateTestContext("GET", "/api/cart/count", nil)
+		c.Request.Header.Set("Authorization", token)
+
+		handlers.GetCartProductsCount(c)
+		require.Equal(t, http.StatusOK, w.Code)
+
+		var response map[string]interface{}
+		err := json.Unmarshal(w.Body.Bytes(), &response)
+		require.NoError(t, err)
+		require.Equal(t, "1", response["count"])
+	})
+}
+
+func TestUpdateCartProduct(t *testing.T) {
 	db := tests.SetupTestDB(t)
 
 	// Prepare test user
@@ -216,7 +276,7 @@ func TestUpdateCartItem(t *testing.T) {
 		c, w := tests.CreateTestContext("PUT", "/api/cart", []byte(`{"invalid":"data"}`))
 		c.Request.Header.Set("Authorization", token)
 
-		handlers.UpdateCartItem(c)
+		handlers.UpdateCartProduct(c)
 		require.Equal(t, http.StatusBadRequest, w.Code)
 		require.Contains(t, w.Body.String(), "Product ID is required")
 	})
@@ -225,16 +285,16 @@ func TestUpdateCartItem(t *testing.T) {
 		c, w := tests.CreateTestContext("PUT", "/api/cart", []byte(`{"productId":"non-existent-pid","quantity":1}`))
 		c.Request.Header.Set("Authorization", token)
 
-		handlers.UpdateCartItem(c)
+		handlers.UpdateCartProduct(c)
 		require.Equal(t, http.StatusNotFound, w.Code)
-		require.Contains(t, w.Body.String(), "Cart item not found")
+		require.Contains(t, w.Body.String(), "Cart product not found")
 	})
 
 	t.Run("Not Enough Quantity", func(t *testing.T) {
 		c, w := tests.CreateTestContext("PUT", "/api/cart", []byte(`{"productId":"product-pid","quantity":15}`))
 		c.Request.Header.Set("Authorization", token)
 
-		handlers.UpdateCartItem(c)
+		handlers.UpdateCartProduct(c)
 		require.Equal(t, http.StatusConflict, w.Code)
 		require.Contains(t, w.Body.String(), "Not enough product in stock")
 	})
@@ -243,7 +303,7 @@ func TestUpdateCartItem(t *testing.T) {
 		c, w := tests.CreateTestContext("PUT", "/api/cart", []byte(`{"productId":"product-pid","quantity":5}`))
 		c.Request.Header.Set("Authorization", token)
 
-		handlers.UpdateCartItem(c)
+		handlers.UpdateCartProduct(c)
 		require.Equal(t, http.StatusOK, w.Code)
 
 		var response map[string]interface{}
@@ -253,14 +313,14 @@ func TestUpdateCartItem(t *testing.T) {
 		// Verify response fields exist
 		_, exists := response["productsTotal"]
 		require.True(t, exists)
-		_, exists = response["handlingFees"]
+		_, exists = response["handlingFee"]
 		require.True(t, exists)
 		_, exists = response["totalCost"]
 		require.True(t, exists)
 	})
 }
 
-func TestRemoveCartItem(t *testing.T) {
+func TestRemoveCartProduct(t *testing.T) {
 	db := tests.SetupTestDB(t)
 
 	// Prepare test user
@@ -299,14 +359,14 @@ func TestRemoveCartItem(t *testing.T) {
 	handlers.AddToCart(c)
 	require.Equal(t, http.StatusCreated, w.Code)
 
-	t.Run("Item Not Found", func(t *testing.T) {
+	t.Run("Product Not Found", func(t *testing.T) {
 		c, w := tests.CreateTestContext("DELETE", "/api/cart/non-existent-pid", nil)
 		c.Request.Header.Set("Authorization", token)
 		c.Params = []gin.Param{{Key: "pid", Value: "non-existent-pid"}}
 
-		handlers.RemoveCartItem(c)
+		handlers.RemoveCartProduct(c)
 		require.Equal(t, http.StatusNotFound, w.Code)
-		require.Contains(t, w.Body.String(), "Cart item not found")
+		require.Contains(t, w.Body.String(), "Cart product not found")
 	})
 
 	t.Run("Successful Remove", func(t *testing.T) {
@@ -314,9 +374,20 @@ func TestRemoveCartItem(t *testing.T) {
 		c.Request.Header.Set("Authorization", token)
 		c.Params = []gin.Param{{Key: "pid", Value: "product-pid"}}
 
-		handlers.RemoveCartItem(c)
+		handlers.RemoveCartProduct(c)
 		require.Equal(t, http.StatusOK, w.Code)
-		require.Contains(t, w.Body.String(), "Item removed")
+
+		var response map[string]interface{}
+		err := json.Unmarshal(w.Body.Bytes(), &response)
+		require.NoError(t, err)
+
+		// Verify response fields exist
+		_, exists := response["productsTotal"]
+		require.True(t, exists)
+		_, exists = response["handlingFee"]
+		require.True(t, exists)
+		_, exists = response["totalCost"]
+		require.True(t, exists)
 	})
 }
 

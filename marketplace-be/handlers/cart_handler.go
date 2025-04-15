@@ -42,19 +42,31 @@ func AddToCart(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "Added to cart"})
 }
 
-func GetCartItems(c *gin.Context) {
+func GetCartProducts(c *gin.Context) {
 	userUid, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
 
-	items, err := services.GetCartItemsService(userUid)
+	products, err := services.GetCartProductsService(userUid)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to retrieve cart items"})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to retrieve cart products"})
 		return
 	}
-	c.JSON(http.StatusOK, items)
+	c.JSON(http.StatusOK, products)
 }
 
-func UpdateCartItem(c *gin.Context) {
-	var input dtos.UpdateCartItemInput
+func GetCartProductsCount(c *gin.Context) {
+	userUid, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
+
+	count, err := services.GetCartProductsCountService(userUid)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to get cart products count"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"count": count})
+}
+
+func UpdateCartProduct(c *gin.Context) {
+	var input dtos.UpdateCartProductInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid input"})
 		return
@@ -66,43 +78,40 @@ func UpdateCartItem(c *gin.Context) {
 	}
 
 	// Call the service and get the updated order details
-	response, err := services.UpdateCartItemService(input.ProductPID, input.Quantity)
+	response, err := services.UpdateCartProductService(input.ProductPID, input.Quantity)
 	if err != nil {
 		switch err {
 		case services.ErrProductNotFound:
 			c.JSON(http.StatusNotFound, gin.H{"message": "Product not found"})
 		case services.ErrInsufficientProductQuantity:
 			c.JSON(http.StatusConflict, gin.H{"message": "Not enough product in stock"})
-		case services.ErrCartItemNotFound:
-			c.JSON(http.StatusNotFound, gin.H{"message": "Cart item not found"})
+		case services.ErrCartProductNotFound:
+			c.JSON(http.StatusNotFound, gin.H{"message": "Cart product not found"})
 		default:
 			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		}
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"productsTotal": response.ProductsTotal,
-		"handlingFees":  response.HandlingFee,
-		"totalCost":     response.TotalCost,
-	})
+	c.JSON(http.StatusOK, response)
 }
 
-func RemoveCartItem(c *gin.Context) {
+func RemoveCartProduct(c *gin.Context) {
 	userUid, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
 	productId := c.Param("pid")
 
-	removeErr := services.RemoveCartItemService(productId, userUid)
+	response, removeErr := services.RemoveCartProductService(productId, userUid)
 	if removeErr != nil {
 		switch removeErr {
-		case services.ErrCartItemNotFound:
-			c.JSON(http.StatusNotFound, gin.H{"message": "Cart item not found"})
+		case services.ErrCartProductNotFound:
+			c.JSON(http.StatusNotFound, gin.H{"message": "Cart product not found"})
 		default:
 			c.JSON(http.StatusInternalServerError, gin.H{"message": removeErr.Error()})
 		}
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Item removed"})
+
+	c.JSON(http.StatusOK, response)
 }
 
 func ClearCart(c *gin.Context) {

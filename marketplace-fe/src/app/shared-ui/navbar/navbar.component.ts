@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common'
-import { Component, Input } from '@angular/core'
+import { Component, Input, OnInit } from '@angular/core'
 import { RouterModule } from '@angular/router'
 
-import { NavbarService } from './navbar.service'
 import { InputComponent } from '../input/input.component'
 import { TextComponent } from '../text/text.component'
+
+import { AppCartService } from '../../core'
 
 @Component({
   selector: 'app-navbar',
@@ -13,16 +14,22 @@ import { TextComponent } from '../text/text.component'
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css'],
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
   @Input() showAccount = false
   @Input() showCart = false
   @Input() showSearchBar = false
 
-  itemsInCart = 0
+  cartCount!: string
 
-  constructor(private navbarService: NavbarService) {}
+  constructor(private appCartService: AppCartService) {}
 
-  get itemsInCartValue() {
-    return this.itemsInCart === 0 ? '' : `(${this.itemsInCart})`
+  ngOnInit(): void {
+    this.appCartService.getCartProductsCount$.subscribe((data) => {
+      this.cartCount = data
+    })
+
+    if (this.showCart) {
+      this.appCartService.getCartProductsCount()
+    }
   }
 }
