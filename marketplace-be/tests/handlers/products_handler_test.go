@@ -18,75 +18,6 @@ func init() {
 	gin.SetMode(gin.TestMode)
 }
 
-func TestCreateProduct(t *testing.T) {
-	db := tests.SetupTestDB(t)
-
-	user := &models.User{
-		ID:              1,
-		Uid:             "user-uid",
-		Email:           "test@ufl.edu",
-		DisplayImageUrl: "",
-		Name:            "Test User",
-		DisplayName:     "GatorUser",
-		Mobile:          "123-456-7890",
-		PasswordHash:    "$2a$10$examplehashedpassword",
-	}
-	db.Create(user)
-
-	token, _ := auth.GenerateToken(user.Uid)
-
-	t.Run("Create product successfully", func(t *testing.T) {
-		input := dtos.ProductInput{
-			Name:     "Test Product",
-			Category: models.Books,
-			Price:    10.99,
-			Quantity: 5,
-			Images: []dtos.ProductImageInput{
-				{MimeType: "image/png", URL: "http://example.com/img1.png", IsMain: true},
-				{MimeType: "image/png", URL: "http://example.com/img2.png", IsMain: false},
-			},
-		}
-
-		body, _ := json.Marshal(input)
-		c, w := tests.CreateTestContext("POST", "/api/products", body)
-		c.Request.Header.Set("Authorization", token)
-
-		// Call the handler
-		handlers.CreateProduct(c)
-
-		require.Equal(t, http.StatusCreated, w.Code)
-	})
-
-	t.Run("Invalid Input Format", func(t *testing.T) {
-		c, w := tests.CreateTestContext("POST", "/api/products", []byte(`{"invalid":"json"}`))
-		c.Request.Header.Set("Authorization", token)
-
-		handlers.CreateProduct(c)
-		require.Equal(t, http.StatusBadRequest, w.Code)
-		require.Contains(t, w.Body.String(), "error")
-	})
-
-	t.Run("Invalid Category", func(t *testing.T) {
-		input := dtos.ProductInput{
-			Name:     "Invalid Cat Product",
-			Category: "NonExistentCategory", // Invalid
-			Price:    15.0,
-		}
-
-		body, _ := json.Marshal(input)
-		c, w := tests.CreateTestContext("POST", "/api/products", body)
-		c.Request.Header.Set("Authorization", token)
-
-		handlers.CreateProduct(c)
-
-		require.Equal(t, http.StatusBadRequest, w.Code)
-
-		var resp map[string]interface{}
-		_ = json.Unmarshal(w.Body.Bytes(), &resp)
-		require.Contains(t, resp["error"], "invalid category")
-	})
-}
-
 func TestGetProducts(t *testing.T) {
 	db := tests.SetupTestDB(t)
 
@@ -295,6 +226,75 @@ func TestGetProductByPID(t *testing.T) {
 
 		require.Equal(t, http.StatusNotFound, w.Code)
 		require.Contains(t, w.Body.String(), "error")
+	})
+}
+
+func TestCreateProduct(t *testing.T) {
+	db := tests.SetupTestDB(t)
+
+	user := &models.User{
+		ID:              1,
+		Uid:             "user-uid",
+		Email:           "test@ufl.edu",
+		DisplayImageUrl: "",
+		Name:            "Test User",
+		DisplayName:     "GatorUser",
+		Mobile:          "123-456-7890",
+		PasswordHash:    "$2a$10$examplehashedpassword",
+	}
+	db.Create(user)
+
+	token, _ := auth.GenerateToken(user.Uid)
+
+	t.Run("Create product successfully", func(t *testing.T) {
+		input := dtos.ProductInput{
+			Name:     "Test Product",
+			Category: models.Books,
+			Price:    10.99,
+			Quantity: 5,
+			Images: []dtos.ProductImageInput{
+				{MimeType: "image/png", URL: "http://example.com/img1.png", IsMain: true},
+				{MimeType: "image/png", URL: "http://example.com/img2.png", IsMain: false},
+			},
+		}
+
+		body, _ := json.Marshal(input)
+		c, w := tests.CreateTestContext("POST", "/api/product", body)
+		c.Request.Header.Set("Authorization", token)
+
+		// Call the handler
+		handlers.CreateProduct(c)
+
+		require.Equal(t, http.StatusCreated, w.Code)
+	})
+
+	t.Run("Invalid Input Format", func(t *testing.T) {
+		c, w := tests.CreateTestContext("POST", "/api/product", []byte(`{"invalid":"json"}`))
+		c.Request.Header.Set("Authorization", token)
+
+		handlers.CreateProduct(c)
+		require.Equal(t, http.StatusBadRequest, w.Code)
+		require.Contains(t, w.Body.String(), "error")
+	})
+
+	t.Run("Invalid Category", func(t *testing.T) {
+		input := dtos.ProductInput{
+			Name:     "Invalid Cat Product",
+			Category: "NonExistentCategory", // Invalid
+			Price:    15.0,
+		}
+
+		body, _ := json.Marshal(input)
+		c, w := tests.CreateTestContext("POST", "/api/product", body)
+		c.Request.Header.Set("Authorization", token)
+
+		handlers.CreateProduct(c)
+
+		require.Equal(t, http.StatusBadRequest, w.Code)
+
+		var resp map[string]interface{}
+		_ = json.Unmarshal(w.Body.Bytes(), &resp)
+		require.Contains(t, resp["error"], "invalid category")
 	})
 }
 

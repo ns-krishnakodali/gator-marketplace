@@ -2,8 +2,9 @@ import { Component, ViewChild } from '@angular/core'
 
 import { MatButtonModule } from '@angular/material/button'
 
-import { ProductDetails } from './models'
+import type { ProductDetails } from './models'
 import { ListProductFormComponent, ProductImagesComponent } from './components'
+import { ListProductService } from './services'
 
 import { NavbarComponent } from '../../shared-ui'
 
@@ -17,12 +18,14 @@ export class ListProductComponent {
   @ViewChild(ListProductFormComponent) listProductForm!: ListProductFormComponent
   @ViewChild(ProductImagesComponent) productImages!: ProductImagesComponent
 
+  constructor(private listProductService: ListProductService) {}
+
   onListProduct = (event: Event): void => {
     event.preventDefault()
     if (this.listProductForm) {
       const productDetails: ProductDetails = this.listProductForm.productDetails
-      const productImageDetails: File[] = this.productImages.imageFiles
-      console.log('Submitting product:', productDetails, productImageDetails)
+      const productImageFiles: File[] = this.productImages.imageFiles
+      this.listProductService.listProduct(productDetails, productImageFiles)
     }
   }
 }

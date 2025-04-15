@@ -85,9 +85,8 @@ export class APIService {
     customHeaders?: Record<string, string>,
     addAuthHeader?: boolean
   ): HttpHeaders => {
-    let headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-    })
+    let headers = new HttpHeaders()
+
     if (addAuthHeader) {
       const token: string = getAuthToken() || ''
       headers = headers.set('Authorization', `${token}`)

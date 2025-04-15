@@ -29,7 +29,7 @@
         @for (preview of imagePreviews; track $index) {
           <div class="image-preview">
             <img [src]="preview" alt="Selected Product Image {{ $index + 1 }}" />
-            <button class="remove-button" (click)="removeImage($index)" type="button">×</button>
+            <button class="remove-button" (click)="removeImage($index)" type="button">x</button>
           </div>
         }
       </div>

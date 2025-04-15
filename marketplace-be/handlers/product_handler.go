@@ -1,33 +1,16 @@
 package handlers
 
 import (
+	"fmt"
 	"marketplace-be/auth"
 	"marketplace-be/dtos"
+	"marketplace-be/models"
 	"marketplace-be/services"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
-
-// CreateProduct handles the HTTP request to create a product.
-func CreateProduct(c *gin.Context) {
-	var input dtos.ProductInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	userUid, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
-
-	err := services.CreateProduct(input, userUid)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusCreated, gin.H{"message": "Product created successfully"})
-}
 
 // GetProducts handles fetching products with optional filtering, sorting, and pagination.
 func GetProducts(c *gin.Context) {
@@ -74,6 +57,65 @@ func GetProductByPID(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, product)
+}
+
+// CreateProduct handles the HTTP request to create a product.
+func CreateProduct(c *gin.Context) {
+	if err := c.Request.ParseMultipartForm(100 << 20); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to parse multipart form"})
+		return
+	}
+
+	categoryStr := c.PostForm("category")
+	// Validate category
+	category := models.Category(categoryStr)
+	if !services.ValidCategory(category) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Invalid category: %s", categoryStr)})
+		return
+	}
+
+	input := dtos.ProductInput{
+		Name:        c.PostForm("name"),
+		Description: c.PostForm("description"),
+		Category:    category,
+	}
+
+	// Parse numeric values
+	price, err := strconv.ParseFloat(c.PostForm("price"), 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid price format"})
+		return
+	}
+	input.Price = price
+
+	quantity, err := strconv.Atoi(c.PostForm("quantity"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid quantity format"})
+		return
+	}
+	input.Quantity = quantity
+
+	// Get uploaded files
+	form, err := c.MultipartForm()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	files := form.File["files"]
+	userUid, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
+
+	fmt.Println("Files: ", files)
+	fmt.Println("UserUID: ", userUid)
+
+	// Call the service function with files
+	// err = services.CreateProduct(input, files, userUid, c)
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// 	return
+	// }
+
+	c.JSON(http.StatusCreated, gin.H{"message": "Product created successfully"})
 }
 
 // UpdateProduct handles updating an existing product (and its images).
