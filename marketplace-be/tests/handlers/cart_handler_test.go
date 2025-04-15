@@ -6,7 +6,7 @@ import (
 	"marketplace-be/dtos"
 	"marketplace-be/handlers"
 	"marketplace-be/models"
-	"marketplace-be/test_utils"
+	"marketplace-be/tests"
 	"net/http"
 	"testing"
 
@@ -20,7 +20,7 @@ func init() {
 }
 
 func TestAddToCart(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	// Prepare test user
 	user := &models.User{
@@ -53,7 +53,7 @@ func TestAddToCart(t *testing.T) {
 	token, _ := auth.GenerateToken(user.Uid)
 
 	t.Run("Invalid Input Format", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("POST", "/api/cart", []byte(`{"invalid":"json"}`))
+		c, w := tests.CreateTestContext("POST", "/api/cart", []byte(`{"invalid":"json"}`))
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.AddToCart(c)
@@ -62,7 +62,7 @@ func TestAddToCart(t *testing.T) {
 	})
 
 	t.Run("Product Not Found", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"non-existent-pid","quantity":1}`))
+		c, w := tests.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"non-existent-pid","quantity":1}`))
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.AddToCart(c)
@@ -71,7 +71,7 @@ func TestAddToCart(t *testing.T) {
 	})
 
 	t.Run("Not Enough Product Quantity", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"product-pid","quantity":20}`))
+		c, w := tests.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"product-pid","quantity":20}`))
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.AddToCart(c)
@@ -80,7 +80,7 @@ func TestAddToCart(t *testing.T) {
 	})
 
 	t.Run("Successful Add To Cart", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"product-pid","quantity":5}`))
+		c, w := tests.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"product-pid","quantity":5}`))
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.AddToCart(c)
@@ -98,7 +98,7 @@ func TestAddToCart(t *testing.T) {
 		}
 		db.Create(cartProduct)
 
-		c, w := test_utils.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"product-pid","quantity":1}`))
+		c, w := tests.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"product-pid","quantity":1}`))
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.AddToCart(c)
@@ -108,7 +108,7 @@ func TestAddToCart(t *testing.T) {
 }
 
 func TestGetCartItems(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	// Prepare test user
 	user := &models.User{
@@ -148,13 +148,13 @@ func TestGetCartItems(t *testing.T) {
 	token, _ := auth.GenerateToken(user.Uid)
 
 	// Add product to cart first
-	c, w := test_utils.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"product-pid","quantity":5}`))
+	c, w := tests.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"product-pid","quantity":5}`))
 	c.Request.Header.Set("Authorization", token)
 	handlers.AddToCart(c)
 	require.Equal(t, http.StatusCreated, w.Code)
 
 	t.Run("Successfully Get Cart Items", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("GET", "/api/cart", nil)
+		c, w := tests.CreateTestContext("GET", "/api/cart", nil)
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.GetCartItems(c)
@@ -175,7 +175,7 @@ func TestGetCartItems(t *testing.T) {
 }
 
 func TestUpdateCartItem(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	// Prepare test user
 	user := &models.User{
@@ -207,13 +207,13 @@ func TestUpdateCartItem(t *testing.T) {
 	token, _ := auth.GenerateToken(user.Uid)
 
 	// Add product to cart first
-	c, w := test_utils.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"product-pid","quantity":2}`))
+	c, w := tests.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"product-pid","quantity":2}`))
 	c.Request.Header.Set("Authorization", token)
 	handlers.AddToCart(c)
 	require.Equal(t, http.StatusCreated, w.Code)
 
 	t.Run("Invalid Input Format", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("PUT", "/api/cart", []byte(`{"invalid":"data"}`))
+		c, w := tests.CreateTestContext("PUT", "/api/cart", []byte(`{"invalid":"data"}`))
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.UpdateCartItem(c)
@@ -222,7 +222,7 @@ func TestUpdateCartItem(t *testing.T) {
 	})
 
 	t.Run("Product Not Found", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("PUT", "/api/cart", []byte(`{"productId":"non-existent-pid","quantity":1}`))
+		c, w := tests.CreateTestContext("PUT", "/api/cart", []byte(`{"productId":"non-existent-pid","quantity":1}`))
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.UpdateCartItem(c)
@@ -231,7 +231,7 @@ func TestUpdateCartItem(t *testing.T) {
 	})
 
 	t.Run("Not Enough Quantity", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("PUT", "/api/cart", []byte(`{"productId":"product-pid","quantity":15}`))
+		c, w := tests.CreateTestContext("PUT", "/api/cart", []byte(`{"productId":"product-pid","quantity":15}`))
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.UpdateCartItem(c)
@@ -240,7 +240,7 @@ func TestUpdateCartItem(t *testing.T) {
 	})
 
 	t.Run("Successful Update", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("PUT", "/api/cart", []byte(`{"productId":"product-pid","quantity":5}`))
+		c, w := tests.CreateTestContext("PUT", "/api/cart", []byte(`{"productId":"product-pid","quantity":5}`))
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.UpdateCartItem(c)
@@ -261,7 +261,7 @@ func TestUpdateCartItem(t *testing.T) {
 }
 
 func TestRemoveCartItem(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	// Prepare test user
 	user := &models.User{
@@ -294,13 +294,13 @@ func TestRemoveCartItem(t *testing.T) {
 	token, _ := auth.GenerateToken(user.Uid)
 
 	// Add product to cart first
-	c, w := test_utils.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"product-pid","quantity":2}`))
+	c, w := tests.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"product-pid","quantity":2}`))
 	c.Request.Header.Set("Authorization", token)
 	handlers.AddToCart(c)
 	require.Equal(t, http.StatusCreated, w.Code)
 
 	t.Run("Item Not Found", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("DELETE", "/api/cart/non-existent-pid", nil)
+		c, w := tests.CreateTestContext("DELETE", "/api/cart/non-existent-pid", nil)
 		c.Request.Header.Set("Authorization", token)
 		c.Params = []gin.Param{{Key: "pid", Value: "non-existent-pid"}}
 
@@ -310,7 +310,7 @@ func TestRemoveCartItem(t *testing.T) {
 	})
 
 	t.Run("Successful Remove", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("DELETE", "/api/cart/product-pid", nil)
+		c, w := tests.CreateTestContext("DELETE", "/api/cart/product-pid", nil)
 		c.Request.Header.Set("Authorization", token)
 		c.Params = []gin.Param{{Key: "pid", Value: "product-pid"}}
 
@@ -321,7 +321,7 @@ func TestRemoveCartItem(t *testing.T) {
 }
 
 func TestClearCart(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	// Prepare test user
 	user := &models.User{
@@ -354,13 +354,13 @@ func TestClearCart(t *testing.T) {
 	token, _ := auth.GenerateToken(user.Uid)
 
 	// Add product to cart first
-	c, w := test_utils.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"product-pid","quantity":2}`))
+	c, w := tests.CreateTestContext("POST", "/api/cart", []byte(`{"productId":"product-pid","quantity":2}`))
 	c.Request.Header.Set("Authorization", token)
 	handlers.AddToCart(c)
 	require.Equal(t, http.StatusCreated, w.Code)
 
 	t.Run("Successful Clear Cart", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("DELETE", "/api/cart", nil)
+		c, w := tests.CreateTestContext("DELETE", "/api/cart", nil)
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.ClearCart(c)

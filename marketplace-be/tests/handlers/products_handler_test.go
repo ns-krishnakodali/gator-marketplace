@@ -6,7 +6,7 @@ import (
 	"marketplace-be/dtos"
 	"marketplace-be/handlers"
 	"marketplace-be/models"
-	"marketplace-be/test_utils"
+	"marketplace-be/tests"
 	"net/http"
 	"testing"
 
@@ -19,7 +19,7 @@ func init() {
 }
 
 func TestCreateProduct(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	user := &models.User{
 		ID:              1,
@@ -48,7 +48,7 @@ func TestCreateProduct(t *testing.T) {
 		}
 
 		body, _ := json.Marshal(input)
-		c, w := test_utils.CreateTestContext("POST", "/api/products", body)
+		c, w := tests.CreateTestContext("POST", "/api/products", body)
 		c.Request.Header.Set("Authorization", token)
 
 		// Call the handler
@@ -58,7 +58,7 @@ func TestCreateProduct(t *testing.T) {
 	})
 
 	t.Run("Invalid Input Format", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("POST", "/api/products", []byte(`{"invalid":"json"}`))
+		c, w := tests.CreateTestContext("POST", "/api/products", []byte(`{"invalid":"json"}`))
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.CreateProduct(c)
@@ -74,7 +74,7 @@ func TestCreateProduct(t *testing.T) {
 		}
 
 		body, _ := json.Marshal(input)
-		c, w := test_utils.CreateTestContext("POST", "/api/products", body)
+		c, w := tests.CreateTestContext("POST", "/api/products", body)
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.CreateProduct(c)
@@ -88,7 +88,7 @@ func TestCreateProduct(t *testing.T) {
 }
 
 func TestGetProducts(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	user := &models.User{
 		ID:              1,
@@ -110,7 +110,7 @@ func TestGetProducts(t *testing.T) {
 	db.Create(&models.Product{Pid: "pid-3", UserUID: user.Uid, Name: "Book B", Category: models.Books, Price: 30, PopularityScore: 5})
 
 	t.Run("Default Params", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("GET", "/api/products", nil)
+		c, w := tests.CreateTestContext("GET", "/api/products", nil)
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.GetProducts(c)
@@ -135,7 +135,7 @@ func TestGetProducts(t *testing.T) {
 	})
 
 	t.Run("With Pagination", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("GET", "/api/products?page=1&pageSize=2", nil)
+		c, w := tests.CreateTestContext("GET", "/api/products?page=1&pageSize=2", nil)
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.GetProducts(c)
@@ -154,7 +154,7 @@ func TestGetProducts(t *testing.T) {
 	})
 
 	t.Run("Filter By Category", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("GET", "/api/products?categories=Books", nil)
+		c, w := tests.CreateTestContext("GET", "/api/products?categories=Books", nil)
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.GetProducts(c)
@@ -174,7 +174,7 @@ func TestGetProducts(t *testing.T) {
 	})
 
 	t.Run("Sort By Price", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("GET", "/api/products?sort=price_desc", nil)
+		c, w := tests.CreateTestContext("GET", "/api/products?sort=price_desc", nil)
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.GetProducts(c)
@@ -199,7 +199,7 @@ func TestGetProducts(t *testing.T) {
 	})
 
 	t.Run("Filter And Sort Combined", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("GET", "/api/products?categories=Books&sort=price_desc", nil)
+		c, w := tests.CreateTestContext("GET", "/api/products?categories=Books&sort=price_desc", nil)
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.GetProducts(c)
@@ -222,7 +222,7 @@ func TestGetProducts(t *testing.T) {
 	})
 
 	t.Run("Invalid Category", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("GET", "/api/products?categories=InvalidCategory", nil)
+		c, w := tests.CreateTestContext("GET", "/api/products?categories=InvalidCategory", nil)
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.GetProducts(c)
@@ -239,7 +239,7 @@ func TestGetProducts(t *testing.T) {
 }
 
 func TestGetProductByPID(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	user := &models.User{
 		ID:              1,
@@ -270,7 +270,7 @@ func TestGetProductByPID(t *testing.T) {
 	})
 
 	t.Run("Get Product details Success", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("GET", "/api/products/pid-123", nil)
+		c, w := tests.CreateTestContext("GET", "/api/products/pid-123", nil)
 		c.Params = gin.Params{{Key: "pid", Value: "pid-123"}}
 		c.Request.Header.Set("Authorization", token)
 
@@ -287,7 +287,7 @@ func TestGetProductByPID(t *testing.T) {
 	})
 
 	t.Run("Product Not Found", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("GET", "/api/products/non-existent", nil)
+		c, w := tests.CreateTestContext("GET", "/api/products/non-existent", nil)
 		c.Params = gin.Params{{Key: "pid", Value: "non-existent"}}
 		c.Request.Header.Set("Authorization", token)
 
@@ -299,7 +299,7 @@ func TestGetProductByPID(t *testing.T) {
 }
 
 func TestUpdateProduct(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	user := &models.User{
 		ID:              1,
@@ -339,7 +339,7 @@ func TestUpdateProduct(t *testing.T) {
 		}
 
 		body, _ := json.Marshal(updateInput)
-		c, w := test_utils.CreateTestContext("PUT", "/api/products/pid-999", body)
+		c, w := tests.CreateTestContext("PUT", "/api/products/pid-999", body)
 		c.Request.Header.Set("Authorization", token)
 		c.Params = gin.Params{{Key: "pid", Value: "pid-999"}}
 
@@ -364,7 +364,7 @@ func TestUpdateProduct(t *testing.T) {
 		}
 
 		body, _ := json.Marshal(updateInput)
-		c, w := test_utils.CreateTestContext("PUT", "/api/products/non-existent", body)
+		c, w := tests.CreateTestContext("PUT", "/api/products/non-existent", body)
 		c.Request.Header.Set("Authorization", token)
 		c.Params = gin.Params{{Key: "pid", Value: "non-existent"}}
 
@@ -375,7 +375,7 @@ func TestUpdateProduct(t *testing.T) {
 	})
 
 	t.Run("Invalid Input", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("PUT", "/api/products/pid-999", []byte(`{"invalid":"json"}`))
+		c, w := tests.CreateTestContext("PUT", "/api/products/pid-999", []byte(`{"invalid":"json"}`))
 		c.Request.Header.Set("Authorization", token)
 		c.Params = gin.Params{{Key: "pid", Value: "pid-999"}}
 
@@ -387,7 +387,7 @@ func TestUpdateProduct(t *testing.T) {
 }
 
 func TestDeleteProduct(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	user := &models.User{
 		ID:              1,
@@ -407,7 +407,7 @@ func TestDeleteProduct(t *testing.T) {
 	db.Create(&models.ProductImage{Pid: "pid-del", Url: "http://example.com/img.png"})
 
 	t.Run("Delete Product Success", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("DELETE", "/api/products/pid-del", nil)
+		c, w := tests.CreateTestContext("DELETE", "/api/products/pid-del", nil)
 		c.Request.Header.Set("Authorization", token)
 		c.Params = gin.Params{{Key: "pid", Value: "pid-del"}}
 
@@ -425,7 +425,7 @@ func TestDeleteProduct(t *testing.T) {
 	})
 
 	t.Run("Product Not Found", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("DELETE", "/api/products/non-existent", nil)
+		c, w := tests.CreateTestContext("DELETE", "/api/products/non-existent", nil)
 		c.Request.Header.Set("Authorization", token)
 		c.Params = gin.Params{{Key: "pid", Value: "non-existent"}}
 

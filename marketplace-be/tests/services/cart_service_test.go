@@ -3,14 +3,14 @@ package services_test
 import (
 	"marketplace-be/models"
 	"marketplace-be/services"
-	"marketplace-be/test_utils"
+	"marketplace-be/tests"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
 
 func TestAddToCartService(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	// Create test product
 	product := &models.Product{
@@ -62,7 +62,7 @@ func TestAddToCartService(t *testing.T) {
 }
 
 func TestUpdateCartItemService(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	t.Run("Increase Qty Success", func(t *testing.T) {
 		p := &models.Product{Pid: "p1", Name: "P1", Quantity: 10, Price: 5.0}
@@ -119,7 +119,7 @@ func TestUpdateCartItemService(t *testing.T) {
 
 func TestRemoveCartItemService(t *testing.T) {
 	// Setup test DB
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	t.Run("Remove from cart Success", func(t *testing.T) {
 		db.Create(&models.Product{Pid: "px", Name: "PX", Quantity: 10})
@@ -138,7 +138,7 @@ func TestRemoveCartItemService(t *testing.T) {
 
 func TestClearCartService(t *testing.T) {
 	// Setup test DB
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	t.Run("Clear cart Success", func(t *testing.T) {
 		db.Create(&models.Product{Pid: "pA", Name: "pA", Quantity: 5})

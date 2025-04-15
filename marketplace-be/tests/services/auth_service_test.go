@@ -4,7 +4,7 @@ import (
 	"marketplace-be/dtos"
 	"marketplace-be/models"
 	"marketplace-be/services"
-	"marketplace-be/test_utils"
+	"marketplace-be/tests"
 
 	"testing"
 
@@ -30,7 +30,7 @@ func (m *MockBcrypt) GenerateFromPassword(password []byte, cost int) ([]byte, er
 
 func TestLoginService(t *testing.T) {
 	// Setup test DB
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	// Create test user
 	user := &models.User{
@@ -72,7 +72,7 @@ func TestLoginService(t *testing.T) {
 
 func TestSignupService(t *testing.T) {
 	// Setup test DB
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	t.Run("Invalid Email format (empty and non ufl.edu domain)", func(t *testing.T) {
 		err1 := services.SignupService(&dtos.SignupInput{Email: "", Password: "password", Name: "Test User", Mobile: "123-456-7890"})

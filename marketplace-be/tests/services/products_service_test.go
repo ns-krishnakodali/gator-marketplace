@@ -9,12 +9,12 @@ import (
 	"marketplace-be/dtos"
 	"marketplace-be/models"
 	"marketplace-be/services"
-	"marketplace-be/test_utils"
+	"marketplace-be/tests"
 )
 
 func TestCreateProductService(t *testing.T) {
 	// Setup test DB
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	user := &models.User{
 		Uid:             "user-pid",
@@ -55,7 +55,7 @@ func TestCreateProductService(t *testing.T) {
 }
 
 func TestGetProductsService(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	t.Run("Get products Success", func(t *testing.T) {
 		db.Create(&models.Product{Pid: "p1", Name: "P1", Category: models.Electronics, Price: 100, PopularityScore: 10})
@@ -165,7 +165,7 @@ func TestGetProductsService(t *testing.T) {
 
 func TestGetProductByPIDService(t *testing.T) {
 	// Setup test DB
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	t.Run("Get product by pid Success", func(t *testing.T) {
 		db.Create(&models.Product{Pid: "pid-xyz", Name: "XYZ Product", Category: models.Clothing, Price: 19.99})
@@ -249,7 +249,7 @@ func TestGetProductByPIDService(t *testing.T) {
 
 func TestUpdateProductService(t *testing.T) {
 	// Setup test DB
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	t.Run("Update Product details Success", func(t *testing.T) {
 		db.Create(&models.Product{
@@ -287,7 +287,7 @@ func TestUpdateProductService(t *testing.T) {
 
 func TestDeleteProductService(t *testing.T) {
 	// Setup test DB
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	t.Run("Delete Product details Success", func(t *testing.T) {
 		db.Create(&models.Product{Pid: "pid-del-svc", Name: "Service Delete"})
