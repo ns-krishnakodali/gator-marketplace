@@ -22,3 +22,6 @@ export const UPDATE_PASSWORD_SUCCESSFUL = 'Successfully updated password!'
 // Cart
 export const ADD_TO_CART_SUCCESSFUL = 'Product added to cart'
 export const REMOVED_FROM_CART_SUCCESSFUL = 'Product removed to cart'
+
+// List Product
+export const PRODUCT_IMAGES_LIMIT = 'Maximum of 6 images allowed.'

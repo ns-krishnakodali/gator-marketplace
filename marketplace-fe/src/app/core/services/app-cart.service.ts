@@ -19,7 +19,6 @@ export class AppCartService {
   ) {}
 
   addToCart = (productId: string, quantity = 1): Observable<unknown> => {
-    console.log(typeof quantity)
     return this.apiService.post('api/cart', { productId, quantity }).pipe(
       tap({
         next: () => {

@@ -8,6 +8,8 @@
       class="product-input"
       type="text"
       placeholder="Enter Product Name"
+      [(ngModel)]="productDetails.name"
+      required
     />
   </div>
   <div class="product-detail-container">
@@ -17,6 +19,8 @@
       name="product-description"
       class="product-input product-description"
       placeholder="Provide details about your product"
+      [(ngModel)]="productDetails.description"
+      required
     ></textarea>
   </div>
   <div class="product-detail-container">
@@ -26,7 +30,10 @@
       name="product-price"
       class="product-input"
       type="number"
+      step="0.01"
       placeholder="0.00"
+      [(ngModel)]="productDetails.price"
+      required
     />
   </div>
   <div class="product-detail-container">
@@ -37,6 +44,8 @@
       class="product-input select-category"
       type=""
       placeholder="0.00"
+      [(ngModel)]="productDetails.category"
+      required
     >
       <option value="">-- Select a category --</option>
       @for (category of categoryValues; track $index) {
@@ -55,6 +64,8 @@
       type="number"
       placeholder="0.00"
       value="1"
+      [(ngModel)]="productDetails.quantity"
+      required
     />
   </div>
 </div>

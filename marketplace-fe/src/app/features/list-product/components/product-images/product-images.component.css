@@ -50,6 +50,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  padding: 1rem 0.5rem;
   gap: var(--spacing-3);
 }
 
@@ -68,11 +69,12 @@
 .remove-button {
   color: var(--color-white);
   background-color: var(--color-notification-error);
+  font-weight: bold;
+  font-size: 16px;
+  margin-left: var(--spacing-quarter);
   border: none;
   border-radius: 50%;
   width: 1.25rem;
   height: 1.25rem;
   cursor: pointer;
-  font-weight: bold;
-  font-size: 16px;
 }
