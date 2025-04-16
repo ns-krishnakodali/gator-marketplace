@@ -1,0 +1,71 @@
+<div class="list-product-form-container">
+  <h2 class="product-details-heading">Product Details</h2>
+  <div class="product-detail-container">
+    <label for="product-name" class="list-product-label">Product Name*</label>
+    <input
+      id="product-name"
+      name="product-name"
+      class="product-input"
+      type="text"
+      placeholder="Enter Product Name"
+      [(ngModel)]="productDetails.name"
+      required
+    />
+  </div>
+  <div class="product-detail-container">
+    <label for="product-description" class="list-product-label">Description*</label>
+    <textarea
+      id="product-description"
+      name="product-description"
+      class="product-input product-description"
+      placeholder="Provide details about your product"
+      [(ngModel)]="productDetails.description"
+      required
+    ></textarea>
+  </div>
+  <div class="product-detail-container">
+    <label for="product-price" class="list-product-label">Price* ($)</label>
+    <input
+      id="product-price"
+      name="product-price"
+      class="product-input"
+      type="number"
+      step="0.01"
+      placeholder="0.00"
+      [(ngModel)]="productDetails.price"
+      required
+    />
+  </div>
+  <div class="product-detail-container">
+    <label for="product-category" class="list-product-label">Category*</label>
+    <select
+      id="product-category"
+      name="product-category"
+      class="product-input select-category"
+      type=""
+      placeholder="0.00"
+      [(ngModel)]="productDetails.category"
+      required
+    >
+      <option value="">-- Select a category --</option>
+      @for (category of categoryValues; track $index) {
+        <option [value]="category">
+          {{ category }}
+        </option>
+      }
+    </select>
+  </div>
+  <div class="product-detail-container">
+    <label for="product-quantity" class="list-product-label">Quantity*</label>
+    <input
+      id="product-quantity"
+      name="product-quantity"
+      class="product-input"
+      type="number"
+      placeholder="0.00"
+      value="1"
+      [(ngModel)]="productDetails.quantity"
+      required
+    />
+  </div>
+</div>

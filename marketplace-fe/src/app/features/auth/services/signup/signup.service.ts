@@ -12,6 +12,7 @@ import {
   INVALID_UFL_EMAIL,
   isValidMobileNumber,
   PASSWORDS_DO_NOT_MATCH,
+  SIGNUP_SUCCESSFUL,
   validateEmail,
   validateUFLDomain,
 } from '../../../../utils'
@@ -52,7 +53,7 @@ export class SignupService {
       .subscribe({
         next: () => {
           this.notificationsService.addNotification({
-            message: 'Signup successful!',
+            message: SIGNUP_SUCCESSFUL,
             type: 'success',
           })
           this.router.navigate(['/auth/login'])

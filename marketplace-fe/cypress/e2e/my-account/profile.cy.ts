@@ -4,6 +4,7 @@ import {
   setupAccountDetailsIntercept,
   setupUpdateAccountIntercept,
   setupUpdatePasswordIntercept,
+  setupCartProductsCountIntercept,
 } from '../../support/intercepts'
 
 describe('Profile Component Tests', () => {
@@ -11,6 +12,7 @@ describe('Profile Component Tests', () => {
     setupLoginIntercept()
     setupProtectedIntercept()
     setupAccountDetailsIntercept()
+    setupCartProductsCountIntercept()
 
     cy.visit('/auth/login')
 
@@ -23,10 +25,11 @@ describe('Profile Component Tests', () => {
     cy.wait('@apiProtected')
 
     cy.visit('/my-account')
+    cy.wait('@cartProductsCountRequest')
     cy.wait('@accountDetailsRequest')
   })
 
-  it('Should be successfully logged in and visting my-account section', () => {
+  it('Should be visting my-account section', () => {
     cy.url().should('include', '/my-account')
 
     cy.get('.account-heading').should('contain', 'My Account')
@@ -66,7 +69,6 @@ describe('Profile Component Tests', () => {
   })
 
   it('Should update account details successfully', () => {
-    // Mock Successful Update Response
     setupUpdateAccountIntercept()
 
     // Modify Profile Fields and click Update Button
@@ -103,7 +105,7 @@ describe('Profile Component Tests', () => {
     cy.get('#old-password input').type('oldPass123')
     cy.get('#new-password input').type('newPass456')
     cy.get('#modify-password-button').contains('Modify Password').click()
-    
+
     cy.wait('@updatePasswordRequest')
 
     cy.get('#modify-password-button').should('contain', 'Modify Password')

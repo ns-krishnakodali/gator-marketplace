@@ -7,7 +7,7 @@ import (
 
 	"marketplace-be/handlers"
 	"marketplace-be/models"
-	"marketplace-be/test_utils"
+	"marketplace-be/tests"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
@@ -20,7 +20,7 @@ func init() {
 
 func TestLoginHandler(t *testing.T) {
 	// Setup test DB
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	// Prepare test data
 	user := &models.User{
@@ -31,34 +31,34 @@ func TestLoginHandler(t *testing.T) {
 	db.Create(user)
 
 	t.Run("Invalid Input", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("POST", "/login", []byte(`{"email":""}`))
+		c, w := tests.CreateTestContext("POST", "/login", []byte(`{"email":""}`))
 		handlers.Login(c)
 		require.Equal(t, http.StatusBadRequest, w.Code)
 		require.Contains(t, w.Body.String(), "Invalid input format")
 	})
 
 	t.Run("User Not Found", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("POST", "/login", []byte(`{"email":"nonexistent@example.com","password":"password"}`))
+		c, w := tests.CreateTestContext("POST", "/login", []byte(`{"email":"nonexistent@example.com","password":"password"}`))
 		handlers.Login(c)
 		require.Equal(t, http.StatusNotFound, w.Code)
 		require.Contains(t, w.Body.String(), "Invalid credentials, try again")
 	})
 
 	t.Run("Invalid Credentials", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("POST", "/login", []byte(`{"email":"test@example.com","password":"wrongpassword"}`))
+		c, w := tests.CreateTestContext("POST", "/login", []byte(`{"email":"test@example.com","password":"wrongpassword"}`))
 		handlers.Login(c)
 		require.Equal(t, http.StatusUnauthorized, w.Code)
 		require.Contains(t, w.Body.String(), "Invalid credentials, try again")
 	})
 
 	t.Run("Successful Login", func(t *testing.T) {
-		signupContext, signupWriter := test_utils.CreateTestContext("POST", "/signup", []byte(
+		signupContext, signupWriter := tests.CreateTestContext("POST", "/signup", []byte(
 			`{"name":"Test User","email":"login@ufl.edu","mobile": "123-456-7890","password":"testpass"}`))
 
 		handlers.Signup(signupContext)
 		require.Equal(t, http.StatusCreated, signupWriter.Code)
 
-		c, w := test_utils.CreateTestContext("POST", "/login", []byte(`{"email":"login@ufl.edu","password":"testpass"}`))
+		c, w := tests.CreateTestContext("POST", "/login", []byte(`{"email":"login@ufl.edu","password":"testpass"}`))
 		handlers.Login(c)
 
 		var resp map[string]interface{}
@@ -71,10 +71,10 @@ func TestLoginHandler(t *testing.T) {
 
 func TestSignupHandler(t *testing.T) {
 	// Setup test DB
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	t.Run("Invalid Input", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("POST", "/signup", []byte(`{"email":"test@example.com"}`)) // Missing 'password' and 'name'
+		c, w := tests.CreateTestContext("POST", "/signup", []byte(`{"email":"test@example.com"}`)) // Missing 'password' and 'name'
 		handlers.Signup(c)
 
 		require.Equal(t, http.StatusBadRequest, w.Code, "expected 400 BadRequest")
@@ -82,7 +82,7 @@ func TestSignupHandler(t *testing.T) {
 	})
 
 	t.Run("Invalid user email (non ufl domain)", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("POST", "/signup", []byte(
+		c, w := tests.CreateTestContext("POST", "/signup", []byte(
 			`{"email":"existing@email.com","password":"password","name":"New User","mobile":"123-456-7890"}`))
 		handlers.Signup(c)
 
@@ -91,7 +91,7 @@ func TestSignupHandler(t *testing.T) {
 	})
 
 	t.Run("Invalid user mobile number", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("POST", "/signup", []byte(
+		c, w := tests.CreateTestContext("POST", "/signup", []byte(
 			`{"email":"existing@ufl.edu","password":"password","name":"New User","mobile":"123-4567890"}`))
 
 		handlers.Signup(c)
@@ -108,7 +108,7 @@ func TestSignupHandler(t *testing.T) {
 		}
 		db.Create(user)
 
-		c, w := test_utils.CreateTestContext("POST", "/signup", []byte(
+		c, w := tests.CreateTestContext("POST", "/signup", []byte(
 			`{"email":"existing@ufl.edu","password":"password","name":"Test User","mobile":"123-456-7890"}`))
 
 		handlers.Signup(c)
@@ -117,7 +117,7 @@ func TestSignupHandler(t *testing.T) {
 	})
 
 	t.Run("Successful Signup", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("POST", "/signup", []byte(
+		c, w := tests.CreateTestContext("POST", "/signup", []byte(
 			`{"email":"signup@ufl.edu","password":"password","name":"New User","mobile":"123-456-7899"}`))
 
 		handlers.Signup(c)

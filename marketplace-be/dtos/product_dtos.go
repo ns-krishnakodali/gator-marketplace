@@ -7,12 +7,11 @@ import (
 )
 
 type ProductInput struct {
-	Name        string              `json:"name" binding:"required"`
-	Description string              `json:"description,omitempty"`
-	Price       float64             `json:"price" binding:"required"`
-	Category    models.Category     `json:"category" binding:"required"`
-	Quantity    int                 `json:"quantity"`
-	Images      []ProductImageInput `json:"images,omitempty"`
+	Name        string          `form:"name"`
+	Description string          `form:"description"`
+	Price       float64         `form:"price"`
+	Category    models.Category `form:"category"`
+	Quantity    int             `form:"quantity"`
 }
 
 type ProductImageInput struct {

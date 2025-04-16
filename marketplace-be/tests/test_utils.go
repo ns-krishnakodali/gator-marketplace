@@ -1,4 +1,4 @@
-package test_utils
+package tests
 
 import (
 	"bytes"
@@ -37,11 +37,9 @@ func SetupTestDB(t *testing.T) *gorm.DB {
 	}
 
 	require.NoError(t, err, "failed to auto-migrate")
-	// Optional checks
 	require.True(t, db.Migrator().HasTable(&models.Product{}), "products table not created")
 	require.True(t, db.Migrator().HasColumn(&models.Product{}, "PID"), "PID column not created")
 
-	// Assign the global DB pointer to this in-memory DB for the handlers
 	database.DB = db
 	return db
 }
@@ -59,28 +57,18 @@ func CreateTestContext(method, path string, body []byte) (*gin.Context, *httptes
 }
 
 // SetUserContext creates a valid JWT using the same JWT_SECRET
-// as your production code, then sets the Authorization header.
 func SetUserContext(c *gin.Context, userEmail string) {
-	// Read secret from env
 	jwtSecret := []byte(os.Getenv("JWT_SECRET"))
-
-	// Or, if you have a global variable loaded from env already (e.g. auth.JwtSecret),
-	// you can just reuse that. The key point is to sign with the same secret.
-
-	// Create real JWT claims
 	claims := jwt.MapClaims{
 		"user_email": userEmail,
 		"exp":        time.Now().Add(time.Hour * 1).Unix(), // 1-hour expiration
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	// Sign the token
 	tokenString, err := token.SignedString(jwtSecret)
 	if err != nil {
-		// In tests, you could panic or handle the error however you'd like
 		panic("failed to sign JWT in test: " + err.Error())
 	}
 
-	// Set Authorization header to "Bearer <token>"
 	c.Request.Header.Set("Authorization", tokenString)
 }

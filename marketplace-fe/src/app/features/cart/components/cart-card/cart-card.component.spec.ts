@@ -69,7 +69,7 @@ describe('CartCardComponent', () => {
     })
 
     it('should show quantity selector when not removing item', () => {
-      cartServiceSpy.removeCartItemIsLoading$ = of(false)
+      cartServiceSpy.removeCartProductIsLoading$ = of(false)
       fixture.detectChanges()
 
       const spinner = fixture.debugElement.query(By.css('mat-spinner'))
@@ -98,14 +98,14 @@ describe('CartCardComponent', () => {
       const plusButton = fixture.debugElement.queryAll(By.css('.quantity-button'))[1].nativeElement
       plusButton.click()
       expect(component.cartProduct.quantity).toBe(3)
-      expect(cartServiceSpy.updateCartItems).toHaveBeenCalledWith('123', 3)
+      expect(cartServiceSpy.updateCartProducts).toHaveBeenCalledWith('123', 3)
     })
 
     it('should decrement quantity when - button is clicked', () => {
       const minusButton = fixture.debugElement.queryAll(By.css('.quantity-button'))[0].nativeElement
       minusButton.click()
       expect(component.cartProduct.quantity).toBe(1)
-      expect(cartServiceSpy.updateCartItems).toHaveBeenCalledWith('123', 1)
+      expect(cartServiceSpy.updateCartProducts).toHaveBeenCalledWith('123', 1)
     })
 
     it('should not allow quantity to go below 0', () => {
@@ -117,7 +117,7 @@ describe('CartCardComponent', () => {
       minusButton.click()
 
       expect(component.cartProduct.quantity).toBe(0)
-      expect(cartServiceSpy.updateCartItems).toHaveBeenCalledWith('123', 0)
+      expect(cartServiceSpy.updateCartProducts).toHaveBeenCalledWith('123', 0)
     })
 
     it('should not allow quantity to exceed maxQuantity', () => {
@@ -129,7 +129,7 @@ describe('CartCardComponent', () => {
       plusButton.click()
 
       expect(component.cartProduct.quantity).toBe(5)
-      expect(cartServiceSpy.updateCartItems).toHaveBeenCalledWith('123', 5)
+      expect(cartServiceSpy.updateCartProducts).toHaveBeenCalledWith('123', 5)
     })
 
     it('should not allow quantity to exceed 10 even if maxQuantity is higher', () => {
@@ -142,7 +142,7 @@ describe('CartCardComponent', () => {
       plusButton.click()
 
       expect(component.cartProduct.quantity).toBe(10)
-      expect(cartServiceSpy.updateCartItems).toHaveBeenCalledWith('123', 10)
+      expect(cartServiceSpy.updateCartProducts).toHaveBeenCalledWith('123', 10)
     })
   })
 
@@ -158,6 +158,6 @@ describe('CartCardComponent', () => {
     plusButton.click()
 
     expect(component.cartProduct.quantity).toBe(0)
-    expect(cartServiceSpy.updateCartItems).toHaveBeenCalledWith('123', 0)
+    expect(cartServiceSpy.updateCartProducts).toHaveBeenCalledWith('123', 0)
   })
 })

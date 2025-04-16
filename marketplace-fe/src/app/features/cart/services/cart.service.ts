@@ -11,14 +11,14 @@ import { REMOVED_FROM_CART_SUCCESSFUL } from '../../../utils'
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
-  private getCartItemsIsLoadingSubject = new BehaviorSubject<boolean>(false)
-  private removeCartItemIsLoadingSubject = new BehaviorSubject<boolean>(false)
+  private getCartProductsIsLoadingSubject = new BehaviorSubject<boolean>(false)
+  private removeCartProductIsLoadingSubject = new BehaviorSubject<boolean>(false)
   private cartDetailsSubject = new BehaviorSubject<{
     cartDetails: CartDetails
   }>({ cartDetails: {} as CartDetails })
 
-  public getCartItemsIsLoading$ = this.getCartItemsIsLoadingSubject.asObservable()
-  public removeCartItemIsLoading$ = this.removeCartItemIsLoadingSubject.asObservable()
+  public getCartProductsIsLoading$ = this.getCartProductsIsLoadingSubject.asObservable()
+  public removeCartProductIsLoading$ = this.removeCartProductIsLoadingSubject.asObservable()
   public cartDetails$ = this.cartDetailsSubject.asObservable()
 
   constructor(
@@ -27,8 +27,8 @@ export class CartService {
     private router: Router
   ) {}
 
-  getCartItems = (): void => {
-    this.getCartItemsIsLoadingSubject.next(true)
+  getCartProducts = (): void => {
+    this.getCartProductsIsLoadingSubject.next(true)
     this.apiService.get('api/cart').subscribe({
       next: (response: unknown) => {
         const cartDetails: CartDetails = this.processCartDetailsResponse(response)
@@ -39,22 +39,22 @@ export class CartService {
           message: error.message,
           type: 'error',
         })
-        this.getCartItemsIsLoadingSubject.next(false)
+        this.getCartProductsIsLoadingSubject.next(false)
       },
       complete: () => {
-        this.getCartItemsIsLoadingSubject.next(false)
+        this.getCartProductsIsLoadingSubject.next(false)
       },
     })
   }
 
-  updateCartItems = (productId: string, quantity: number): void => {
+  updateCartProducts = (productId: string, quantity: number): void => {
     if (quantity === 0) {
       this.removeFromCart(productId)
       return
     }
     this.apiService.put('api/cart', { productId, quantity }).subscribe({
       next: (response: unknown) => {
-        const updatedCartDetails: CartDetails = this.processUpdateCardDetailsResponse(response)
+        const updatedCartDetails: CartDetails = this.processCartModifyResponse(response)
         this.cartDetailsSubject.next({ cartDetails: updatedCartDetails })
       },
       error: (error) => {
@@ -67,10 +67,10 @@ export class CartService {
   }
 
   removeFromCart = (productId: string): void => {
-    this.removeCartItemIsLoadingSubject.next(true)
+    this.removeCartProductIsLoadingSubject.next(true)
     this.apiService.delete(`api/cart/${productId}`).subscribe({
-      next: () => {
-        const updatedCartDetails: CartDetails = { ...this.cartDetailsSubject.value.cartDetails }
+      next: (response: unknown) => {
+        const updatedCartDetails: CartDetails = this.processCartModifyResponse(response)
         updatedCartDetails.cartProducts = updatedCartDetails.cartProducts.filter(
           (product: CartProduct) => product.productId !== productId
         )
@@ -86,10 +86,10 @@ export class CartService {
           message: error.message,
           type: 'error',
         })
-        this.removeCartItemIsLoadingSubject.next(false)
+        this.removeCartProductIsLoadingSubject.next(false)
       },
       complete: () => {
-        this.removeCartItemIsLoadingSubject.next(false)
+        this.removeCartProductIsLoadingSubject.next(false)
       },
     })
   }
@@ -108,13 +108,13 @@ export class CartService {
     }
   }
 
-  private processUpdateCardDetailsResponse = (response: unknown): CartDetails => {
+  private processCartModifyResponse = (response: unknown): CartDetails => {
     const productResponse = response as CartResponseDTO
     return {
       cartProducts: this.cartDetailsSubject.value.cartDetails.cartProducts,
-      productsTotal: `${productResponse.productsTotal || ''}`,
-      handlingFee: `${productResponse.handlingFee || 'N/A'}`,
-      totalCost: `${productResponse.totalCost || 'N/A'}`,
+      productsTotal: `${productResponse.productsTotal || '0'}`,
+      handlingFee: `${productResponse.handlingFee || '0'}`,
+      totalCost: `${productResponse.totalCost || '0'}`,
     }
   }
 

@@ -39,7 +39,6 @@ export class ProductDetailsComponent implements OnInit {
   constructor(private appCartService: AppCartService) {}
 
   ngOnInit(): void {
-    console.log(this.maxQuantity)
     this.quantityOptions = Array.from(
       { length: Math.min(this.maxQuantity || 0, 10) },
       (_, i) => i + 1
@@ -47,7 +46,6 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   addtoCart = (): void => {
-    console.log(this.quantity)
     this.addToCartLoading = true
     this.appCartService
       .addToCart(this.productId, Number(this.quantity))

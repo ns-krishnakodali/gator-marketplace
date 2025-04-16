@@ -1,14 +1,14 @@
 <div class="container">
-  <h2 class="products-heading">Explore Marketplace</h2>
+  <h1 class="products-heading">Explore Marketplace</h1>
   @if (isLoading) {
     <div class="loader">
       <mat-spinner diameter="60" />
     </div>
   } @else if (!productsData || productsData.length === 0) {
     <div class="no-products">
-      <app-text id="no-products-text" class="no-products-text" size="x-large"
-        >Oops!! No items found.</app-text
-      >
+      <app-text id="no-products-text" class="no-products-text" size="x-large">
+        Oops!! No active product listing, Check back later.
+      </app-text>
       <img src="assets/svg-icons/sad-face.svg" class="sad-face" alt="Sad Face" />
     </div>
   } @else {

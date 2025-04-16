@@ -70,3 +70,12 @@ export const setupProductDetailsIntercept = () => {
     },
   }).as('productDetailsRequest')
 }
+
+export const setupCartProductsCountIntercept = (count = "0" ) => {
+  cy.intercept('GET', '/api/cart/count', {
+    statusCode: 200,
+    body: {
+      count,
+    },
+  }).as('cartProductsCountRequest')
+}

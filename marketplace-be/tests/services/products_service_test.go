@@ -6,56 +6,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"marketplace-be/dtos"
 	"marketplace-be/models"
 	"marketplace-be/services"
-	"marketplace-be/test_utils"
+	"marketplace-be/tests"
 )
 
-func TestCreateProductService(t *testing.T) {
-	// Setup test DB
-	db := test_utils.SetupTestDB(t)
-
-	user := &models.User{
-		Uid:             "user-pid",
-		Email:           "product-test@ufl.edu",
-		Name:            "Test Product User",
-		DisplayName:     "TestProductUser123",
-		Mobile:          "123-456-7890",
-		DisplayImageUrl: "https://example.com/image.jpg",
-	}
-	db.Create(user)
-
-	t.Run("Created product Success", func(t *testing.T) {
-		input := dtos.ProductInput{
-			Name:     "Service Product",
-			Category: models.Books,
-			Price:    12.34,
-			Quantity: 2,
-			Images: []dtos.ProductImageInput{
-				{MimeType: "image/png", URL: "http://example.com/book.png", IsMain: true},
-			},
-		}
-
-		err := services.CreateProduct(input, user.Uid)
-		require.NoError(t, err)
-	})
-
-	t.Run("Invalid Category", func(t *testing.T) {
-		input := dtos.ProductInput{
-			Name:     "Invalid Category",
-			Category: "NoSuchCategory",
-			Price:    10.0,
-		}
-
-		err := services.CreateProduct(input, user.Uid)
-		require.Error(t, err)
-		require.Contains(t, err.Error(), "invalid category")
-	})
-}
-
 func TestGetProductsService(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	t.Run("Get products Success", func(t *testing.T) {
 		db.Create(&models.Product{Pid: "p1", Name: "P1", Category: models.Electronics, Price: 100, PopularityScore: 10})
@@ -165,7 +122,7 @@ func TestGetProductsService(t *testing.T) {
 
 func TestGetProductByPIDService(t *testing.T) {
 	// Setup test DB
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	t.Run("Get product by pid Success", func(t *testing.T) {
 		db.Create(&models.Product{Pid: "pid-xyz", Name: "XYZ Product", Category: models.Clothing, Price: 19.99})
@@ -247,47 +204,9 @@ func TestGetProductByPIDService(t *testing.T) {
 	})
 }
 
-func TestUpdateProductService(t *testing.T) {
-	// Setup test DB
-	db := test_utils.SetupTestDB(t)
-
-	t.Run("Update Product details Success", func(t *testing.T) {
-		db.Create(&models.Product{
-			Pid:         "pid-upd",
-			Name:        "Old Name",
-			Description: "Old Description",
-			Category:    models.Books,
-			Price:       10.0,
-		})
-		db.Create(&models.ProductImage{
-			Pid: "pid-upd", MimeType: "image/png", Url: "http://example.com/old.png", IsMain: true,
-		})
-
-		input := dtos.ProductInput{
-			Name:        "New Name",
-			Description: "New Desc",
-			Category:    models.Books,
-			Price:       20.0,
-			Quantity:    5,
-			Images: []dtos.ProductImageInput{
-				{MimeType: "image/jpeg", URL: "http://example.com/new1.jpg", IsMain: true},
-				{MimeType: "image/jpeg", URL: "http://example.com/new2.jpg", IsMain: false},
-			},
-		}
-
-		updated, err := services.UpdateProductService("pid-upd", input)
-		require.NoError(t, err)
-		require.Equal(t, "pid-upd", updated.Pid)
-		require.Equal(t, "New Name", updated.Name)
-		require.EqualValues(t, 20.0, updated.Price)
-		require.Len(t, updated.Images, 2)
-		require.Equal(t, "http://example.com/new1.jpg", updated.Images[0].Url)
-	})
-}
-
 func TestDeleteProductService(t *testing.T) {
 	// Setup test DB
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	t.Run("Delete Product details Success", func(t *testing.T) {
 		db.Create(&models.Product{Pid: "pid-del-svc", Name: "Service Delete"})

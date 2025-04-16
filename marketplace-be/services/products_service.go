@@ -2,60 +2,16 @@ package services
 
 import (
 	"fmt"
+	"marketplace-be/aws"
 	"marketplace-be/database"
 	"marketplace-be/dtos"
 	"marketplace-be/models"
 	"math"
+	"mime/multipart"
 	"strings"
-	"time"
 
 	"github.com/google/uuid"
 )
-
-// CreateProduct creates a product (and optional images) in the database.
-func CreateProduct(input dtos.ProductInput, userUid string) error {
-	if !validCategory(input.Category) {
-		return fmt.Errorf("invalid category: %s", input.Category)
-	}
-
-	newPID := uuid.NewString()
-	product := models.Product{
-		Pid:             newPID,
-		UserUID:         userUid,
-		Name:            input.Name,
-		Description:     input.Description,
-		Price:           input.Price,
-		Category:        input.Category,
-		Quantity:        input.Quantity,
-		PopularityScore: 0,
-	}
-
-	// Create the product
-	if err := database.DB.Create(&product).Error; err != nil {
-		return fmt.Errorf("could not create product: %v", err)
-	}
-
-	// Create images if provided
-	for _, img := range input.Images {
-		imageModel := models.ProductImage{
-			Pid:      newPID,
-			MimeType: img.MimeType,
-			Url:      img.URL,
-			IsMain:   img.IsMain,
-		}
-		if err := database.DB.Create(&imageModel).Error; err != nil {
-			return fmt.Errorf("could not create product images: %v", err)
-		}
-	}
-
-	// Fetch the newly created product with images
-	var createdProduct models.Product
-	if err := database.DB.Where("pid = ?", newPID).Preload("Images").First(&createdProduct).Error; err != nil {
-		return fmt.Errorf("could not fetch created product")
-	}
-
-	return nil
-}
 
 // GetProductsService fetches products with filtering, sorting, and pagination.
 func GetProductsService(categoriesParam, sortParam string, page, pageSize int) (dtos.GetProductsResponse, error) {
@@ -178,57 +134,92 @@ func GetProductByPIDService(productPID string) (dtos.ProductResponse, error) {
 	}, nil
 }
 
+// CreateProduct creates a product (and optional images) in the database.
+func CreateProduct(input dtos.ProductInput, files []*multipart.FileHeader, userUid string) error {
+	newPID := uuid.NewString()
+	product := models.Product{
+		Pid:             newPID,
+		UserUID:         userUid,
+		Name:            input.Name,
+		Description:     input.Description,
+		Price:           input.Price,
+		Category:        input.Category,
+		Quantity:        input.Quantity,
+		PopularityScore: 0,
+	}
+
+	if err := database.DB.Create(&product).Error; err != nil {
+		return fmt.Errorf("could not create product: %v", err)
+	}
+
+	imageURLs, errs := aws.UploadImages(aws.S3Client, files, "products", newPID)
+	if errs != nil {
+		fmt.Printf("Image uploading failed to S3: %s\n", errs[0])
+		return ErrImageUploadFailed
+	}
+
+	for idx, url := range imageURLs {
+		imageModel := models.ProductImage{
+			Pid:      newPID,
+			MimeType: files[idx].Header.Get("Content-Type"),
+			Url:      url,
+			IsMain:   idx == 0,
+		}
+
+		if err := database.DB.Create(&imageModel).Error; err != nil {
+			return fmt.Errorf("could not save image record: %v", err)
+		}
+	}
+
+	return nil
+}
+
 // UpdateProductService updates a product (and optionally images) in the DB.
 func UpdateProductService(productPID string, input dtos.ProductInput) (models.Product, error) {
-	// Fetch existing product
-	var existingProduct models.Product
-	if err := database.DB.Preload("Images").Where("pid = ?", productPID).First(&existingProduct).Error; err != nil {
-		return existingProduct, fmt.Errorf("product not found")
-	}
+	// var existingProduct models.Product
+	// if err := database.DB.Preload("Images").Where("pid = ?", productPID).First(&existingProduct).Error; err != nil {
+	// 	return existingProduct, fmt.Errorf("product not found")
+	// }
 
-	// Validate category
-	if !validCategory(input.Category) {
-		return existingProduct, fmt.Errorf("invalid category: %s", input.Category)
-	}
+	// if !validCategory(input.Category) {
+	// 	return existingProduct, fmt.Errorf("invalid category: %s", input.Category)
+	// }
 
-	// Update fields
-	existingProduct.Name = input.Name
-	existingProduct.Description = input.Description
-	existingProduct.Price = input.Price
-	existingProduct.Category = input.Category
-	existingProduct.Quantity = input.Quantity
-	existingProduct.UpdatedAt = time.Now()
+	// existingProduct.Name = input.Name
+	// existingProduct.Description = input.Description
+	// existingProduct.Price = input.Price
+	// existingProduct.Category = input.Category
+	// existingProduct.Quantity = input.Quantity
+	// existingProduct.UpdatedAt = time.Now()
 
-	// Save product
-	if err := database.DB.Save(&existingProduct).Error; err != nil {
-		return existingProduct, fmt.Errorf("could not update product")
-	}
+	// if err := database.DB.Save(&existingProduct).Error; err != nil {
+	// 	return existingProduct, fmt.Errorf("could not update product")
+	// }
 
-	// If images are provided, handle them:
-	if len(input.Images) > 0 {
-		// Delete existing images
-		if err := database.DB.Where("pid = ?", productPID).Delete(&models.ProductImage{}).Error; err != nil {
-			return existingProduct, fmt.Errorf("could not update product images")
-		}
-		// Create new images
-		for _, img := range input.Images {
-			newImg := models.ProductImage{
-				Pid:      productPID,
-				MimeType: img.MimeType,
-				Url:      img.URL,
-				IsMain:   img.IsMain,
-			}
-			if err := database.DB.Create(&newImg).Error; err != nil {
-				return existingProduct, fmt.Errorf("could not create updated product images")
-			}
-		}
-	}
+	// if len(input.Images) > 0 {
+	// 	// Delete existing images
+	// 	if err := database.DB.Where("pid = ?", productPID).Delete(&models.ProductImage{}).Error; err != nil {
+	// 		return existingProduct, fmt.Errorf("could not update product images")
+	// 	}
+	// 	// Create new images
+	// 	for _, img := range input.Images {
+	// 		newImg := models.ProductImage{
+	// 			Pid:      productPID,
+	// 			MimeType: img.MimeType,
+	// 			Url:      img.URL,
+	// 			IsMain:   img.IsMain,
+	// 		}
+	// 		if err := database.DB.Create(&newImg).Error; err != nil {
+	// 			return existingProduct, fmt.Errorf("could not create updated product images")
+	// 		}
+	// 	}
+	// }
 
-	if err := database.DB.Preload("Images").Where("pid = ?", productPID).First(&existingProduct).Error; err != nil {
-		return existingProduct, fmt.Errorf("error reloading product")
-	}
+	// if err := database.DB.Preload("Images").Where("pid = ?", productPID).First(&existingProduct).Error; err != nil {
+	// 	return existingProduct, fmt.Errorf("error reloading product")
+	// }
 
-	return existingProduct, nil
+	return models.Product{}, nil
 }
 
 // DeleteProductService deletes a product by PID (and its related images).
@@ -251,8 +242,7 @@ func DeleteProductService(productPID string) error {
 	return nil
 }
 
-// validCategory checks if a category is valid according to the ones defined in your models.
-func validCategory(category models.Category) bool {
+func ValidCategory(category models.Category) bool {
 	switch category {
 	case models.Appliances,
 		models.Books,
@@ -269,13 +259,12 @@ func validCategory(category models.Category) bool {
 }
 
 // parseCategories parses a comma-separated list of category strings into a slice of valid categories.
-// Invalid categories are collected in `invalidCats`.
 func parseCategories(catString string) (validCats []models.Category, invalidCats []string) {
 	cats := strings.Split(catString, ",")
 	for _, c := range cats {
 		c = strings.TrimSpace(c)
 		category := models.Category(c)
-		if validCategory(category) {
+		if ValidCategory(category) {
 			validCats = append(validCats, category)
 		} else {
 			invalidCats = append(invalidCats, c)

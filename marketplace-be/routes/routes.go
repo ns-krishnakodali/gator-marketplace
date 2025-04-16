@@ -28,6 +28,7 @@ func SetupRoutes(router *gin.Engine) {
 
 		apiProtected.GET("/products", handlers.GetProducts)
 		apiProtected.GET("/product/:pid", handlers.GetProductByPID)
+		apiProtected.POST("/product", handlers.CreateProduct)
 		apiProtected.PUT("/product/:pid", handlers.UpdateProduct)
 		apiProtected.DELETE("/product/:pid", handlers.DeleteProduct)
 
@@ -36,10 +37,11 @@ func SetupRoutes(router *gin.Engine) {
 		apiProtected.PUT("/update-password", handlers.UpdatePassword)
 
 		// CART endpoints
-		apiProtected.GET("/cart", handlers.GetCartItems)
+		apiProtected.GET("/cart", handlers.GetCartProducts)
+		apiProtected.GET("/cart/count", handlers.GetCartProductsCount)
 		apiProtected.POST("/cart", handlers.AddToCart)
-		apiProtected.PUT("/cart", handlers.UpdateCartItem)
-		apiProtected.DELETE("/cart/:pid", handlers.RemoveCartItem)
+		apiProtected.PUT("/cart", handlers.UpdateCartProduct)
+		apiProtected.DELETE("/cart/:pid", handlers.RemoveCartProduct)
 		apiProtected.DELETE("/cart", handlers.ClearCart)
 
 	}

@@ -5,7 +5,8 @@ import (
 	"marketplace-be/auth"
 	"marketplace-be/handlers"
 	"marketplace-be/models"
-	"marketplace-be/test_utils"
+	"marketplace-be/tests"
+
 	"net/http"
 	"testing"
 
@@ -19,7 +20,7 @@ func init() {
 }
 
 func TestGetAccountDetails(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	// Prepare test user
 	user := &models.User{
@@ -38,7 +39,7 @@ func TestGetAccountDetails(t *testing.T) {
 	token, _ := auth.GenerateToken(user.Uid)
 
 	t.Run("User Not Found", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("GET", "/api/account", nil)
+		c, w := tests.CreateTestContext("GET", "/api/account", nil)
 		c.Request.Header.Set("Authorization", token+"invalid")
 
 		handlers.GetAccountDetails(c)
@@ -47,7 +48,7 @@ func TestGetAccountDetails(t *testing.T) {
 	})
 
 	t.Run("Successful Get Account Details", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("GET", "/api/account", nil)
+		c, w := tests.CreateTestContext("GET", "/api/account", nil)
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.GetAccountDetails(c)
@@ -68,7 +69,7 @@ func TestGetAccountDetails(t *testing.T) {
 
 func TestUpdateAccountDetailsHandler(t *testing.T) {
 	// Setup test DB
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	// Prepare test user
 	user := &models.User{
@@ -87,7 +88,7 @@ func TestUpdateAccountDetailsHandler(t *testing.T) {
 	token, _ := auth.GenerateToken(user.Uid)
 
 	t.Run("Invalid Input Format", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("PUT", "/api/update-account", []byte(`{"name":""}`))
+		c, w := tests.CreateTestContext("PUT", "/api/update-account", []byte(`{"name":""}`))
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.UpdateAccountDetails(c)
@@ -96,7 +97,7 @@ func TestUpdateAccountDetailsHandler(t *testing.T) {
 	})
 
 	t.Run("Invalid Email Format", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("PUT", "/api/update-account", []byte(
+		c, w := tests.CreateTestContext("PUT", "/api/update-account", []byte(
 			`{"name":"Test User","email":"test@email.com","displayName":"GatorUser","mobile":"123-456-7890"}`))
 		c.Request.Header.Set("Authorization", token)
 
@@ -106,7 +107,7 @@ func TestUpdateAccountDetailsHandler(t *testing.T) {
 	})
 
 	t.Run("Invalid Mobile Number Format", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("PUT", "/api/update-account", []byte(
+		c, w := tests.CreateTestContext("PUT", "/api/update-account", []byte(
 			`{"name":"Test Name","email":"test@ufl.edu","displayName":"GatorUser","mobile":"1234567890"}`))
 		c.Request.Header.Set("Authorization", token)
 
@@ -116,7 +117,7 @@ func TestUpdateAccountDetailsHandler(t *testing.T) {
 	})
 
 	t.Run("Successful Update", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("PUT", "/account", []byte(
+		c, w := tests.CreateTestContext("PUT", "/account", []byte(
 			`{"name":"New Name","email":"test@ufl.edu","displayName":"GatorUser","mobile":"987-654-3210"}`))
 		c.Request.Header.Set("Authorization", token)
 
