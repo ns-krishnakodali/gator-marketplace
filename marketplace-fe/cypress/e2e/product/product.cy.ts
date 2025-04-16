@@ -1,4 +1,5 @@
 import {
+  setupCartProductsCountIntercept,
   setupLoginIntercept,
   setupProductDetailsIntercept,
   setupProtectedIntercept,
@@ -9,6 +10,7 @@ describe('Product Details Page', () => {
     setupLoginIntercept()
     setupProtectedIntercept()
     setupProductDetailsIntercept()
+    setupCartProductsCountIntercept()
 
     cy.visit('/auth/login')
 
@@ -22,6 +24,7 @@ describe('Product Details Page', () => {
 
     cy.visit('/product/cb1aea77-427a-4abe-bf9f-649145369dfa')
     cy.wait('@productDetailsRequest')
+    cy.wait('@cartProductsCountRequest')
   })
 
   it('Should display the product details correctly', () => {
@@ -81,7 +84,7 @@ describe('Product Details Page', () => {
 
   it('Should show proper date format for posted date', () => {
     cy.get('.product-meta').should('contain', 'Posted On:')
-    
+
     // Check the date format i.e. MMM dd, yyyy (e.g., "Jan 01, 2023")
     cy.get('.product-meta').contains(/Posted On: \w{3} \d{2}, \d{4}/)
   })

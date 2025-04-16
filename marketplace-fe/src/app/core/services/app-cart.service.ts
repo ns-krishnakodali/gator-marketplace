@@ -37,6 +37,9 @@ export class AppCartService {
     return this.apiService.post('api/cart', { productId, quantity }).pipe(
       tap({
         next: () => {
+          const count: number =
+            (parseInt(this.getCartProductsCountSubject.getValue(), 10) || 0) + quantity
+          this.getCartProductsCountSubject.next(String(count > 10 ? '10+' : count))
           this.notificationsService.addNotification({
             message: ADD_TO_CART_SUCCESSFUL,
             type: 'success',
