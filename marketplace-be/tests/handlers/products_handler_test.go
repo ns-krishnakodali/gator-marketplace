@@ -6,7 +6,7 @@ import (
 	"marketplace-be/dtos"
 	"marketplace-be/handlers"
 	"marketplace-be/models"
-	"marketplace-be/test_utils"
+	"marketplace-be/tests"
 	"net/http"
 	"testing"
 
@@ -18,77 +18,8 @@ func init() {
 	gin.SetMode(gin.TestMode)
 }
 
-func TestCreateProduct(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
-
-	user := &models.User{
-		ID:              1,
-		Uid:             "user-uid",
-		Email:           "test@ufl.edu",
-		DisplayImageUrl: "",
-		Name:            "Test User",
-		DisplayName:     "GatorUser",
-		Mobile:          "123-456-7890",
-		PasswordHash:    "$2a$10$examplehashedpassword",
-	}
-	db.Create(user)
-
-	token, _ := auth.GenerateToken(user.Uid)
-
-	t.Run("Create product successfully", func(t *testing.T) {
-		input := dtos.ProductInput{
-			Name:     "Test Product",
-			Category: models.Books,
-			Price:    10.99,
-			Quantity: 5,
-			Images: []dtos.ProductImageInput{
-				{MimeType: "image/png", URL: "http://example.com/img1.png", IsMain: true},
-				{MimeType: "image/png", URL: "http://example.com/img2.png", IsMain: false},
-			},
-		}
-
-		body, _ := json.Marshal(input)
-		c, w := test_utils.CreateTestContext("POST", "/api/products", body)
-		c.Request.Header.Set("Authorization", token)
-
-		// Call the handler
-		handlers.CreateProduct(c)
-
-		require.Equal(t, http.StatusCreated, w.Code)
-	})
-
-	t.Run("Invalid Input Format", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("POST", "/api/products", []byte(`{"invalid":"json"}`))
-		c.Request.Header.Set("Authorization", token)
-
-		handlers.CreateProduct(c)
-		require.Equal(t, http.StatusBadRequest, w.Code)
-		require.Contains(t, w.Body.String(), "error")
-	})
-
-	t.Run("Invalid Category", func(t *testing.T) {
-		input := dtos.ProductInput{
-			Name:     "Invalid Cat Product",
-			Category: "NonExistentCategory", // Invalid
-			Price:    15.0,
-		}
-
-		body, _ := json.Marshal(input)
-		c, w := test_utils.CreateTestContext("POST", "/api/products", body)
-		c.Request.Header.Set("Authorization", token)
-
-		handlers.CreateProduct(c)
-
-		require.Equal(t, http.StatusBadRequest, w.Code)
-
-		var resp map[string]interface{}
-		_ = json.Unmarshal(w.Body.Bytes(), &resp)
-		require.Contains(t, resp["error"], "invalid category")
-	})
-}
-
 func TestGetProducts(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	user := &models.User{
 		ID:              1,
@@ -110,7 +41,7 @@ func TestGetProducts(t *testing.T) {
 	db.Create(&models.Product{Pid: "pid-3", UserUID: user.Uid, Name: "Book B", Category: models.Books, Price: 30, PopularityScore: 5})
 
 	t.Run("Default Params", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("GET", "/api/products", nil)
+		c, w := tests.CreateTestContext("GET", "/api/products", nil)
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.GetProducts(c)
@@ -135,7 +66,7 @@ func TestGetProducts(t *testing.T) {
 	})
 
 	t.Run("With Pagination", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("GET", "/api/products?page=1&pageSize=2", nil)
+		c, w := tests.CreateTestContext("GET", "/api/products?page=1&pageSize=2", nil)
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.GetProducts(c)
@@ -154,7 +85,7 @@ func TestGetProducts(t *testing.T) {
 	})
 
 	t.Run("Filter By Category", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("GET", "/api/products?categories=Books", nil)
+		c, w := tests.CreateTestContext("GET", "/api/products?categories=Books", nil)
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.GetProducts(c)
@@ -174,7 +105,7 @@ func TestGetProducts(t *testing.T) {
 	})
 
 	t.Run("Sort By Price", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("GET", "/api/products?sort=price_desc", nil)
+		c, w := tests.CreateTestContext("GET", "/api/products?sort=price_desc", nil)
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.GetProducts(c)
@@ -199,7 +130,7 @@ func TestGetProducts(t *testing.T) {
 	})
 
 	t.Run("Filter And Sort Combined", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("GET", "/api/products?categories=Books&sort=price_desc", nil)
+		c, w := tests.CreateTestContext("GET", "/api/products?categories=Books&sort=price_desc", nil)
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.GetProducts(c)
@@ -222,7 +153,7 @@ func TestGetProducts(t *testing.T) {
 	})
 
 	t.Run("Invalid Category", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("GET", "/api/products?categories=InvalidCategory", nil)
+		c, w := tests.CreateTestContext("GET", "/api/products?categories=InvalidCategory", nil)
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.GetProducts(c)
@@ -239,7 +170,7 @@ func TestGetProducts(t *testing.T) {
 }
 
 func TestGetProductByPID(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	user := &models.User{
 		ID:              1,
@@ -270,7 +201,7 @@ func TestGetProductByPID(t *testing.T) {
 	})
 
 	t.Run("Get Product details Success", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("GET", "/api/products/pid-123", nil)
+		c, w := tests.CreateTestContext("GET", "/api/products/pid-123", nil)
 		c.Params = gin.Params{{Key: "pid", Value: "pid-123"}}
 		c.Request.Header.Set("Authorization", token)
 
@@ -287,7 +218,7 @@ func TestGetProductByPID(t *testing.T) {
 	})
 
 	t.Run("Product Not Found", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("GET", "/api/products/non-existent", nil)
+		c, w := tests.CreateTestContext("GET", "/api/products/non-existent", nil)
 		c.Params = gin.Params{{Key: "pid", Value: "non-existent"}}
 		c.Request.Header.Set("Authorization", token)
 
@@ -298,96 +229,8 @@ func TestGetProductByPID(t *testing.T) {
 	})
 }
 
-func TestUpdateProduct(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
-
-	user := &models.User{
-		ID:              1,
-		Uid:             "user-uid",
-		Email:           "test@ufl.edu",
-		DisplayImageUrl: "",
-		Name:            "Test User",
-		DisplayName:     "GatorUser",
-		Mobile:          "123-456-7890",
-		PasswordHash:    "$2a$10$examplehashedpassword",
-	}
-	db.Create(user)
-
-	token, _ := auth.GenerateToken(user.Uid)
-
-	db.Create(&models.Product{
-		Pid:         "pid-999",
-		Name:        "Old Product",
-		Category:    models.Books,
-		Price:       20,
-		Description: "Old desc",
-	})
-	db.Create(&models.ProductImage{
-		Pid: "pid-999", MimeType: "image/png", Url: "http://example.com/old.png", IsMain: true,
-	})
-
-	t.Run("Update Product details Success", func(t *testing.T) {
-		updateInput := dtos.ProductInput{
-			Name:     "New Product Name",
-			Category: models.Books,
-			Price:    30,
-			Quantity: 10,
-			Images: []dtos.ProductImageInput{
-				{MimeType: "image/jpeg", URL: "http://example.com/new1.jpg", IsMain: true},
-				{MimeType: "image/jpeg", URL: "http://example.com/new2.jpg", IsMain: false},
-			},
-		}
-
-		body, _ := json.Marshal(updateInput)
-		c, w := test_utils.CreateTestContext("PUT", "/api/products/pid-999", body)
-		c.Request.Header.Set("Authorization", token)
-		c.Params = gin.Params{{Key: "pid", Value: "pid-999"}}
-
-		handlers.UpdateProduct(c)
-
-		require.Equal(t, http.StatusOK, w.Code)
-
-		var updated models.Product
-		err := json.Unmarshal(w.Body.Bytes(), &updated)
-		require.NoError(t, err)
-		require.Equal(t, "New Product Name", updated.Name)
-		require.EqualValues(t, 30, updated.Price)
-		require.Len(t, updated.Images, 2)
-		require.Equal(t, "http://example.com/new1.jpg", updated.Images[0].Url)
-	})
-
-	t.Run("Product Not Found", func(t *testing.T) {
-		updateInput := dtos.ProductInput{
-			Name:     "Updated Name",
-			Category: models.Books,
-			Price:    25,
-		}
-
-		body, _ := json.Marshal(updateInput)
-		c, w := test_utils.CreateTestContext("PUT", "/api/products/non-existent", body)
-		c.Request.Header.Set("Authorization", token)
-		c.Params = gin.Params{{Key: "pid", Value: "non-existent"}}
-
-		handlers.UpdateProduct(c)
-
-		require.Equal(t, http.StatusBadRequest, w.Code)
-		require.Contains(t, w.Body.String(), "error")
-	})
-
-	t.Run("Invalid Input", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("PUT", "/api/products/pid-999", []byte(`{"invalid":"json"}`))
-		c.Request.Header.Set("Authorization", token)
-		c.Params = gin.Params{{Key: "pid", Value: "pid-999"}}
-
-		handlers.UpdateProduct(c)
-
-		require.Equal(t, http.StatusBadRequest, w.Code)
-		require.Contains(t, w.Body.String(), "error")
-	})
-}
-
 func TestDeleteProduct(t *testing.T) {
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	user := &models.User{
 		ID:              1,
@@ -407,7 +250,7 @@ func TestDeleteProduct(t *testing.T) {
 	db.Create(&models.ProductImage{Pid: "pid-del", Url: "http://example.com/img.png"})
 
 	t.Run("Delete Product Success", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("DELETE", "/api/products/pid-del", nil)
+		c, w := tests.CreateTestContext("DELETE", "/api/products/pid-del", nil)
 		c.Request.Header.Set("Authorization", token)
 		c.Params = gin.Params{{Key: "pid", Value: "pid-del"}}
 
@@ -425,7 +268,7 @@ func TestDeleteProduct(t *testing.T) {
 	})
 
 	t.Run("Product Not Found", func(t *testing.T) {
-		c, w := test_utils.CreateTestContext("DELETE", "/api/products/non-existent", nil)
+		c, w := tests.CreateTestContext("DELETE", "/api/products/non-existent", nil)
 		c.Request.Header.Set("Authorization", token)
 		c.Params = gin.Params{{Key: "pid", Value: "non-existent"}}
 

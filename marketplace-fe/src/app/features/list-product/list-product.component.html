@@ -1,0 +1,17 @@
+<app-navbar [showAccount]="true" [showCart]="true" />
+<div class="list-product-container">
+  <h1 class="list-product-heading">List a New Product</h1>
+  <form ngNativeValidate (submit)="onListProduct($event)">
+    <app-list-product-form />
+    <app-product-images />
+    <div class="list-product-button-container">
+      @if (isLoading$ | async; as isLoading) {
+        <mat-spinner diameter="40" />
+      } @else {
+        <button mat-flat-button id="list-product-button" type="submit" class="list-product-button">
+          List Product
+        </button>
+      }
+    </div>
+  </form>
+</div>

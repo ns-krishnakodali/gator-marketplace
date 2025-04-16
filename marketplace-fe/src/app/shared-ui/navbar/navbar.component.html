@@ -20,7 +20,9 @@
       <a class="navbar-link" [routerLink]="'/cart'">
         <img src="assets/svg-icons/cart-icon.svg" alt="Account Icon" class="navbar-icon" />
         <app-text id="cart" class="router-link">Cart</app-text>
-        <app-text id="cart-items" size="x-small">{{ itemsInCartValue }}</app-text>
+        @if (cartCount && cartCount !== '0') {
+          <app-text id="cart-items" size="x-small">({{ cartCount }})</app-text>
+        }
       </a>
     }
   </div>

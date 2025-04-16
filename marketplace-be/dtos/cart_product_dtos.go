@@ -5,19 +5,19 @@ type AddToCartInput struct {
 	Quantity   int    `json:"quantity"`
 }
 
-type UpdateCartItemInput struct {
+type UpdateCartProductInput struct {
 	ProductPID string `json:"productId"`
 	Quantity   int    `json:"quantity"`
 }
 
 type CartResponse struct {
-	CartProducts  []CartItemResponse `json:"cartProducts"`
-	ProductsTotal float64            `json:"productsTotal"`
-	HandlingFee   float64            `json:"handlingFee"`
-	TotalCost     float64            `json:"totalCost"`
+	CartProducts  []CartProductResponse `json:"cartProducts"`
+	ProductsTotal float64               `json:"productsTotal"`
+	HandlingFee   float64               `json:"handlingFee"`
+	TotalCost     float64               `json:"totalCost"`
 }
 
-type CartItemResponse struct {
+type CartProductResponse struct {
 	AddedQuantity int     `json:"addedQuantity"`
 	MaxQuantity   int     `json:"maxQuantity"`
 	PID           string  `json:"pid"`
@@ -26,7 +26,7 @@ type CartItemResponse struct {
 	PrimaryImage  string  `json:"primaryImage"`
 }
 
-type CartUpdateResponse struct {
+type CartModifyResponse struct {
 	ProductsTotal float64 `json:"productsTotal"`
 	HandlingFee   float64 `json:"handlingFee"`
 	TotalCost     float64 `json:"totalCost"`

@@ -37,7 +37,7 @@ describe('Landing Page Tests', () => {
     cy.get('app-landing-page-card').should('have.length', 2);
   });
 
-  it('should display correct content in cards', () => {
+  it('Should display correct content in cards', () => {
     cy.wait('@apiProtected');
     
     // Explore Marketplace card
@@ -55,18 +55,17 @@ describe('Landing Page Tests', () => {
     });
   });
 
-  it('should navigate to products page when Explore Marketplace card is clicked', () => {
+  it('Should navigate to products page when Explore Marketplace card is clicked', () => {
     cy.wait('@apiProtected');
 
     cy.get('app-landing-page-card').eq(0).click();
     cy.url().should('include', '/products');
   });
 
-  // it('should navigate to list-product page when List Products card is clicked', () => {
-  //   cy.wait('@apiProtected');
+  it('Should navigate to list-product page when List Products card is clicked', () => {
+    cy.wait('@apiProtected');
     
-  //   // Click the List Products card and check URL
-  //   cy.get('app-landing-page-card').eq(1).click();
-  //   cy.url().should('include', '/list-product');
-  // });
+    cy.get('app-landing-page-card').eq(1).click();
+    cy.url().should('include', '/list-product');
+  });
 })

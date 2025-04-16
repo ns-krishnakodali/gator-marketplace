@@ -9,20 +9,37 @@ import { ADD_TO_CART_SUCCESSFUL } from '../../utils'
 
 @Injectable({ providedIn: 'root' })
 export class AppCartService {
-  private isAddCartLoadingSubject = new BehaviorSubject<boolean>(false)
+  private getCartProductsCountSubject = new BehaviorSubject<string>('')
 
-  public isAddCartLoading$ = this.isAddCartLoadingSubject.asObservable()
+  public getCartProductsCount$ = this.getCartProductsCountSubject.asObservable()
 
   constructor(
     private apiService: APIService,
     private notificationsService: NotificationsService
   ) {}
 
+  getCartProductsCount = (): void => {
+    this.apiService.get('api/cart/count').subscribe({
+      next: (response: unknown) => {
+        const { count } = response as { count: string }
+        this.getCartProductsCountSubject.next(count)
+      },
+      error: (error) => {
+        this.notificationsService.addNotification({
+          message: error.message,
+          type: 'error',
+        })
+      },
+    })
+  }
+
   addToCart = (productId: string, quantity = 1): Observable<unknown> => {
-    console.log(typeof quantity)
     return this.apiService.post('api/cart', { productId, quantity }).pipe(
       tap({
         next: () => {
+          const count: number =
+            (parseInt(this.getCartProductsCountSubject.getValue(), 10) || 0) + quantity
+          this.getCartProductsCountSubject.next(String(count > 10 ? '10+' : count))
           this.notificationsService.addNotification({
             message: ADD_TO_CART_SUCCESSFUL,
             type: 'success',

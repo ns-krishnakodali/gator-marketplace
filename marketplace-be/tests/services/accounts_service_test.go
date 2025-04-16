@@ -4,7 +4,7 @@ import (
 	"marketplace-be/dtos"
 	"marketplace-be/models"
 	"marketplace-be/services"
-	"marketplace-be/test_utils"
+	"marketplace-be/tests"
 
 	"testing"
 
@@ -14,7 +14,7 @@ import (
 
 func TestAccountDetailsService(t *testing.T) {
 	// Setup test DB
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	t.Run("User Not Found", func(t *testing.T) {
 		details, err := services.GetAccountDetailsService("user-uid")
@@ -46,7 +46,7 @@ func TestAccountDetailsService(t *testing.T) {
 
 func TestUpdateAccountDetailsService(t *testing.T) {
 	// Setup test DB
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	// Create test user
 	user := &models.User{
@@ -133,7 +133,7 @@ func TestUpdateAccountDetailsService(t *testing.T) {
 
 func TestUpdatePasswordService(t *testing.T) {
 	// Setup test DB
-	db := test_utils.SetupTestDB(t)
+	db := tests.SetupTestDB(t)
 
 	// Create test user with hashed password
 	password := "currentPassword"

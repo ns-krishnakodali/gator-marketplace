@@ -1,0 +1,38 @@
+<div class="product-images-container">
+  <h2 class="product-images-heading">Product Images</h2>
+  <p class="product-upload-description">
+    Upload up to 6 images. The first image will be featured as the main image.*
+    @if (imagePreviews.length > 0) {
+      <span>({{ imagePreviews.length }}/{{ MAX_IMAGES }})</span>
+    }
+  </p>
+  <div
+    class="upload-product-images-container"
+    (dragover)="onDragOver($event)"
+    (drop)="onDrop($event)"
+  >
+    @if (imagePreviews.length === 0) {
+      <label class="upload-label" for="imageUpload">
+        <img src="assets/svg-icons/camera-icon.svg" width="50" height="50" alt="Upload Icon" />
+        <p class="upload-text">Drag and drop / Click to upload</p>
+      </label>
+      <input
+        type="file"
+        id="imageUpload"
+        accept="image/*"
+        multiple
+        (change)="onImagesSelected($event)"
+        hidden
+      />
+    } @else if (imagePreviews.length > 0) {
+      <div class="product-images-preview-container">
+        @for (preview of imagePreviews; track $index) {
+          <div class="image-preview">
+            <img [src]="preview" alt="Selected Product Image {{ $index + 1 }}" />
+            <button class="remove-button" (click)="removeImage($index)" type="button">x</button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

@@ -22,3 +22,9 @@ export const UPDATE_PASSWORD_SUCCESSFUL = 'Successfully updated password!'
 // Cart
 export const ADD_TO_CART_SUCCESSFUL = 'Product added to cart'
 export const REMOVED_FROM_CART_SUCCESSFUL = 'Product removed to cart'
+
+// List Product
+export const PRODUCT_IMAGES_LIMIT = 'Maximum of 6 images allowed'
+export const INVALID_CATEGORY = 'Invalid Category, Please check'
+export const INVALID_QUANTITY = 'Please enter a valid quantity.'
+export const PRODUCT_LISTING_SUCCESSFUL = 'Product listed successfully.'

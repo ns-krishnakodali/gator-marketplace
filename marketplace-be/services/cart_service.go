@@ -5,9 +5,10 @@ import (
 	"marketplace-be/database"
 	"marketplace-be/dtos"
 	"marketplace-be/models"
+	"strconv"
 )
 
-// AddToCartService reduces the product stock, then creates or increments a CartItem.
+// AddToCartService reduces the product stock, then creates or increments a CartProduct.
 func AddToCartService(userUID, productPID string, requestedQty int) error {
 	if requestedQty <= 0 {
 		requestedQty = 1
@@ -29,28 +30,28 @@ func AddToCartService(userUID, productPID string, requestedQty int) error {
 	}
 
 	// No change to product.Quantity here
-	newItem := models.CartProduct{
+	newCartProduct := models.CartProduct{
 		UserUID:    userUID,
 		ProductPID: productPID,
 		Quantity:   requestedQty,
 	}
-	if err := database.DB.Create(&newItem).Error; err != nil {
-		return fmt.Errorf("failed to create cart item: %v", err)
+	if err := database.DB.Create(&newCartProduct).Error; err != nil {
+		return fmt.Errorf("failed to create cart product: %v", err)
 	}
 
 	return nil
 }
 
-// GetCartItemsService returns all items in a user's cart.
-func GetCartItemsService(userUID string) (dtos.CartResponse, error) {
+func GetCartProductsService(userUID string) (dtos.CartResponse, error) {
 	var cartProducts []models.CartProduct
 	if err := database.DB.Where("user_uid = ?", userUID).
+		Order("created_at desc").
 		Preload("Product.Images", "is_main = ?", true).
 		Find(&cartProducts).Error; err != nil {
-		return dtos.CartResponse{}, fmt.Errorf("failed to fetch cart items: %v", err)
+		return dtos.CartResponse{}, fmt.Errorf("failed to fetch cart products: %v", err)
 	}
 
-	var responses []dtos.CartItemResponse
+	var responses []dtos.CartProductResponse
 	var cartProductsTotal float64
 
 	for _, cartProduct := range cartProducts {
@@ -59,7 +60,7 @@ func GetCartItemsService(userUID string) (dtos.CartResponse, error) {
 			primaryImage = cartProduct.Product.Images[0].Url
 		}
 
-		response := dtos.CartItemResponse{
+		response := dtos.CartProductResponse{
 			AddedQuantity: cartProduct.Quantity,
 			MaxQuantity:   cartProduct.Product.Quantity,
 			PID:           cartProduct.Product.Pid,
@@ -74,84 +75,108 @@ func GetCartItemsService(userUID string) (dtos.CartResponse, error) {
 	}
 
 	// Calculate final totalCost
-	totalCost := cartProductsTotal + HandlingFees
+	totalCost := cartProductsTotal + HandlingFee
 
 	return dtos.CartResponse{
 		CartProducts:  responses,
 		ProductsTotal: cartProductsTotal,
-		HandlingFee:   HandlingFees,
+		HandlingFee:   HandlingFee,
 		TotalCost:     totalCost,
 	}, nil
 }
 
-func UpdateCartItemService(productPID string, newQty int) (dtos.CartUpdateResponse, error) {
+func GetCartProductsCountService(userUID string) (string, error) {
+	var count int64
+	if err := database.DB.Model(&models.CartProduct{}).
+		Where("user_uid = ?", userUID).
+		Count(&count).Error; err != nil {
+		return "", fmt.Errorf("failed to count cart products: %v", err)
+	}
+
+	if count > 10 {
+		return "10+", nil
+	}
+	return strconv.FormatInt(count, 10), nil
+}
+
+func UpdateCartProductService(productPID string, newQty int) (dtos.CartModifyResponse, error) {
 	if newQty <= 0 {
 		newQty = 1
 	}
 
-	// Fetch the cart item by productPID
-	var cartItem models.CartProduct
-	if err := database.DB.Where("product_p_id = ?", productPID).First(&cartItem).Error; err != nil {
-		return dtos.CartUpdateResponse{}, ErrCartItemNotFound
+	var cartProduct models.CartProduct
+	if err := database.DB.Where("product_p_id = ?", productPID).First(&cartProduct).Error; err != nil {
+		return dtos.CartModifyResponse{}, ErrCartProductNotFound
 	}
 
-	// Fetch the product data only once
 	var product models.Product
-	if err := database.DB.Where("pid = ?", cartItem.ProductPID).First(&product).Error; err != nil {
-		return dtos.CartUpdateResponse{}, ErrProductNotFound
+	if err := database.DB.Where("pid = ?", cartProduct.ProductPID).First(&product).Error; err != nil {
+		return dtos.CartModifyResponse{}, ErrProductNotFound
 	}
 
-	// Calculate the difference between the new quantity and the existing quantity
-	diff := newQty - cartItem.Quantity
+	diff := newQty - cartProduct.Quantity
 	if diff > 0 && product.Quantity < diff {
-		return dtos.CartUpdateResponse{}, ErrInsufficientProductQuantity
+		return dtos.CartModifyResponse{}, ErrInsufficientProductQuantity
 	}
 
-	// Update the cart item quantity
-	cartItem.Quantity = newQty
-	if err := database.DB.Save(&cartItem).Error; err != nil {
-		return dtos.CartUpdateResponse{}, fmt.Errorf("failed to update cart item")
+	cartProduct.Quantity = newQty
+	if err := database.DB.Save(&cartProduct).Error; err != nil {
+		return dtos.CartModifyResponse{}, fmt.Errorf("failed to update cart product")
 	}
 
-	// Now, calculate the total cost, handling fees, and other necessary details
 	var cartProducts []models.CartProduct
-	if err := database.DB.Where("user_uid = ?", cartItem.UserUID).
+	if err := database.DB.Where("user_uid = ?", cartProduct.UserUID).
 		Preload("Product.Images", "is_main = ?", true).
 		Find(&cartProducts).Error; err != nil {
-		return dtos.CartUpdateResponse{}, fmt.Errorf("failed to fetch cart items: %v", err)
+		return dtos.CartModifyResponse{}, fmt.Errorf("failed to fetch cart products: %v", err)
 	}
 
 	var cartProductsTotal float64
 	for _, cartProduct := range cartProducts {
 		cartProductsTotal += cartProduct.Product.Price * float64(cartProduct.Quantity)
 	}
+	totalCost := cartProductsTotal + HandlingFee
 
-	// Calculate final totalCost
-	totalCost := cartProductsTotal + HandlingFees
-
-	return dtos.CartUpdateResponse{
+	return dtos.CartModifyResponse{
 		ProductsTotal: cartProductsTotal,
-		HandlingFee:   HandlingFees,
+		HandlingFee:   HandlingFee,
 		TotalCost:     totalCost,
 	}, nil
 }
 
-func RemoveCartItemService(productId string, userUID string) error {
-	var cartItem models.CartProduct
-	if err := database.DB.Where("product_p_id = ? AND user_uid = ?", productId, userUID).First(&cartItem).Error; err != nil {
-		return ErrCartItemNotFound
+func RemoveCartProductService(productId string, userUID string) (dtos.CartModifyResponse, error) {
+	var cartProduct models.CartProduct
+	if err := database.DB.Where("product_p_id = ? AND user_uid = ?", productId, userUID).First(&cartProduct).Error; err != nil {
+		return dtos.CartModifyResponse{}, ErrCartProductNotFound
 	}
 
-	// Remove the cart item
 	if err := database.DB.
 		Where("product_p_id = ? AND user_uid = ?", productId, userUID).
 		Delete(&models.CartProduct{}).Error; err != nil {
-		return fmt.Errorf("failed to remove cart item: %v", err)
+		return dtos.CartModifyResponse{}, fmt.Errorf("failed to remove cart product: %v", err)
 	}
-	return nil
+
+	var cartProducts []models.CartProduct
+	if err := database.DB.Where("user_uid = ?", userUID).
+		Preload("Product.Images", "is_main = ?", true).
+		Find(&cartProducts).Error; err != nil {
+		return dtos.CartModifyResponse{}, fmt.Errorf("failed to fetch cart products: %v", err)
+	}
+
+	var cartProductsTotal float64
+	for _, cartProduct := range cartProducts {
+		cartProductsTotal += cartProduct.Product.Price * float64(cartProduct.Quantity)
+	}
+	totalCost := cartProductsTotal + HandlingFee
+
+	return dtos.CartModifyResponse{
+		ProductsTotal: cartProductsTotal,
+		HandlingFee:   HandlingFee,
+		TotalCost:     totalCost,
+	}, nil
 }
 
-// ClearCartService removes all items for a user.
+// ClearCartService removes all products for a user.
 func ClearCartService(userUID string) error {
 	if err := database.DB.Where("user_uid = ?", userUID).Delete(&models.CartProduct{}).Error; err != nil {
 		return fmt.Errorf("failed to clear cart: %v", err)

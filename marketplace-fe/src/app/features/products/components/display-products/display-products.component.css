@@ -31,6 +31,8 @@
 
 .products-heading {
   text-align: center;
+  font-size: 28px;
+  letter-spacing: 0.5px;
   margin: var(--spacing-2) 0 var(--spacing-3);
 }
 
