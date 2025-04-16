@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 
-import { NavbarComponent } from '../../shared-ui'
+import { HeadingComponent, NavbarComponent } from '../../shared-ui'
 
 import { ProfileComponent, OrdersComponent, PaymentsComponent } from './components/'
 import type { AccountSection } from './models'
@@ -19,6 +19,7 @@ import { MyAccountService } from './services'
     ProfileComponent,
     OrdersComponent,
     PaymentsComponent,
+    HeadingComponent,
   ],
   templateUrl: './my-account.component.html',
   styleUrl: './my-account.component.css',

@@ -7,7 +7,7 @@ import type { ProductDetails } from './models'
 import { ListProductFormComponent, ProductImagesComponent } from './components'
 import { ListProductService } from './services'
 
-import { NavbarComponent } from '../../shared-ui'
+import { HeadingComponent, NavbarComponent } from '../../shared-ui'
 import { Observable } from 'rxjs'
 import { CommonModule } from '@angular/common'
 
@@ -20,6 +20,7 @@ import { CommonModule } from '@angular/common'
     NavbarComponent,
     ProductImagesComponent,
     ListProductFormComponent,
+    HeadingComponent,
   ],
   templateUrl: './list-product.component.html',
   styleUrl: './list-product.component.css',

@@ -12,7 +12,14 @@
     <span>Total:</span>
     <span class="currency">{{ totalCost | currency: 'USD' : 'symbol' : '1.2-2' }}</span>
   </div>
-  <button mat-flat-button id="checkout" class="checkout-button" type="button" aria-label="Checkout">
+  <button
+    mat-flat-button
+    id="checkout"
+    class="checkout-button"
+    type="button"
+    aria-label="Checkout"
+    (click)="handleCheckout()"
+  >
     Checkout
   </button>
 </div>

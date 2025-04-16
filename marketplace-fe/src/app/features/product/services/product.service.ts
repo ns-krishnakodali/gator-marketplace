@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core'
+import { Router } from '@angular/router'
 
 import { BehaviorSubject } from 'rxjs'
 
@@ -19,7 +20,8 @@ export class ProductService {
 
   constructor(
     private apiService: APIService,
-    private notificationsService: NotificationsService
+    private notificationsService: NotificationsService,
+    private router: Router
   ) {}
 
   getProductDetails = (productId: string) => {
@@ -36,12 +38,17 @@ export class ProductService {
           message: error.message,
           type: 'error',
         })
+        this.router.navigate(['/products'])
         this.isLoadingSubject.next(false)
       },
       complete: () => {
         this.isLoadingSubject.next(false)
       },
     })
+  }
+
+  handleCheckout = (): void => {
+    this.router.navigate(['/checkout'])
   }
 
   private processProductDetailsResponse = (response: unknown): ProductDetails => {

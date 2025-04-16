@@ -4,11 +4,6 @@
   overflow-y: scroll;
 }
 
-.cart-heading {
-  margin: 0 0 var(--spacing-1-5) 0;
-  text-align: center;
-}
-
 .cart-details-container {
   display: flex;
   justify-content: space-between;

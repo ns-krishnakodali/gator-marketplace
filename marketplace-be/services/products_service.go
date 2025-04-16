@@ -107,7 +107,7 @@ func GetProductByPIDService(productPID string) (dtos.ProductResponse, error) {
 	var product models.Product
 	err := database.DB.Preload("PostedBy").Preload("Images").Omit("id").Where("pid = ?", productPID).First(&product).Error
 	if err != nil {
-		return dtos.ProductResponse{}, fmt.Errorf("product not found")
+		return dtos.ProductResponse{}, ErrProductNotFound
 	}
 
 	imageDTOs := make([]dtos.ProductImageDTO, len(product.Images))
