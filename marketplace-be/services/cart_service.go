@@ -11,7 +11,7 @@ import (
 // AddToCartService reduces the product stock, then creates or increments a CartProduct.
 func AddToCartService(userUID, productPID string, requestedQty int) error {
 	if requestedQty <= 0 {
-		requestedQty = 1
+		return ErrInvalidProductQuantity
 	}
 
 	var product models.Product

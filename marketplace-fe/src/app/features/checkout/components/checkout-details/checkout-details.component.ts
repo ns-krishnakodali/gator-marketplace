@@ -24,7 +24,7 @@ import { GAINESVILLE_COORDINATES } from '../../../../utils'
   styleUrl: './checkout-details.component.css',
 })
 export class CheckoutDetailsComponent {
-  readonly isLinear = true
+  readonly isLinearStepper = true
   displayMap = false
 
   meetupDetails: MeetupDetails = {
@@ -78,6 +78,6 @@ export class CheckoutDetailsComponent {
   }
 
   completeOrder = (): void => {
-    this.checkoutService.placeOrder(this.meetupDetails, this.paymentDetails)
+    this.checkoutService.placeProductsOrder(this.meetupDetails, this.paymentDetails)
   }
 }

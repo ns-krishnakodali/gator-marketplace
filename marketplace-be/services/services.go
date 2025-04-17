@@ -24,6 +24,7 @@ var ErrInvalidMobileNumber = errors.New("invalid mobile number format, must be x
 var ErrSamePassword = errors.New("passwords are same")
 
 var ErrProductNotFound = errors.New("product not found")
+var ErrInvalidProductQuantity = errors.New("Invalid product quantity specified")
 var ErrInsufficientProductQuantity = errors.New("insufficient product quantity")
 var ErrCartProductNotFound = errors.New("cart product not found")
 var ErrProductAlreadyAdded = errors.New("product already added")

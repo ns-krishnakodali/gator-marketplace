@@ -2,13 +2,13 @@
   <div class="order-details-container">
     <app-heading id="order-details" heading="Order Details" />
     <div class="product-details-container">
-      @for (productDetail of orderProductDetails; track $index) {
+      @for (productDetail of checkoutProductDetails; track $index) {
         <div class="detail">
           <app-text id="product-detail">
             {{ productDetail.quantity }} x {{ productDetail.name }}
           </app-text>
           <p class="price">
-            {{ productDetail.totalPrice | currency: 'USD' : 'symbol' : '1.2-2' }}
+            {{ productDetail.productTotalPrice | currency: 'USD' : 'symbol' : '1.2-2' }}
           </p>
         </div>
       }
@@ -29,7 +29,7 @@
       <div class="detail">
         <div class="total">Total</div>
         <div class="price">
-          {{ total | currency: 'USD' : 'symbol' : '1.2-2' }}
+          {{ totalPrice | currency: 'USD' : 'symbol' : '1.2-2' }}
         </div>
       </div>
     </div>

@@ -1,10 +1,12 @@
-export interface MeetupDetails {
-  address: string
-  date: string
-  time: string
-  additionalNotes: string
+export interface CheckoutOrderDetails {
+  checkoutProductDetails: CheckoutProductDetail[]
+  subTotal: number
+  handlingFee: number
+  totalPrice: number
 }
 
-export interface PaymentDetails {
-  method: 'cash' | 'venmo' | 'zelle'
+export interface CheckoutProductDetail {
+  name: string
+  quantity: number
+  productTotalPrice: number
 }

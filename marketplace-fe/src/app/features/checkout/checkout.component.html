@@ -3,7 +3,12 @@
   <app-heading id="checkout-heading" heading="Checkout" />
   <div class="checkout-sub-container">
     <app-checkout-details />
-    <app-order-details />
+    <app-order-details
+      [checkoutProductDetails]="checkoutOrderDetails.checkoutProductDetails"
+      [subTotal]="checkoutOrderDetails.subTotal"
+      [handlingFee]="checkoutOrderDetails.handlingFee"
+      [totalPrice]="checkoutOrderDetails.totalPrice"
+    />
     <app-safety-tips />
   </div>
 </div>

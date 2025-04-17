@@ -31,6 +31,7 @@ export const PRODUCT_LISTING_SUCCESSFUL = 'Product listed successfully'
 
 export const PROVIDE_MEETUP_DETAILS = 'Provide meetup info to proceed with order'
 export const SELECT_PAYMENT_METHOD = 'Select a payment method'
+export const INVALID_DATE = 'Pick today or later.'
 
 export const GAINESVILLE_COORDINATES = { lat: 29.6516, lng: -82.3248 }
 export const SAFETY_TIPS = [

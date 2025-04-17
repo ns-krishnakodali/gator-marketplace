@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, Input } from '@angular/core'
 import { CurrencyPipe } from '@angular/common'
 
-import type { OrderProductDetail } from '../../models'
+import type { CheckoutProductDetail } from '../../models'
 import { HeadingComponent, TextComponent } from '../../../../shared-ui'
 
 @Component({
@@ -10,19 +10,9 @@ import { HeadingComponent, TextComponent } from '../../../../shared-ui'
   templateUrl: './order-details.component.html',
   styleUrl: './order-details.component.css',
 })
-export class OrderDetailsComponent implements OnInit {
-  orderProductDetails!: OrderProductDetail[]
-  subTotal!: number
-  handlingFee!: number
-  total!: number
-
-  ngOnInit(): void {
-    this.orderProductDetails = [
-      { quantity: 1, name: 'Study Lamp', totalPrice: 20 },
-      { quantity: 1, name: 'Study Lamp', totalPrice: 20 },
-    ]
-    this.subTotal = 20
-    this.handlingFee = 5
-    this.total = 25
-  }
+export class OrderDetailsComponent {
+  @Input({ required: true }) checkoutProductDetails!: CheckoutProductDetail[]
+  @Input({ required: true }) subTotal!: number
+  @Input({ required: true }) handlingFee!: number
+  @Input({ required: true }) totalPrice!: number
 }
