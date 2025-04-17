@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core'
+import { Observable } from 'rxjs'
 
 import { CheckoutDetailsComponent, OrderDetailsComponent, SafetyTipsComponent } from './components'
+import type { CheckoutOrderDetails } from './models'
+import { CheckoutService } from './services'
 
 import { HeadingComponent, NavbarComponent } from '../../shared-ui'
-import { CheckoutService } from './services'
-import { CheckoutOrderDetails } from './models'
-import { Observable } from 'rxjs'
 
 @Component({
   selector: 'app-checkout',

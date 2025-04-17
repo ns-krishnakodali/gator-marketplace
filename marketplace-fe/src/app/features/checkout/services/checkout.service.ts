@@ -80,7 +80,7 @@ export class CheckoutService {
     return true
   }
 
-  validatePaymentDetails = (paymentDetails: PaymentDetails): boolean => {
+  private validatePaymentDetails = (paymentDetails: PaymentDetails): boolean => {
     if (!paymentDetails || !paymentDetails.method) {
       this.notificationsService.addNotification({
         message: SELECT_PAYMENT_METHOD,
