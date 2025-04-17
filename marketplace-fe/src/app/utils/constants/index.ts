@@ -26,5 +26,16 @@ export const REMOVED_FROM_CART_SUCCESSFUL = 'Product removed to cart'
 // List Product
 export const PRODUCT_IMAGES_LIMIT = 'Maximum of 6 images allowed'
 export const INVALID_CATEGORY = 'Invalid Category, Please check'
-export const INVALID_QUANTITY = 'Please enter a valid quantity.'
-export const PRODUCT_LISTING_SUCCESSFUL = 'Product listed successfully.'
+export const INVALID_QUANTITY = 'Please enter a valid quantity'
+export const PRODUCT_LISTING_SUCCESSFUL = 'Product listed successfully'
+
+export const PROVIDE_MEETUP_DETAILS = 'Provide meetup info to proceed with order'
+export const SELECT_PAYMENT_METHOD = 'Select a payment method'
+
+export const GAINESVILLE_COORDINATES = { lat: 29.6516, lng: -82.3248 }
+export const SAFETY_TIPS = [
+  'Always meet in a public, well-lit area, preferably on campus.',
+  'Consider bringing a friend to the meetup.',
+  'Inspect items thoroughly before completing payment.',
+  'Prefer digital payment methods if available and agreed upon.',
+]
