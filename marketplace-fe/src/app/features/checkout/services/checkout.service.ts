@@ -40,25 +40,12 @@ export class CheckoutService {
     }
   }
 
-  getCheckoutDetails = (): void => {
-    this.getCheckoutDetailsIsLoadingSubject.next(true)
-    this.apiService.get('api/checkout-details').subscribe({
-      next: (response: unknown) => {
-        const checkoutOrderDetails: CheckoutOrderDetails =
-          this.processCheckoutDetailsResponse(response)
-        this.checkoutOrderDetailsSubject.next({ checkoutOrderDetails })
-      },
-      error: (error) => {
-        this.notificationsService.addNotification({
-          message: error.message,
-          type: 'error',
-        })
-        this.getCheckoutDetailsIsLoadingSubject.next(false)
-      },
-      complete: () => {
-        this.getCheckoutDetailsIsLoadingSubject.next(false)
-      },
-    })
+  getCheckoutCartDetails = (): void => {
+    this.getCheckoutDetails('api/checkout/cart')
+  }
+
+  getCheckoutProductDetails = (pid: string, qty: string): void => {
+    this.getCheckoutDetails('api/checkout/product', { pid, qty })
   }
 
   validateMeetupDetails = (meetupDetails: MeetupDetails): boolean => {
@@ -89,6 +76,27 @@ export class CheckoutService {
       return false
     }
     return true
+  }
+
+  private getCheckoutDetails = (url: string, params?: Record<string, string>): void => {
+    this.getCheckoutDetailsIsLoadingSubject.next(true)
+    this.apiService.get(url, params).subscribe({
+      next: (response: unknown) => {
+        const checkoutOrderDetails: CheckoutOrderDetails =
+          this.processCheckoutDetailsResponse(response)
+        this.checkoutOrderDetailsSubject.next({ checkoutOrderDetails })
+      },
+      error: (error) => {
+        this.notificationsService.addNotification({
+          message: error.message,
+          type: 'error',
+        })
+        this.getCheckoutDetailsIsLoadingSubject.next(false)
+      },
+      complete: () => {
+        this.getCheckoutDetailsIsLoadingSubject.next(false)
+      },
+    })
   }
 
   private processCheckoutDetailsResponse = (response: unknown): CheckoutOrderDetails => {

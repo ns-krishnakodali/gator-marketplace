@@ -7,6 +7,7 @@ import type { ProductDetails, ProductResponseDTO, ProductImage, ProductImageDTO 
 
 import { APIService } from '../../../core'
 import { NotificationsService } from '../../../shared-ui'
+import { TO_CHECKOUT_FAILED } from '../../../utils'
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
@@ -47,8 +48,17 @@ export class ProductService {
     })
   }
 
-  handleCheckout = (): void => {
-    this.router.navigate(['/checkout'])
+  handleProductCheckout = (productId: string, quantity: number): void => {
+    this.router
+      .navigate(['/checkout', 'product'], { queryParams: { pid: productId, qty: quantity } })
+      .then((success) => {
+        if (!success) {
+          this.notificationsService.addNotification({
+            message: TO_CHECKOUT_FAILED,
+            type: 'error',
+          })
+        }
+      })
   }
 
   private processProductDetailsResponse = (response: unknown): ProductDetails => {

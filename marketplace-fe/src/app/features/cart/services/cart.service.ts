@@ -7,7 +7,7 @@ import type { CartDetails, CartProduct, CartProductDTO, CartResponseDTO } from '
 
 import { APIService } from '../../../core'
 import { NotificationsService } from '../../../shared-ui'
-import { REMOVED_FROM_CART_SUCCESSFUL } from '../../../utils'
+import { REMOVED_FROM_CART_SUCCESSFUL, TO_CHECKOUT_FAILED } from '../../../utils'
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
@@ -94,7 +94,18 @@ export class CartService {
     })
   }
 
-  public navigateToProductPage = (productId: string): void => {
+  handleCartCheckout = (): void => {
+    this.router.navigate(['/checkout', 'cart']).then((success) => {
+      if (!success) {
+        this.notificationsService.addNotification({
+          message: TO_CHECKOUT_FAILED,
+          type: 'error',
+        })
+      }
+    })
+  }
+
+  navigateToProductPage = (productId: string): void => {
     this.router.navigate(['product', productId])
   }
 

@@ -44,6 +44,7 @@ func SetupRoutes(router *gin.Engine) {
 		apiProtected.DELETE("/cart/:pid", handlers.RemoveCartProduct)
 		apiProtected.DELETE("/cart", handlers.ClearCart)
 
-		apiProtected.GET("/checkout-details", handlers.GetCheckoutOrderDetails)
+		apiProtected.GET("/checkout/cart", handlers.GetCheckoutCartDetails)
+		apiProtected.GET("/checkout/product", handlers.GetCheckoutProductDetails)
 	}
 }

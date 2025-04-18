@@ -7,7 +7,7 @@ import (
 	"marketplace-be/models"
 )
 
-func GetCheckoutOrderDetailsService(userUID string) (dtos.CheckoutOrderDetailsResponse, error) {
+func GetCheckoutCartDetailsService(userUID string) (dtos.CheckoutOrderDetailsResponse, error) {
 	var cartProducts []models.CartProduct
 	if err := database.DB.Where("user_uid = ?", userUID).
 		Order("created_at desc").
@@ -36,6 +36,34 @@ func GetCheckoutOrderDetailsService(userUID string) (dtos.CheckoutOrderDetailsRe
 
 	return dtos.CheckoutOrderDetailsResponse{
 		CheckoutProductDetails: checkoutProductDetails,
+		ProductsTotal:          checkoutProductsTotal,
+		HandlingFee:            HandlingFee,
+		TotalCost:              totalCost,
+	}, nil
+}
+
+func GetCheckoutProductDetailsService(productPID string, quantity int) (dtos.CheckoutOrderDetailsResponse, error) {
+	var product models.Product
+	err := database.DB.Omit("id").Where("pid = ?", productPID).First(&product).Error
+	if err != nil {
+		return dtos.CheckoutOrderDetailsResponse{}, ErrProductNotFound
+	}
+
+	if product.Quantity < quantity {
+		return dtos.CheckoutOrderDetailsResponse{}, ErrInsufficientProductQuantity
+	}
+
+	productDetail := dtos.CheckoutProductDetail{
+		Quantity:    quantity,
+		ProductName: product.Name,
+	}
+
+	productDetail.ProductTotalPrice = float64(quantity) * product.Price
+	checkoutProductsTotal := productDetail.ProductTotalPrice
+	totalCost := checkoutProductsTotal + HandlingFee
+
+	return dtos.CheckoutOrderDetailsResponse{
+		CheckoutProductDetails: []dtos.CheckoutProductDetail{productDetail},
 		ProductsTotal:          checkoutProductsTotal,
 		HandlingFee:            HandlingFee,
 		TotalCost:              totalCost,

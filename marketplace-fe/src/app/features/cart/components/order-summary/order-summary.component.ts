@@ -2,7 +2,7 @@ import { CurrencyPipe } from '@angular/common'
 import { Component, Input } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 
-import { ProductService } from '../../../product/services'
+import { CartService } from '../../services'
 import { TextComponent } from '../../../../shared-ui'
 
 @Component({
@@ -16,9 +16,9 @@ export class OrderSummaryCardComponent {
   @Input({ required: true }) handlingFee!: string
   @Input({ required: true }) totalCost!: string
 
-  constructor(private productServcice: ProductService) {}
+  constructor(private cartService: CartService) {}
 
   handleCheckout = (): void => {
-    this.productServcice.handleCheckout()
+    this.cartService.handleCartCheckout()
   }
 }

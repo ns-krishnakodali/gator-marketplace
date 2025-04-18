@@ -15,7 +15,11 @@ export const routes: Routes = [
   { path: 'auth/login', component: LoginComponent, canActivate: [noAuthenticationGuard] },
   { path: 'auth/signup', component: SignupComponent, canActivate: [noAuthenticationGuard] },
   { path: 'cart', component: CartComponent, canActivate: [authenticationGuard] },
-  { path: 'checkout', component: CheckoutComponent, canActivate: [authenticationGuard] },
+  {
+    path: 'checkout/:checkoutFrom',
+    component: CheckoutComponent,
+    canActivate: [authenticationGuard],
+  },
   { path: 'list-product', component: ListProductComponent, canActivate: [authenticationGuard] },
   { path: 'my-account', component: MyAccountComponent, canActivate: [authenticationGuard] },
   { path: 'products', component: ProductsComponent, canActivate: [authenticationGuard] },

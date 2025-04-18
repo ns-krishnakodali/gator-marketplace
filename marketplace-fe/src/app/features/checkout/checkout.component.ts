@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core'
+import { CommonModule } from '@angular/common'
+import { ActivatedRoute } from '@angular/router'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+
 import { Observable } from 'rxjs'
 
 import { CheckoutDetailsComponent, OrderDetailsComponent, SafetyTipsComponent } from './components'
-import type { CheckoutOrderDetails } from './models'
+import type { CheckoutFrom, CheckoutOrderDetails } from './models'
 import { CheckoutService } from './services'
 
 import { HeadingComponent, NavbarComponent } from '../../shared-ui'
@@ -10,6 +14,8 @@ import { HeadingComponent, NavbarComponent } from '../../shared-ui'
 @Component({
   selector: 'app-checkout',
   imports: [
+    MatProgressSpinnerModule,
+    CommonModule,
     HeadingComponent,
     NavbarComponent,
     CheckoutDetailsComponent,
@@ -21,9 +27,13 @@ import { HeadingComponent, NavbarComponent } from '../../shared-ui'
 })
 export class CheckoutComponent implements OnInit {
   isLoading$: Observable<boolean>
+  checkoutFrom!: CheckoutFrom
   checkoutOrderDetails!: CheckoutOrderDetails
 
-  constructor(private checkoutService: CheckoutService) {
+  constructor(
+    private checkoutService: CheckoutService,
+    private route: ActivatedRoute
+  ) {
     this.isLoading$ = this.checkoutService.getCheckoutDetailsIsLoading$
   }
 
@@ -32,6 +42,13 @@ export class CheckoutComponent implements OnInit {
       this.checkoutOrderDetails = data.checkoutOrderDetails
     })
 
-    this.checkoutService.getCheckoutDetails()
+    this.checkoutFrom = this.route.snapshot.paramMap.get('checkoutFrom')! as CheckoutFrom
+    if (this.checkoutFrom === 'cart') this.checkoutService.getCheckoutCartDetails()
+    else if (this.checkoutFrom === 'product') {
+      this.checkoutService.getCheckoutProductDetails(
+        this.route.snapshot.queryParamMap.get('pid') || '',
+        this.route.snapshot.queryParamMap.get('qty') || ''
+      )
+    }
   }
 }

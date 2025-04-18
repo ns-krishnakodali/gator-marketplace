@@ -29,10 +29,11 @@ export const INVALID_CATEGORY = 'Invalid Category, Please check'
 export const INVALID_QUANTITY = 'Please enter a valid quantity'
 export const PRODUCT_LISTING_SUCCESSFUL = 'Product listed successfully'
 
+// Checkout Order
+export const TO_CHECKOUT_FAILED = 'Failed to checkout, try again'
 export const PROVIDE_MEETUP_DETAILS = 'Provide meetup info to proceed with order'
 export const SELECT_PAYMENT_METHOD = 'Select a payment method'
 export const INVALID_DATE = 'Pick today or later.'
-
 export const GAINESVILLE_COORDINATES = { lat: 29.6516, lng: -82.3248 }
 export const SAFETY_TIPS = [
   'Always meet in a public, well-lit area, preferably on campus.',

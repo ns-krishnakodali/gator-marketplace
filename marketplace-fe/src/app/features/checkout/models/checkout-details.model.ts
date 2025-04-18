@@ -1,3 +1,5 @@
+export type CheckoutFrom = 'cart' | 'product'
+
 export interface CheckoutOrderDetails {
   checkoutProductDetails: CheckoutProductDetail[]
   subTotal: number
