@@ -2,13 +2,6 @@
   padding-top: var(--spacing-half);
 }
 
-.account-heading {
-  text-align: center;
-  font-size: 28px;
-  letter-spacing: 0.5px;
-  margin: var(--spacing-2) 0;
-}
-
 .account-section-container {
   display: flex;
   justify-content: space-between;

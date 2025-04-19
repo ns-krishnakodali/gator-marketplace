@@ -1,0 +1,18 @@
+<app-navbar [showAccount]="true" />
+<div class="checkout-container">
+  <app-heading id="checkout-heading" heading="Checkout" />
+  <div class="checkout-sub-container">
+    <app-checkout-details [checkoutFrom]="checkoutFrom" [pid]="pid" [quantity]="quantity" />
+    @if (isLoading$ | async; as isLoading) {
+      <mat-spinner diameter="50" />
+    } @else {
+      <app-order-details
+        [checkoutProductDetails]="checkoutOrderDetails.checkoutProductDetails"
+        [subTotal]="checkoutOrderDetails.subTotal"
+        [handlingFee]="checkoutOrderDetails.handlingFee"
+        [totalPrice]="checkoutOrderDetails.totalPrice"
+      />
+    }
+    <app-safety-tips />
+  </div>
+</div>

@@ -7,11 +7,11 @@
   } @else {
     <app-display-images [images]="productDetails.productImages" />
     <app-product-details
+      [productId]="productDetails.pid"
       [productName]="productDetails.name"
       [productDescription]="productDetails.description"
       [postedAt]="productDetails.postedAt"
       [postedBy]="productDetails.postedBy"
-      [productId]="productDetails.pid"
       [maxQuantity]="productDetails.quantity"
     />
   }

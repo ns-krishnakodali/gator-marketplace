@@ -42,8 +42,8 @@
   box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
-.add-to-cart-container {
+.product-buttons-container {
   display: flex;
-  justify-content: center;
-  margin-top: var(--spacing-2);
+  justify-content: space-around;
+  margin-top: var(--spacing-5);
 }

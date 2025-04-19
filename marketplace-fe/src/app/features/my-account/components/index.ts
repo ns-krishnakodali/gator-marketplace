@@ -1,3 +1,3 @@
+export * from './listings/listings.component'
 export * from './orders/orders.component'
-export * from './payments/payments.component'
 export * from './profile/profile.component'

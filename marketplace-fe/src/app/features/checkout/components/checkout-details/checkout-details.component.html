@@ -1,0 +1,149 @@
+<mat-stepper [linear]="isLinearStepper" class="checkout-stepper" #stepper>
+  <mat-step>
+    <ng-template matStepLabel>Meet Up</ng-template>
+    <div class="checkout-details-container">
+      <div class="details-container">
+        <app-heading id="order-details" heading="Meeting Details" />
+        <div class="checkout-detail-container">
+          <label for="meetup-address" class="checkout-label">Meetup Address*</label>
+          <input
+            id="meetup-address"
+            name="meetup-address"
+            class="checkout-input address-input"
+            type="text"
+            placeholder="e.g., Reitz Union, Marston Library"
+            [(ngModel)]="meetupDetails.address"
+            required
+          />
+          <app-button
+            id="select-in-map"
+            class="select-map-button"
+            variant="text"
+            type="button"
+            [onClickHandler]="toggleDisplayMap"
+          >
+            Select in map
+          </app-button>
+          @if (displayMap) {
+            <google-map
+              height="12.5rem"
+              width="40vw"
+              [center]="center"
+              [zoom]="zoom"
+              (mapClick)="moveMap($event)"
+              (mapMousemove)="move($event)"
+            />
+          }
+        </div>
+        <div class="checkout-detail-container">
+          <label for="meetup-date" class="checkout-label">Meetup Date*</label>
+          <input
+            id="meetup-date"
+            name="meetup-date"
+            class="checkout-input"
+            type="date"
+            [(ngModel)]="meetupDetails.date"
+            required
+          />
+        </div>
+        <div class="checkout-detail-container">
+          <label for="meetup-time" class="checkout-label">Meetup Time*</label>
+          <input
+            id="meetup-time"
+            name="meetup-time"
+            class="checkout-input"
+            type="time"
+            [(ngModel)]="meetupDetails.time"
+            required
+          />
+        </div>
+        @if (checkoutFrom === 'product') {
+          <div class="checkout-detail-container">
+            <label for="meetup-date" class="checkout-label">Price Proposal (Optional)</label>
+            <input
+              id="price-proposal"
+              name="price-proposal"
+              class="checkout-input"
+              type="number"
+              [(ngModel)]="meetupDetails.priceProposal"
+              required
+            />
+          </div>
+        }
+        <div class="checkout-detail-container">
+          <label for="meetup-notes" class="checkout-label">Additional Notes (Optional)</label>
+          <textarea
+            id="meetup-notes"
+            name="meetup-notes"
+            class="checkout-input meetup-notes"
+            placeholder="Any additional information the seller should know"
+            [(ngModel)]="meetupDetails.additionalNotes"
+            required
+          ></textarea>
+        </div>
+        <div class=".stepper-button-meetup-container">
+          <button class="step-button" type="button" (click)="goToPaymentStep()">
+            Continue to Payment >
+          </button>
+        </div>
+      </div>
+    </div>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Payment</ng-template>
+    <div class="checkout-details-container">
+      <h2 class="checkout-details-heading">Payment</h2>
+      <div class="details-container">
+        <app-heading id="order-details" heading="Payment Method" />
+        <div class="payment-form-group">
+          <div class="payment-option">
+            <input
+              id="payment-cash"
+              name="payment-method"
+              type="radio"
+              value="cash"
+              [(ngModel)]="paymentMethod"
+              required
+            />
+            <label for="payment-cash" class="payment-label">Cash on Meetup</label>
+            <span class="description">Pay with cash when you meet the seller</span>
+          </div>
+          <div class="payment-option">
+            <input
+              id="payment-venmo"
+              name="payment-method"
+              type="radio"
+              value="venmo"
+              [(ngModel)]="paymentMethod"
+              required
+            />
+            <label for="payment-venmo" class="payment-label">Venmo</label>
+            <span class="description">Pay using Venmo at meetup</span>
+          </div>
+          <div class="payment-option">
+            <input
+              id="payment-zelle"
+              name="payment-method"
+              type="radio"
+              value="zelle"
+              [(ngModel)]="paymentMethod"
+              required
+            />
+            <label for="payment-zelle" class="payment-label">Zelle</label>
+            <span class="description">Pay using Zelle at meetup</span>
+          </div>
+        </div>
+        <div class="stepper-button-payments-container">
+          <button matStepperPrevious class="step-button" type="button">< Back</button>
+          @if (isCheckoutLoading$ | async; as isLoading) {
+            <mat-spinner diameter="40" />
+          } @else {
+            <button mat-flat-button type="button" (click)="completeOrderCheckout()">
+              Complete Order
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </mat-step>
+</mat-stepper>

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core'
+import { Router } from '@angular/router'
 
 import { BehaviorSubject } from 'rxjs'
 
@@ -6,6 +7,7 @@ import type { ProductDetails, ProductResponseDTO, ProductImage, ProductImageDTO 
 
 import { APIService } from '../../../core'
 import { NotificationsService } from '../../../shared-ui'
+import { TO_CHECKOUT_FAILED } from '../../../utils'
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
@@ -19,7 +21,8 @@ export class ProductService {
 
   constructor(
     private apiService: APIService,
-    private notificationsService: NotificationsService
+    private notificationsService: NotificationsService,
+    private router: Router
   ) {}
 
   getProductDetails = (productId: string) => {
@@ -36,12 +39,26 @@ export class ProductService {
           message: error.message,
           type: 'error',
         })
+        this.router.navigate(['/products'])
         this.isLoadingSubject.next(false)
       },
       complete: () => {
         this.isLoadingSubject.next(false)
       },
     })
+  }
+
+  handleProductCheckout = (productId: string, quantity: number): void => {
+    this.router
+      .navigate(['/checkout', 'product'], { queryParams: { pid: productId, qty: quantity } })
+      .then((success) => {
+        if (!success) {
+          this.notificationsService.addNotification({
+            message: TO_CHECKOUT_FAILED,
+            type: 'error',
+          })
+        }
+      })
   }
 
   private processProductDetailsResponse = (response: unknown): ProductDetails => {

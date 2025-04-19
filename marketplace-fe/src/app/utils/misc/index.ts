@@ -19,3 +19,17 @@ export const formatMobileNumber = (number: string): string => {
 
   return ''
 }
+
+export const isValidDate = (date: string): boolean => {
+  const [year, month, day] = date.split('-').map(Number)
+
+  if (!year || !month || !day) return false
+
+  const meetupDate: Date = new Date(year, month - 1, day)
+  if (isNaN(meetupDate.getTime())) return false
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  return meetupDate >= today
+}

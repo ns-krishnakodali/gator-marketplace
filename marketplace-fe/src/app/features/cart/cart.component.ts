@@ -9,7 +9,7 @@ import { CartCardComponent, OrderSummaryCardComponent } from './components'
 import type { CartDetails } from './models'
 import { CartService } from './services'
 
-import { NavbarComponent } from '../../shared-ui'
+import { HeadingComponent, NavbarComponent } from '../../shared-ui'
 
 @Component({
   selector: 'app-cart',
@@ -20,6 +20,7 @@ import { NavbarComponent } from '../../shared-ui'
     NavbarComponent,
     CartCardComponent,
     OrderSummaryCardComponent,
+    HeadingComponent,
   ],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.css',
