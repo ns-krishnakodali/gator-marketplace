@@ -1,0 +1,10 @@
+<div class="safety-tips">
+  <div class="safety-tips-container">
+    <app-heading id="safety-tips" heading="Safety Tips" />
+    <div class="safety-tips-details-container">
+      @for (safetyTip of safetyTips; track $index) {
+        <app-text [id]="'safety-tip-' + $index"> ‣ {{ safetyTip }} </app-text>
+      }
+    </div>
+  </div>
+</div>

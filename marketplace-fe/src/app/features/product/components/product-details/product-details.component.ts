@@ -9,6 +9,7 @@ import { finalize } from 'rxjs'
 
 import { AppCartService } from '../../../../core'
 import { TextComponent } from '../../../../shared-ui'
+import { ProductService } from '../../services'
 
 @Component({
   selector: 'app-product-details',
@@ -24,11 +25,11 @@ import { TextComponent } from '../../../../shared-ui'
   styleUrl: './product-details.component.css',
 })
 export class ProductDetailsComponent implements OnInit {
+  @Input({ required: true }) productId!: string
   @Input({ required: true }) productName!: string
   @Input({ required: true }) productDescription!: string
   @Input({ required: true }) postedAt!: Date
   @Input({ required: true }) postedBy!: string
-  @Input({ required: true }) productId!: string
   @Input({ required: true }) maxQuantity!: number
 
   addToCartLoading = false
@@ -36,13 +37,20 @@ export class ProductDetailsComponent implements OnInit {
   quantity = 1
   quantityOptions: number[] = []
 
-  constructor(private appCartService: AppCartService) {}
+  constructor(
+    private appCartService: AppCartService,
+    private productService: ProductService
+  ) {}
 
   ngOnInit(): void {
     this.quantityOptions = Array.from(
       { length: Math.min(this.maxQuantity || 0, 10) },
       (_, i) => i + 1
     )
+  }
+
+  buyProduct = (): void => {
+    this.productService.handleProductCheckout(this.productId, this.quantity)
   }
 
   addtoCart = (): void => {

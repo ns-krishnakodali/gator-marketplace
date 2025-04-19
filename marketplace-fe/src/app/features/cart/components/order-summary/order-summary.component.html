@@ -1,18 +1,25 @@
 <div class="order-summary-card">
   <h2 class="order-summary-heading">Order Summary</h2>
   <div class="order-details">
-    <span>Items Total:</span>
+    <app-text id="items-total">Items Total:</app-text>
     <span class="currency">{{ productsTotal | currency: 'USD' : 'symbol' : '1.2-2' }}</span>
   </div>
   <div class="order-details">
-    <span>Handling Fee:</span>
+    <app-text id="items-total">Handling Fee:</app-text>
     <span class="currency">{{ handlingFee | currency: 'USD' : 'symbol' : '1.2-2' }}</span>
   </div>
   <div class="total-details">
-    <span>Total:</span>
+    <app-text id="items-total">Total:</app-text>
     <span class="currency">{{ totalCost | currency: 'USD' : 'symbol' : '1.2-2' }}</span>
   </div>
-  <button mat-flat-button id="checkout" class="checkout-button" type="button" aria-label="Checkout">
+  <button
+    mat-flat-button
+    id="checkout"
+    class="checkout-button"
+    type="button"
+    aria-label="Checkout"
+    (click)="handleCheckout()"
+  >
     Checkout
   </button>
 </div>

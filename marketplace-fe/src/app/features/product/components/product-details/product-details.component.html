@@ -22,7 +22,17 @@
       <option [value]="option">{{ option }}</option>
     }
   </select>
-  <div class="add-to-cart-container">
+  <div class="product-buttons-container">
+    <button
+      mat-flat-button
+      id="buy-product"
+      type="button"
+      (click)="buyProduct()"
+      aria-label="But Product"
+    >
+      <mat-icon>shopping_bag</mat-icon>
+      Buy Now
+    </button>
     @if (addToCartLoading) {
       <mat-spinner [diameter]="40" />
     } @else {

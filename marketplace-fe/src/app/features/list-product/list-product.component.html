@@ -1,6 +1,6 @@
 <app-navbar [showAccount]="true" [showCart]="true" />
 <div class="list-product-container">
-  <h1 class="list-product-heading">List a New Product</h1>
+  <app-heading id="list-product-heading" heading="List a New Product" />
   <form ngNativeValidate (submit)="onListProduct($event)">
     <app-list-product-form />
     <app-product-images />

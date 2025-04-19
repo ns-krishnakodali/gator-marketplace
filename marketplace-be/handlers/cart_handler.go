@@ -77,8 +77,10 @@ func UpdateCartProduct(c *gin.Context) {
 		return
 	}
 
+	userUid, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
+
 	// Call the service and get the updated order details
-	response, err := services.UpdateCartProductService(input.ProductPID, input.Quantity)
+	response, err := services.UpdateCartProductService(input.ProductPID, input.Quantity, userUid)
 	if err != nil {
 		switch err {
 		case services.ErrProductNotFound:

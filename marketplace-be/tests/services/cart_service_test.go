@@ -243,9 +243,9 @@ func TestUpdateCartItemService(t *testing.T) {
 		}
 		db.Create(cartItem)
 
-		updated, err := services.UpdateCartProductService(cartItem.ProductPID, 8)
+		updated, err := services.UpdateCartProductService(cartItem.ProductPID, 8, cartItem.UserUID)
 		require.NoError(t, err)
-		require.Equal(t, float64(45), updated.TotalCost)
+		require.Equal(t, float64(41), updated.TotalCost)
 
 		var updatedCart models.CartProduct
 		db.Where("user_uid = ? AND product_p_id = ?", "u1", "p1").First(&updatedCart)
@@ -259,9 +259,9 @@ func TestUpdateCartItemService(t *testing.T) {
 		cartItem := &models.CartProduct{UserUID: "u2", ProductPID: "p2", Quantity: 5}
 		db.Create(cartItem)
 
-		updated, err := services.UpdateCartProductService(cartItem.ProductPID, 2)
+		updated, err := services.UpdateCartProductService(cartItem.ProductPID, 2, cartItem.UserUID)
 		require.NoError(t, err)
-		require.Equal(t, float64(19), updated.TotalCost)
+		require.Equal(t, float64(15), updated.TotalCost)
 
 		var updatedCart models.CartProduct
 		db.Where("user_uid = ? AND product_p_id = ?", "u2", "p2").First(&updatedCart)
@@ -275,12 +275,12 @@ func TestUpdateCartItemService(t *testing.T) {
 		cartItem := &models.CartProduct{UserUID: "u3", ProductPID: "p3", Quantity: 3}
 		db.Create(cartItem)
 
-		_, err := services.UpdateCartProductService(cartItem.ProductPID, 10)
+		_, err := services.UpdateCartProductService(cartItem.ProductPID, 10, cartItem.UserUID)
 		require.ErrorIs(t, err, services.ErrInsufficientProductQuantity)
 	})
 
 	t.Run("Product Not Found", func(t *testing.T) {
-		_, err := services.UpdateCartProductService("nonexistent", 2)
+		_, err := services.UpdateCartProductService("nonexistent", 2, "")
 		require.ErrorIs(t, err, services.ErrCartProductNotFound)
 	})
 }
@@ -320,7 +320,7 @@ func TestClearCartService(t *testing.T) {
 		require.NoError(t, err)
 
 		var all []models.CartProduct
-		db.Find(&all)
-		require.Len(t, all, 1)
+		db.Find(&all).Where("is_delete = ?", true)
+		require.Len(t, all, 3)
 	})
 }

@@ -17,7 +17,6 @@ import (
 func GetProductsService(categoriesParam, sortParam string, page, pageSize int) (dtos.GetProductsResponse, error) {
 	query := database.DB.Model(&models.Product{}).Preload("PostedBy").Preload("Images", "is_main = true")
 
-	// =========== Filtering ===========
 	if categoriesParam != "" {
 		validCategories, invalidCategories := parseCategories(categoriesParam)
 		if len(invalidCategories) > 0 {
@@ -28,7 +27,6 @@ func GetProductsService(categoriesParam, sortParam string, page, pageSize int) (
 		}
 	}
 
-	// =========== Sorting ===========
 	switch sortParam {
 	case "price_asc":
 		query = query.Order("price ASC")
@@ -46,7 +44,6 @@ func GetProductsService(categoriesParam, sortParam string, page, pageSize int) (
 		return dtos.GetProductsResponse{}, fmt.Errorf("invalid sort parameter")
 	}
 
-	// Execute the count query first (for total items)
 	var totalCount int64
 	if err := query.Count(&totalCount).Error; err != nil {
 		return dtos.GetProductsResponse{}, fmt.Errorf("could not fetch products count")
@@ -64,7 +61,6 @@ func GetProductsService(categoriesParam, sortParam string, page, pageSize int) (
 	// Convert products to DTOs
 	productDTOs := make([]dtos.ProductDetails, len(products))
 	for i, product := range products {
-		// Convert images to DTOs
 		var imageDTO dtos.ProductImageDTO
 		if len(product.Images) > 0 {
 			imageDTO = dtos.ProductImageDTO{
@@ -107,7 +103,7 @@ func GetProductByPIDService(productPID string) (dtos.ProductResponse, error) {
 	var product models.Product
 	err := database.DB.Preload("PostedBy").Preload("Images").Omit("id").Where("pid = ?", productPID).First(&product).Error
 	if err != nil {
-		return dtos.ProductResponse{}, fmt.Errorf("product not found")
+		return dtos.ProductResponse{}, ErrProductNotFound
 	}
 
 	imageDTOs := make([]dtos.ProductImageDTO, len(product.Images))

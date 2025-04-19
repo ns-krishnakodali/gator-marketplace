@@ -1,1 +1,1 @@
-export type AccountSection = 'profile' | 'orders' | 'payments'
+export type AccountSection = 'profile' | 'orders' | 'listings'

@@ -1,0 +1,37 @@
+<div class="order-details">
+  <div class="order-details-container">
+    <app-heading id="order-details" heading="Order Details" />
+    <div class="product-details-container">
+      @for (productDetail of checkoutProductDetails; track $index) {
+        <div class="detail">
+          <app-text id="product-detail">
+            {{ productDetail.quantity }} x {{ productDetail.name }}
+          </app-text>
+          <p class="price">
+            {{ productDetail.productTotalPrice | currency: 'USD' : 'symbol' : '1.2-2' }}
+          </p>
+        </div>
+      }
+      <div class="border-bottom"></div>
+      <div class="detail">
+        <app-text id="subtotal"> Subtotal </app-text>
+        <div class="price">
+          {{ subTotal | currency: 'USD' : 'symbol' : '1.2-2' }}
+        </div>
+      </div>
+      <div class="detail">
+        <app-text id="handling-fee"> Handling Fee </app-text>
+        <div class="price">
+          {{ handlingFee | currency: 'USD' : 'symbol' : '1.2-2' }}
+        </div>
+      </div>
+      <div class="border-bottom"></div>
+      <div class="detail">
+        <div class="total">Total</div>
+        <div class="price">
+          {{ totalPrice | currency: 'USD' : 'symbol' : '1.2-2' }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
