@@ -32,14 +32,14 @@ describe('Profile Component Tests', () => {
   it('Should be visting my-account section', () => {
     cy.url().should('include', '/my-account')
 
-    cy.get('.account-heading').should('contain', 'My Account')
+    cy.get('.heading').should('contain', 'My Account')
 
     cy.get('.account-section-list li').should('have.length', 3)
     cy.get('.account-section-list li').eq(0).should('contain', 'My Profile')
     cy.get('.account-section-list li').eq(1).should('contain', 'Orders')
-    cy.get('.account-section-list li').eq(2).should('contain', 'Payments')
+    cy.get('.account-section-list li').eq(2).should('contain', 'Listings')
 
-    cy.get('.account-section-icon').should('have.length', 3) // 3 icons for Profile, Orders, and Payments
+    cy.get('.account-section-icon').should('have.length', 3) // 3 icons for Profile, Orders, and Listings
 
     cy.get('.logout-button').should('exist').and('contain', 'Logout')
   })

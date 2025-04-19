@@ -37,19 +37,19 @@
             Orders
           </li>
           <li
-            [ngClass]="{ selected: renderedSection === 'payments' }"
-            (click)="renderSection('payments')"
-            (keydown.enter)="renderSection('payments')"
-            (keydown.space)="renderSection('payments')"
+            [ngClass]="{ selected: renderedSection === 'listings' }"
+            (click)="renderSection('listings')"
+            (keydown.enter)="renderSection('listings')"
+            (keydown.space)="renderSection('listings')"
             tabindex="0"
             role="button"
           >
             <img
-              src="assets/svg-icons/payments-icon.svg"
-              alt="Payments Icon"
+              src="assets/svg-icons/product-listing-icon.svg"
+              alt="Product Listings Icon"
               class="account-section-icon"
             />
-            Payments
+            Listings
           </li>
         </ul>
         <button class="logout-button" (click)="handleLogout()" mat-fab extended>
@@ -68,8 +68,8 @@
         />
       } @else if (renderedSection === 'orders') {
         <app-orders />
-      } @else if (renderedSection === 'payments') {
-        <app-payments />
+      } @else if (renderedSection === 'listings') {
+        <app-listings />
       }
     </div>
   </div>
