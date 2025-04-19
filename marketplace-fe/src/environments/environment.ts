@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiBaseURL: 'http://gator-marketplace-api:5000',
-  appTitle: 'Marketplace Dev',
+  apiBaseURL: 'http://localhost:5000',
+  appTitle: 'Marketplace',
   googleMapsApiKey: 'API_KEY',
 }
