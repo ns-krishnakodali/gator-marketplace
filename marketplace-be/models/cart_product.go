@@ -11,4 +11,5 @@ type CartProduct struct {
 	UpdatedAt  time.Time `gorm:"autoUpdateTime"`
 	User       User      `gorm:"foreignKey:UserUID;references:Uid;constraint:OnDelete:CASCADE;"`
 	Product    Product   `gorm:"foreignKey:ProductPID;references:Pid;constraint:OnDelete:CASCADE;"`
+	IsDelete   bool      `gorm:"not null;default:false"`
 }

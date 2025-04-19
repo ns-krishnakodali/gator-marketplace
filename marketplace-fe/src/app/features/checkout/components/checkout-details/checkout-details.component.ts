@@ -1,20 +1,26 @@
-import { Component, ViewChild } from '@angular/core'
+import { Component, Input, ViewChild } from '@angular/core'
+import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { GoogleMap } from '@angular/google-maps'
 
 import { MatButtonModule } from '@angular/material/button'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatStepper, MatStepperModule } from '@angular/material/stepper'
 
-import type { MeetupDetails, PaymentDetails } from '../../models'
+import { Observable } from 'rxjs'
+
+import type { CheckoutFrom, MeetupDetails, PaymentMethod } from '../../models'
 import { CheckoutService } from '../../services'
 import { ButtonComponent, HeadingComponent } from '../../../../shared-ui'
-import { GAINESVILLE_COORDINATES } from '../../../../utils'
+import { UFL_COORDINATES } from '../../../../utils'
 
 @Component({
   selector: 'app-checkout-details',
   imports: [
     MatButtonModule,
+    MatProgressSpinnerModule,
     MatStepperModule,
+    CommonModule,
     FormsModule,
     GoogleMap,
     ButtonComponent,
@@ -24,8 +30,16 @@ import { GAINESVILLE_COORDINATES } from '../../../../utils'
   styleUrl: './checkout-details.component.css',
 })
 export class CheckoutDetailsComponent {
+  @Input({ required: true }) checkoutFrom!: CheckoutFrom
+  @ViewChild('stepper') stepper!: MatStepper
+
+  isCheckoutLoading$: Observable<boolean>
+
   readonly isLinearStepper = true
   displayMap = false
+  zoom = 13
+  center: google.maps.LatLngLiteral = UFL_COORDINATES
+  display!: google.maps.LatLngLiteral
 
   meetupDetails: MeetupDetails = {
     address: '',
@@ -34,17 +48,11 @@ export class CheckoutDetailsComponent {
     additionalNotes: '',
   }
 
-  paymentDetails: PaymentDetails = {
-    method: 'cash',
+  paymentMethod: PaymentMethod = 'cash'
+
+  constructor(private checkoutService: CheckoutService) {
+    this.isCheckoutLoading$ = this.checkoutService.getCheckoutOrderIsLoading$
   }
-
-  zoom = 13
-  center: google.maps.LatLngLiteral = GAINESVILLE_COORDINATES
-  display!: google.maps.LatLngLiteral
-
-  @ViewChild('stepper') stepper!: MatStepper
-
-  constructor(private checkoutService: CheckoutService) {}
 
   moveMap = (event: google.maps.MapMouseEvent): void => {
     if (event.latLng) {
@@ -77,7 +85,11 @@ export class CheckoutDetailsComponent {
     }
   }
 
-  completeOrder = (): void => {
-    this.checkoutService.placeProductsOrder(this.meetupDetails, this.paymentDetails)
+  completeOrderCheckout = (): void => {
+    this.checkoutService.placeProductsOrder(
+      this.checkoutFrom,
+      this.meetupDetails,
+      this.paymentMethod
+    )
   }
 }

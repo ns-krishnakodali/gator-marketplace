@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core'
 import { CurrencyPipe } from '@angular/common'
 
-import { MatIcon } from '@angular/material/icon'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 import type { CheckoutProductDetail } from '../../models'
@@ -9,7 +8,7 @@ import { HeadingComponent, TextComponent } from '../../../../shared-ui'
 
 @Component({
   selector: 'app-order-details',
-  imports: [MatIcon, MatTooltipModule, CurrencyPipe, HeadingComponent, TextComponent],
+  imports: [MatTooltipModule, CurrencyPipe, HeadingComponent, TextComponent],
   templateUrl: './order-details.component.html',
   styleUrl: './order-details.component.css',
 })

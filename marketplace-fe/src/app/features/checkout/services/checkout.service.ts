@@ -3,11 +3,12 @@ import { BehaviorSubject } from 'rxjs'
 
 import type {
   CheckoutDetailsResponseDTO,
+  CheckoutFrom,
   CheckoutOrderDetails,
   CheckoutOrderDetailsDTO,
   CheckoutProductDetail,
   MeetupDetails,
-  PaymentDetails,
+  PaymentMethod,
 } from '../models'
 
 import { APIService } from '../../../core'
@@ -22,11 +23,13 @@ import {
 @Injectable({ providedIn: 'root' })
 export class CheckoutService {
   private getCheckoutDetailsIsLoadingSubject = new BehaviorSubject<boolean>(false)
+  private getCheckoutOrderIsLoadingSubject = new BehaviorSubject<boolean>(false)
   private checkoutOrderDetailsSubject = new BehaviorSubject<{
     checkoutOrderDetails: CheckoutOrderDetails
   }>({ checkoutOrderDetails: {} as CheckoutOrderDetails })
 
   public getCheckoutDetailsIsLoading$ = this.getCheckoutDetailsIsLoadingSubject.asObservable()
+  public getCheckoutOrderIsLoading$ = this.getCheckoutOrderIsLoadingSubject.asObservable()
   public checkoutOrderDetails$ = this.checkoutOrderDetailsSubject.asObservable()
 
   constructor(
@@ -34,9 +37,37 @@ export class CheckoutService {
     private notificationsService: NotificationsService
   ) {}
 
-  placeProductsOrder = (meetupDetails: MeetupDetails, paymentDetails: PaymentDetails): void => {
-    if (this.validateMeetupDetails(meetupDetails) && this.validatePaymentDetails(paymentDetails)) {
-      console.log(meetupDetails, paymentDetails)
+  placeProductsOrder = (
+    checkoutFrom: CheckoutFrom,
+    meetupDetails: MeetupDetails,
+    paymentMethod: PaymentMethod
+  ): void => {
+    if (this.validateMeetupDetails(meetupDetails) && this.validatePaymentMethod(paymentMethod)) {
+      this.getCheckoutOrderIsLoadingSubject.next(true)
+      this.apiService
+        .post(`api/checkout/${checkoutFrom}`, {
+          meetupAddress: meetupDetails.address,
+          meetupDate: meetupDetails.date,
+          meetupTime: meetupDetails.time,
+          additionalNotes: meetupDetails.additionalNotes,
+          paymentMethod: paymentMethod,
+        })
+        .subscribe({
+          next: (response: unknown) => {
+            const { orderId } = response as { orderId: string }
+            console.log(orderId)
+          },
+          error: (error) => {
+            this.notificationsService.addNotification({
+              message: error.message,
+              type: 'error',
+            })
+            this.getCheckoutOrderIsLoadingSubject.next(false)
+          },
+          complete: () => {
+            this.getCheckoutOrderIsLoadingSubject.next(false)
+          },
+        })
     }
   }
 
@@ -67,8 +98,8 @@ export class CheckoutService {
     return true
   }
 
-  private validatePaymentDetails = (paymentDetails: PaymentDetails): boolean => {
-    if (!paymentDetails || !paymentDetails.method) {
+  private validatePaymentMethod = (paymentMethod: PaymentMethod): boolean => {
+    if (!paymentMethod) {
       this.notificationsService.addNotification({
         message: SELECT_PAYMENT_METHOD,
         type: 'error',

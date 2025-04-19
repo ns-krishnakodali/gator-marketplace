@@ -33,6 +33,9 @@ var ErrDeleteProduct = errors.New("could not delete product")
 
 var ErrImageUploadFailed = errors.New("issue with uploading image to cloud")
 
+var ErrFailedToCreateOrder = errors.New("failed to create order")
+var ErrEmptyCart = errors.New("cart is empty")
+
 func validateUFLEmail(email string) bool {
 	re := regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@ufl.edu$`)
 	return re.MatchString(email)

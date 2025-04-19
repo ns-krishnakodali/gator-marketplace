@@ -8,10 +8,11 @@ import (
 
 func MigrateDB() {
 	err := DB.AutoMigrate(
-		&models.User{},
+		&models.CartProduct{},
+		&models.Order{},
 		&models.Product{},
 		&models.ProductImage{},
-		&models.CartProduct{},
+		&models.User{},
 	)
 	if err != nil {
 		log.Printf("Failed to migrate database: %v", err)

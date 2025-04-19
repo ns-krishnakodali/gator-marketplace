@@ -5,11 +5,13 @@ import (
 	"marketplace-be/database"
 	"marketplace-be/dtos"
 	"marketplace-be/models"
+
+	"github.com/google/uuid"
 )
 
 func GetCheckoutCartDetailsService(userUID string) (dtos.CheckoutOrderDetailsResponse, error) {
 	var cartProducts []models.CartProduct
-	if err := database.DB.Where("user_uid = ?", userUID).
+	if err := database.DB.Where("user_uid = ? AND is_delete = ?", userUID, false).
 		Order("created_at desc").
 		Preload("Product").
 		Find(&cartProducts).Error; err != nil {
@@ -68,4 +70,50 @@ func GetCheckoutProductDetailsService(productPID string, quantity int) (dtos.Che
 		HandlingFee:            HandlingFee,
 		TotalCost:              totalCost,
 	}, nil
+}
+
+func CheckoutCartOrderService(input *dtos.CheckoutOrderInput, userUID string) (string, error) {
+	var cartProducts []models.CartProduct
+	if err := database.DB.Where("user_uid = ? AND is_delete = ?", userUID, false).
+		Preload("Product").
+		Find(&cartProducts).Error; err != nil {
+		return "", fmt.Errorf("failed to fetch cart products: %v", err)
+	}
+
+	if len(cartProducts) == 0 {
+		return "", ErrEmptyCart
+	}
+
+	// Create a new order
+	orderID := uuid.New().String()
+	order := models.Order{
+		OrderID:         orderID,
+		UserUID:         userUID,
+		MeetupLocation:  input.MeetupAddress,
+		MeetupDate:      input.MeetupDate,
+		MeetupTime:      input.MeetupTime,
+		AdditionalNotes: input.AdditionalNotes,
+		PaymentMethod:   input.PaymentMethod,
+		OrderStatus:     models.OrderPlaced,
+	}
+
+	if err := database.DB.Create(&order).Error; err != nil {
+		return "", ErrFailedToCreateOrder
+	}
+
+	var products []models.Product
+	for _, cartProduct := range cartProducts {
+		products = append(products, cartProduct.Product)
+	}
+
+	if err := database.DB.Model(&order).Association("Products").Append(products); err != nil {
+		return "", fmt.Errorf("failed to associate products with order: %v", err)
+	}
+
+	// Clear cart after successful order i.e. soft delete.
+	if err := ClearCartService(userUID); err != nil {
+		return "", err
+	}
+
+	return orderID, nil
 }

@@ -2,9 +2,8 @@ export interface MeetupDetails {
   address: string
   date: string
   time: string
-  additionalNotes: string
+  priceProposal?: number
+  additionalNotes?: string
 }
 
-export interface PaymentDetails {
-  method: 'cash' | 'venmo' | 'zelle'
-}
+export type PaymentMethod = 'cash' | 'venmo' | 'zelle'

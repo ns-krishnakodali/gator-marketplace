@@ -46,5 +46,6 @@ func SetupRoutes(router *gin.Engine) {
 
 		apiProtected.GET("/checkout/cart", handlers.GetCheckoutCartDetails)
 		apiProtected.GET("/checkout/product", handlers.GetCheckoutProductDetails)
+		apiProtected.POST("/checkout/cart", handlers.CheckoutCartOrder)
 	}
 }
