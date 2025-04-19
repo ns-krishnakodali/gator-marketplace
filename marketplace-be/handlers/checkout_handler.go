@@ -51,8 +51,7 @@ func GetCheckoutProductDetails(c *gin.Context) {
 }
 
 func CheckoutCartOrder(c *gin.Context) {
-	var input dtos.CheckoutOrderInput
-
+	var input dtos.CheckoutCartOrderInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid input format"})
 		return
@@ -65,6 +64,28 @@ func CheckoutCartOrder(c *gin.Context) {
 		switch {
 		case errors.Is(err, services.ErrEmptyCart):
 			c.JSON(http.StatusBadRequest, gin.H{"message": "Your cart is empty, add products to place an order."})
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "Couldn't place the order, please retry"})
+		}
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"orderId": orderId})
+}
+
+func CheckoutCartProduct(c *gin.Context) {
+	var input dtos.CheckoutProductOrderInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid input format"})
+		return
+	}
+
+	userUid, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
+
+	orderId, err := services.CheckoutCartProductService(&input, userUid)
+	if err != nil {
+		switch {
+		case errors.Is(err, services.ErrProductNotFound):
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Product not found, check again."})
 		default:
 			c.JSON(http.StatusInternalServerError, gin.H{"message": "Couldn't place the order, please retry"})
 		}

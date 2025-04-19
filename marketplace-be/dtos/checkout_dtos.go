@@ -15,11 +15,21 @@ type CheckoutProductDetail struct {
 	ProductTotalPrice float64 `json:"productTotalPrice"`
 }
 
-type CheckoutOrderInput struct {
+type CheckoutCartOrderInput struct {
 	MeetupAddress   string               `json:"meetupAddress"`
 	MeetupDate      string               `json:"meetupDate"`
 	MeetupTime      string               `json:"meetupTime"`
 	AdditionalNotes string               `json:"additionalNotes"`
-	PriceProposal   *int                 `json:"priceProposal"`
 	PaymentMethod   models.PaymentMethod `json:"paymentMethod"`
+}
+
+type CheckoutProductOrderInput struct {
+	MeetupAddress   string               `json:"meetupAddress"`
+	MeetupDate      string               `json:"meetupDate"`
+	MeetupTime      string               `json:"meetupTime"`
+	AdditionalNotes string               `json:"additionalNotes"`
+	ProductId       string               `json:"productId"`
+	Quantity        int                  `json:"quantity"`
+	PaymentMethod   models.PaymentMethod `json:"paymentMethod"`
+	PriceProposal   *int                 `json:"priceProposal"`
 }

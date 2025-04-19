@@ -3,7 +3,6 @@ import { BehaviorSubject } from 'rxjs'
 
 import type {
   CheckoutDetailsResponseDTO,
-  CheckoutFrom,
   CheckoutOrderDetails,
   CheckoutOrderDetailsDTO,
   CheckoutProductDetail,
@@ -15,6 +14,8 @@ import { APIService } from '../../../core'
 import { NotificationsService } from '../../../shared-ui'
 import {
   INVALID_DATE,
+  INVALID_PRICE_PROPOSAL,
+  INVALID_PRODUCT_QUANTITY,
   isValidDate,
   PROVIDE_MEETUP_DETAILS,
   SELECT_PAYMENT_METHOD,
@@ -37,40 +38,6 @@ export class CheckoutService {
     private notificationsService: NotificationsService
   ) {}
 
-  placeProductsOrder = (
-    checkoutFrom: CheckoutFrom,
-    meetupDetails: MeetupDetails,
-    paymentMethod: PaymentMethod
-  ): void => {
-    if (this.validateMeetupDetails(meetupDetails) && this.validatePaymentMethod(paymentMethod)) {
-      this.getCheckoutOrderIsLoadingSubject.next(true)
-      this.apiService
-        .post(`api/checkout/${checkoutFrom}`, {
-          meetupAddress: meetupDetails.address,
-          meetupDate: meetupDetails.date,
-          meetupTime: meetupDetails.time,
-          additionalNotes: meetupDetails.additionalNotes,
-          paymentMethod: paymentMethod,
-        })
-        .subscribe({
-          next: (response: unknown) => {
-            const { orderId } = response as { orderId: string }
-            console.log(orderId)
-          },
-          error: (error) => {
-            this.notificationsService.addNotification({
-              message: error.message,
-              type: 'error',
-            })
-            this.getCheckoutOrderIsLoadingSubject.next(false)
-          },
-          complete: () => {
-            this.getCheckoutOrderIsLoadingSubject.next(false)
-          },
-        })
-    }
-  }
-
   getCheckoutCartDetails = (): void => {
     this.getCheckoutDetails('api/checkout/cart')
   }
@@ -79,10 +46,59 @@ export class CheckoutService {
     this.getCheckoutDetails('api/checkout/product', { pid, qty })
   }
 
+  placeCartOrder = (meetupDetails: MeetupDetails, paymentMethod: PaymentMethod): void => {
+    if (this.validateMeetupDetails(meetupDetails) && this.validatePaymentMethod(paymentMethod)) {
+      this.placeOrder('api/checkout/cart', {
+        meetupAddress: meetupDetails.address,
+        meetupDate: meetupDetails.date,
+        meetupTime: meetupDetails.time,
+        additionalNotes: meetupDetails.additionalNotes,
+        paymentMethod: paymentMethod,
+      })
+    }
+  }
+
+  placeProductOrder = (
+    meetupDetails: MeetupDetails,
+    paymentMethod: PaymentMethod,
+    pid: string,
+    quantity: string
+  ): void => {
+    if (this.validateMeetupDetails(meetupDetails) && this.validatePaymentMethod(paymentMethod)) {
+      let iQuantity: number
+      try {
+        iQuantity = parseInt(quantity, 10)
+      } catch {
+        this.notificationsService.addNotification({
+          message: INVALID_PRODUCT_QUANTITY,
+          type: 'error',
+        })
+        return
+      }
+      this.placeOrder('api/checkout/product', {
+        meetupAddress: meetupDetails.address,
+        meetupDate: meetupDetails.date,
+        meetupTime: meetupDetails.time,
+        additionalNotes: meetupDetails.additionalNotes,
+        paymentMethod: paymentMethod,
+        productId: pid,
+        quantity: iQuantity,
+        priceProposal: meetupDetails.priceProposal,
+      })
+    }
+  }
+
   validateMeetupDetails = (meetupDetails: MeetupDetails): boolean => {
     if (!meetupDetails || !(meetupDetails.address && meetupDetails.date && meetupDetails.time)) {
       this.notificationsService.addNotification({
         message: PROVIDE_MEETUP_DETAILS,
+        type: 'error',
+      })
+      return false
+    }
+    if (meetupDetails.priceProposal && meetupDetails.priceProposal <= 0) {
+      this.notificationsService.addNotification({
+        message: INVALID_PRICE_PROPOSAL,
         type: 'error',
       })
       return false
@@ -130,22 +146,42 @@ export class CheckoutService {
     })
   }
 
+  private placeOrder = (url: string, body: unknown): void => {
+    this.getCheckoutOrderIsLoadingSubject.next(true)
+    this.apiService.post(url, body).subscribe({
+      next: (response: unknown) => {
+        const { orderId } = response as { orderId: string }
+        console.log(orderId)
+      },
+      error: (error) => {
+        this.notificationsService.addNotification({
+          message: error.message,
+          type: 'error',
+        })
+        this.getCheckoutOrderIsLoadingSubject.next(false)
+      },
+      complete: () => {
+        this.getCheckoutOrderIsLoadingSubject.next(false)
+      },
+    })
+  }
+
   private processCheckoutDetailsResponse = (response: unknown): CheckoutOrderDetails => {
     const checkoutDetailsResponse = response as CheckoutDetailsResponseDTO
     return {
       checkoutProductDetails: this.processCheckoutProducts(
-        checkoutDetailsResponse.orderProductDetails
+        checkoutDetailsResponse?.orderProductDetails
       ),
-      subTotal: checkoutDetailsResponse.productsTotal,
-      handlingFee: checkoutDetailsResponse.handlingFee,
-      totalPrice: checkoutDetailsResponse.totalCost,
+      subTotal: checkoutDetailsResponse?.productsTotal,
+      handlingFee: checkoutDetailsResponse?.handlingFee,
+      totalPrice: checkoutDetailsResponse?.totalCost,
     }
   }
 
   private processCheckoutProducts = (
     checkoutProducts: CheckoutOrderDetailsDTO[]
   ): CheckoutProductDetail[] =>
-    checkoutProducts.map(({ productName, quantity, productTotalPrice }) => ({
+    checkoutProducts?.map(({ productName, quantity, productTotalPrice }) => ({
       name: productName,
       quantity,
       productTotalPrice,

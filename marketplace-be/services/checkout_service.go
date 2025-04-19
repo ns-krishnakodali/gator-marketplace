@@ -72,7 +72,7 @@ func GetCheckoutProductDetailsService(productPID string, quantity int) (dtos.Che
 	}, nil
 }
 
-func CheckoutCartOrderService(input *dtos.CheckoutOrderInput, userUID string) (string, error) {
+func CheckoutCartOrderService(input *dtos.CheckoutCartOrderInput, userUID string) (string, error) {
 	var cartProducts []models.CartProduct
 	if err := database.DB.Where("user_uid = ? AND is_delete = ?", userUID, false).
 		Preload("Product").
@@ -84,7 +84,6 @@ func CheckoutCartOrderService(input *dtos.CheckoutOrderInput, userUID string) (s
 		return "", ErrEmptyCart
 	}
 
-	// Create a new order
 	orderID := uuid.New().String()
 	order := models.Order{
 		OrderID:         orderID,
@@ -107,6 +106,52 @@ func CheckoutCartOrderService(input *dtos.CheckoutOrderInput, userUID string) (s
 	}
 
 	if err := database.DB.Model(&order).Association("Products").Append(products); err != nil {
+		if delErr := database.DB.Delete(&models.Order{}, "order_id = ?", orderID).Error; delErr != nil {
+			return "", fmt.Errorf("failed to associate products with order: %v; additionally failed to remove order: %v", err, delErr)
+		}
+		return "", fmt.Errorf("failed to associate products with order: %v", err)
+	}
+
+	if err := ClearCartService(userUID); err != nil {
+		return "", err
+	}
+
+	return orderID, nil
+}
+
+func CheckoutCartProductService(input *dtos.CheckoutProductOrderInput, userUID string) (string, error) {
+	var product models.Product
+	if err := database.DB.Where("pid = ?", input.ProductId).Find(&product).Error; err != nil {
+		return "", ErrProductNotFound
+	}
+
+	if product.Quantity < input.Quantity {
+		return "", ErrInsufficientProductQuantity
+	}
+
+	// Create a new order
+	orderID := uuid.New().String()
+	order := models.Order{
+		OrderID:         orderID,
+		UserUID:         userUID,
+		MeetupLocation:  input.MeetupAddress,
+		MeetupDate:      input.MeetupDate,
+		MeetupTime:      input.MeetupTime,
+		AdditionalNotes: input.AdditionalNotes,
+		PaymentMethod:   input.PaymentMethod,
+		PriceProposal:   *input.PriceProposal,
+		OrderStatus:     models.OrderPlaced,
+	}
+
+	if err := database.DB.Create(&order).Error; err != nil {
+		return "", ErrFailedToCreateOrder
+	}
+
+	products := []models.Product{product}
+	if err := database.DB.Model(&order).Association("Products").Append(products); err != nil {
+		if delErr := database.DB.Delete(&models.Order{}, "order_id = ?", orderID).Error; delErr != nil {
+			return "", fmt.Errorf("failed to associate products with order: %v; additionally failed to remove order: %v", err, delErr)
+		}
 		return "", fmt.Errorf("failed to associate products with order: %v", err)
 	}
 

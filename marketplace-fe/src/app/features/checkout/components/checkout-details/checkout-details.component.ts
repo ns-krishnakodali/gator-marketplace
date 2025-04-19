@@ -30,8 +30,10 @@ import { UFL_COORDINATES } from '../../../../utils'
   styleUrl: './checkout-details.component.css',
 })
 export class CheckoutDetailsComponent {
-  @Input({ required: true }) checkoutFrom!: CheckoutFrom
   @ViewChild('stepper') stepper!: MatStepper
+  @Input({ required: true }) checkoutFrom!: CheckoutFrom
+  @Input({ required: true }) pid!: string
+  @Input({ required: true }) quantity!: string
 
   isCheckoutLoading$: Observable<boolean>
 
@@ -86,10 +88,14 @@ export class CheckoutDetailsComponent {
   }
 
   completeOrderCheckout = (): void => {
-    this.checkoutService.placeProductsOrder(
-      this.checkoutFrom,
-      this.meetupDetails,
-      this.paymentMethod
-    )
+    if (this.checkoutFrom === 'cart')
+      this.checkoutService.placeCartOrder(this.meetupDetails, this.paymentMethod)
+    else if (this.checkoutFrom === 'product')
+      this.checkoutService.placeProductOrder(
+        this.meetupDetails,
+        this.paymentMethod,
+        this.pid,
+        this.quantity
+      )
   }
 }

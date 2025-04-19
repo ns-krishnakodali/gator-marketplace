@@ -29,6 +29,8 @@ export class CheckoutComponent implements OnInit {
   isLoading$: Observable<boolean>
   checkoutFrom!: CheckoutFrom
   checkoutOrderDetails!: CheckoutOrderDetails
+  pid!: string
+  quantity!: string
 
   constructor(
     private checkoutService: CheckoutService,
@@ -43,12 +45,12 @@ export class CheckoutComponent implements OnInit {
     })
 
     this.checkoutFrom = this.route.snapshot.paramMap.get('checkoutFrom')! as CheckoutFrom
+    this.pid = this.route.snapshot.queryParamMap.get('pid') || ''
+    this.quantity = this.route.snapshot.queryParamMap.get('qty') || ''
+
     if (this.checkoutFrom === 'cart') this.checkoutService.getCheckoutCartDetails()
     else if (this.checkoutFrom === 'product') {
-      this.checkoutService.getCheckoutProductDetails(
-        this.route.snapshot.queryParamMap.get('pid') || '',
-        this.route.snapshot.queryParamMap.get('qty') || ''
-      )
+      this.checkoutService.getCheckoutProductDetails(this.pid, this.quantity)
     }
   }
 }

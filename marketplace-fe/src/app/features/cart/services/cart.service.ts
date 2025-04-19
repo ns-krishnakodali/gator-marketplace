@@ -113,9 +113,9 @@ export class CartService {
     const productResponse = response as CartResponseDTO
     return {
       cartProducts: this.processCartProducts(productResponse.cartProducts),
-      productsTotal: `${productResponse.productsTotal || ''}`,
-      handlingFee: `${productResponse.handlingFee || 'N/A'}`,
-      totalCost: `${productResponse.totalCost || 'N/A'}`,
+      productsTotal: `${productResponse?.productsTotal || ''}`,
+      handlingFee: `${productResponse?.handlingFee || 'N/A'}`,
+      totalCost: `${productResponse?.totalCost || 'N/A'}`,
     }
   }
 
@@ -123,14 +123,14 @@ export class CartService {
     const productResponse = response as CartResponseDTO
     return {
       cartProducts: this.cartDetailsSubject.value.cartDetails.cartProducts,
-      productsTotal: `${productResponse.productsTotal || '0'}`,
-      handlingFee: `${productResponse.handlingFee || '0'}`,
-      totalCost: `${productResponse.totalCost || '0'}`,
+      productsTotal: `${productResponse?.productsTotal || '0'}`,
+      handlingFee: `${productResponse?.handlingFee || '0'}`,
+      totalCost: `${productResponse?.totalCost || '0'}`,
     }
   }
 
   private processCartProducts = (cartProducts: CartProductDTO[]): CartProduct[] =>
-    cartProducts.map(
+    cartProducts?.map(
       ({ pid, productName, productPrice, addedQuantity, maxQuantity, primaryImage }) => ({
         productId: pid,
         name: productName,

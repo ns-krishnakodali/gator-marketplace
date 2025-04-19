@@ -2,7 +2,7 @@
 <div class="checkout-container">
   <app-heading id="checkout-heading" heading="Checkout" />
   <div class="checkout-sub-container">
-    <app-checkout-details [checkoutFrom]="checkoutFrom" />
+    <app-checkout-details [checkoutFrom]="checkoutFrom" [pid]="pid" [quantity]="quantity" />
     @if (isLoading$ | async; as isLoading) {
       <mat-spinner diameter="50" />
     } @else {

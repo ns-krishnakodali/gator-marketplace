@@ -27,6 +27,7 @@ type Order struct {
 	MeetupTime      string        `gorm:"type:text;"`
 	AdditionalNotes string        `gorm:"type:text;"`
 	PaymentMethod   PaymentMethod `gorm:"type:text;not null"`
+	PriceProposal   int           `gorm:"default:null"`
 	OrderStatus     OrderStatus   `gorm:"type:text;default:'Placed';not null"`
 	CreatedAt       time.Time     `gorm:"autoCreateTime"`
 	UpdatedAt       time.Time     `gorm:"autoUpdateTime"`
