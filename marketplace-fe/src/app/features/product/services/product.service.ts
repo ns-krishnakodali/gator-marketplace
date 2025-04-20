@@ -39,7 +39,6 @@ export class ProductService {
           message: error.message,
           type: 'error',
         })
-        this.router.navigate(['/products'])
         this.isLoadingSubject.next(false)
       },
       complete: () => {
@@ -62,19 +61,18 @@ export class ProductService {
   }
 
   private processProductDetailsResponse = (response: unknown): ProductDetails => {
-    const productResponse = response as ProductResponseDTO
-
+    const productDetailsResponse = response as ProductResponseDTO
     return {
-      pid: productResponse.pid || '',
-      name: productResponse.name || '',
-      description: productResponse.description || '',
-      price: productResponse.price || 0,
-      category: productResponse.category,
-      postedBy: productResponse.postedBy || '',
-      quantity: productResponse.quantity || 0,
-      popularityScore: productResponse.popularityScore || 0,
-      postedAt: productResponse.postedAt,
-      productImages: this.getProductImages(productResponse.images),
+      pid: productDetailsResponse.pid || '',
+      name: productDetailsResponse.name || '',
+      description: productDetailsResponse.description || '',
+      price: productDetailsResponse.price || 0,
+      category: productDetailsResponse.category,
+      postedBy: productDetailsResponse.postedBy || '',
+      quantity: productDetailsResponse.quantity || 0,
+      popularityScore: productDetailsResponse.popularityScore || 0,
+      postedAt: productDetailsResponse.postedAt,
+      productImages: this.getProductImages(productDetailsResponse.images),
     }
   }
 

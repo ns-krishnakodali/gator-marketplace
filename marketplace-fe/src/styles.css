@@ -26,6 +26,9 @@
   --color-background-hover: #f0f4f8;
   --color-background-scrollbar: #c7ccd8b9;
   --color-background-scrollbar-hover: #c7ccd8;
+  --color-order-placed-background: #dbeafe;
+  --color-order-completed-background: #dcfce7;
+  --color-order-cancelled-background: #fee2e2;
 
   --color-black: black;
   --color-blue: #005398;
@@ -42,6 +45,9 @@
   --color-notification-success: #4caf50;
   --color-notification-warning: #ff9800;
   --color-white: white;
+  --color-order-placed: #1e40af;
+  --color-order-completed: #166534;
+  --color-order-cancelled: #991b1b;
 
   --border-1: 1px solid #ccc;
   --border-2: 1px solid #e0e0e0;

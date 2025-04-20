@@ -6,7 +6,7 @@ import { CartService } from '../../services'
 import { TextComponent } from '../../../../shared-ui'
 
 @Component({
-  selector: 'app-order-summary',
+  selector: 'app-cart-order-summary',
   templateUrl: './order-summary.component.html',
   styleUrls: ['./order-summary.component.css'],
   imports: [CurrencyPipe, MatButtonModule, TextComponent],
