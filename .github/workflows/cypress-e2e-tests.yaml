@@ -32,18 +32,19 @@ jobs:
         continue-on-error: true  # This allows the workflow to continue even if tests fail
 
       - name: Upload Cypress screenshots
-        uses: actions/upload-artifact@v3
-        if: always()
+        uses: actions/upload-artifact@v4
+        if: always()  # This ensures screenshots are uploaded even if tests fail
         with:
           name: cypress-screenshots
           path: marketplace-fe/cypress/screenshots
-          retention-days: 1
+          retention-days: 30  # Keep screenshots for 30 days
+          if-no-files-found: ignore  # Don't fail if no screenshots were generated
 
       - name: Upload Cypress videos (if available)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: cypress-videos
           path: marketplace-fe/cypress/videos
-          retention-days: 1
-          if-no-files-found: ignore
+          retention-days: 30
+          if-no-files-found: ignore  # Don't fail if no videos were generated
