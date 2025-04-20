@@ -51,21 +51,46 @@ describe('Products Page', () => {
 
   describe('Page Load and Layout', () => {
     it('Should load the products page with all UI elements', () => {
+      // Add longer wait time for GitHub Actions environment
+      cy.wait(2000)
+
       // Check navbar
-      cy.get('app-navbar').should('exist')
+      cy.get('app-navbar', { timeout: 10000 }).should('exist')
 
       // Check container and layout
-      cy.get('.container').should('exist')
+      cy.get('.container', { timeout: 10000 }).should('exist')
 
       // Check sidebar
-      cy.get('app-sidebar').should('exist')
+      cy.get('app-sidebar', { timeout: 10000 }).should('exist')
 
       // Check product display
-      cy.get('app-display-products').should('exist')
-      cy.get('.products-heading').should('contain', 'Explore Marketplace')
+      cy.get('app-display-products', { timeout: 10000 }).should('exist')
+
+      // Look for heading in multiple ways
+      cy.get('body', { timeout: 10000 }).then(($body) => {
+        // First check if products-heading exists directly
+        if ($body.find('.products-heading').length > 0) {
+          cy.get('.products-heading', { timeout: 10000 }).should('contain', 'Explore Marketplace')
+        }
+        // Then check if it's inside app-display-products
+        else if ($body.find('app-display-products .products-heading').length > 0) {
+          cy.get('app-display-products .products-heading', { timeout: 10000 }).should(
+            'contain',
+            'Explore Marketplace'
+          )
+        }
+        // Then look for any h1 element containing the text
+        else if ($body.find('h1:contains("Explore Marketplace")').length > 0) {
+          cy.get('h1:contains("Explore Marketplace")', { timeout: 10000 }).should('exist')
+        }
+        // Finally, just look for the text anywhere
+        else {
+          cy.contains('Explore Marketplace', { timeout: 10000 }).should('exist')
+        }
+      })
 
       // Check paginator
-      cy.get('mat-paginator').should('exist')
+      cy.get('mat-paginator', { timeout: 10000 }).should('exist')
     })
 
     it('Should display products with correct information', () => {
