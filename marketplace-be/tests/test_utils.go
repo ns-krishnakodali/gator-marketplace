@@ -27,10 +27,11 @@ func SetupTestDB(t *testing.T) *gorm.DB {
 	require.NoError(t, err, "failed to open in-memory sqlite")
 
 	err = db.AutoMigrate(
-		&models.User{},
+		&models.CartProduct{},
+		&models.Order{},
 		&models.Product{},
 		&models.ProductImage{},
-		&models.CartProduct{},
+		&models.User{},
 	)
 	if err != nil {
 		t.Fatalf("AutoMigrate failed: %v", err)

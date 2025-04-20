@@ -57,6 +57,15 @@ func CheckoutCartOrder(c *gin.Context) {
 		return
 	}
 
+	// 2) Validate required fields
+	if input.MeetupAddress == "" ||
+		input.MeetupDate == "" ||
+		input.MeetupTime == "" ||
+		input.PaymentMethod == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid input format"})
+		return
+	}
+
 	userUid, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
 
 	orderId, err := services.CheckoutCartOrderService(&input, userUid)
@@ -78,6 +87,18 @@ func CheckoutCartProduct(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid input format"})
 		return
 	}
+
+	// validate required fields
+    if input.MeetupAddress == "" ||
+       input.MeetupDate == "" ||
+       input.MeetupTime == "" ||
+       input.ProductId == "" ||
+       input.Quantity <= 0 ||
+       input.PaymentMethod == "" ||
+       input.PriceProposal == nil {
+        c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid input format"})
+        return
+    }
 
 	userUid, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
 
