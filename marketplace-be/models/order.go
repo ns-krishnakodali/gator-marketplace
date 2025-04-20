@@ -10,9 +10,9 @@ import (
 type PaymentMethod string
 
 const (
-	Cash  PaymentMethod = "cash"
-	Venmo PaymentMethod = "venmo"
-	Zelle PaymentMethod = "zelle"
+	Cash  PaymentMethod = "Cash"
+	Venmo PaymentMethod = "Venmo"
+	Zelle PaymentMethod = "Zelle"
 )
 
 type OrderStatus string
@@ -41,6 +41,7 @@ type Order struct {
 	UpdatedAt          time.Time          `gorm:"autoUpdateTime"`
 	BuyerRating        *int               `gorm:"default:null"`
 	SellerRating       *int               `gorm:"default:null"`
+	TotalCost          float64            `gorm:"default:null"`
 	OrderedBy          User               `gorm:"foreignKey:UserUID;references:Uid;constraint:OnDelete:CASCADE;"`
 	Products           []Product          `gorm:"many2many:order_products;joinForeignKey:OrderID;joinReferences:Pid"`
 }

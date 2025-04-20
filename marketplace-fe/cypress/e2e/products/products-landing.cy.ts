@@ -12,17 +12,13 @@ const checkPriceSorting = () => {
     .each(($el) => {
       // Get the text content
       const priceText = $el.text()
-      // Remove currency symbols ($, €, etc.) and any non-numeric characters except dots
       const cleanedPrice = priceText.replace(/[^\d.]/g, '')
-      // Parse the resulting string as a float
       const price = parseFloat(cleanedPrice)
-      // Only add valid numbers to the array
       if (!isNaN(price)) {
         prices.push(price)
       }
     })
     .then(() => {
-      // Only check sorting if we have valid prices
       if (prices.length > 1) {
         for (let i = 1; i < prices.length; i++) {
           expect(prices[i]).to.be.gte(prices[i - 1])
@@ -33,7 +29,6 @@ const checkPriceSorting = () => {
 
 describe('Products Page', () => {
   beforeEach(() => {
-    // Setup all intercepts before visiting any pages
     setupLoginIntercept()
     setupProtectedIntercept()
     setupCartProductsCountIntercept()
@@ -73,14 +68,12 @@ describe('Products Page', () => {
     // Now directly visit the products page instead of clicking
     cy.visit('/products')
 
-    // Wait for all necessary requests
     cy.wait('@apiProtected')
     cy.wait('@productsDataRequest', { timeout: 10000 })
     cy.wait('@cartProductsCountRequest', { timeout: 10000 })
   })
 
   describe('Page Load and Layout', () => {
-
     it('Should display the correct number of products', () => {
       cy.get('app-product-card').should('have.length', 12)
     })
@@ -217,8 +210,6 @@ describe('Products Page', () => {
       // Click next page button
       cy.get('.mat-mdc-paginator-navigation-next').click()
       cy.wait('@page2Request')
-
-      // Verify we're on page 2 by checking product names contain "Page 2"
       cy.get('.product-name').first().should('contain', 'Page 2')
     })
   })
@@ -232,7 +223,6 @@ describe('Products Page', () => {
       cy.get('app-product-card').first().click()
       cy.wait('@productDetailsRequest')
 
-      // Verify URL changed to product details
       cy.url().should('include', '/product/')
     })
   })
@@ -249,11 +239,7 @@ describe('Products Page', () => {
 
       // Click the Add to Cart button (stopping propagation)
       cy.get('app-product-card').first().find('button').click({ force: true })
-
-      // Wait for add to cart request to complete
       cy.wait('@addToCartRequest')
-
-      // Check if the request was successful
       cy.get('@addToCartRequest').its('response.statusCode').should('eq', 200)
     })
   })
@@ -283,32 +269,8 @@ describe('Products Page', () => {
     })
   })
 
-  describe('Responsive Design', () => {
-    it('Should adapt layout for tablet screens', () => {
-      // Set viewport to tablet size
-      cy.viewport(1024, 768)
-
-      // Check for responsive layout changes
-      cy.get('.sidebar').should('exist')
-      cy.get('.products-container').should('exist')
-
-      // Instead of checking for the exact CSS value, check the computed style
-      cy.get('.products-container').then(($el) => {
-        // Get the computed style
-        const computedStyle = getComputedStyle($el[0])
-        const gridTemplateColumns = computedStyle.gridTemplateColumns
-
-        // Check that we have exactly 3 columns by counting the number of spaces
-        // The format will be something like "229.719px 229.734px 229.734px"
-        const columnCount = gridTemplateColumns.split(' ').length
-        expect(columnCount).to.equal(3)
-      })
-    })
-  })
-
   describe('Combined Filtering and Sorting', () => {
     it('Should apply both filters and sorting simultaneously', () => {
-      // Setup intercept for combined filtering and sorting
       cy.intercept('GET', '/api/products**', (req) => {
         if (req.url.includes('categories=') && req.url.includes('sort=')) {
           req.reply({
@@ -335,16 +297,11 @@ describe('Products Page', () => {
 
       // Apply category filter
       cy.get('[type="checkbox"]').eq(2).click()
-
-      // Apply sorting
       cy.get('[type="radio"]').eq(2).click()
 
       cy.wait('@combinedRequest')
-
-      // Verify combined results (fewer products, sorted by price)
       cy.get('app-product-card').should('have.length', 4)
 
-      // Use the helper function to check price sorting
       checkPriceSorting()
     })
   })

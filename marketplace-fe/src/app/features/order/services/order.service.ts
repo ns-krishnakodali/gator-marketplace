@@ -12,7 +12,7 @@ import type {
 
 import { APIService } from '../../../core'
 import { NotificationsService } from '../../../shared-ui'
-import { PRODUCT_DETAILS_FETCH_ERROR } from '../../../utils'
+import { capitalizeFirstLetter, PRODUCT_DETAILS_FETCH_ERROR } from '../../../utils'
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
@@ -70,7 +70,7 @@ export class OrderService {
         orderId: orderDetailsResponse.orderId,
         orderStatus: orderDetailsResponse.orderStatus,
         datePlaced: orderDetailsResponse.datePlaced,
-        paymentMethod: orderDetailsResponse.paymentMethod,
+        paymentMethod: capitalizeFirstLetter(orderDetailsResponse.paymentMethod),
         location: orderDetailsResponse.location,
         date: orderDetailsResponse.date,
         time: orderDetailsResponse.time,

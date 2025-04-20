@@ -37,6 +37,7 @@ var ErrFailedToCreateOrder = errors.New("failed to create order")
 var ErrEmptyCart = errors.New("cart is empty")
 
 var ErrOrderNotFound = errors.New("order not found")
+var ErrUserOrdersNotFound = errors.New("users orders not found")
 
 func validateUFLEmail(email string) bool {
 	re := regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@ufl.edu$`)

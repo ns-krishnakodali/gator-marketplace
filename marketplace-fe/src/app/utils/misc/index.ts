@@ -16,20 +16,20 @@ export const formatMobileNumber = (number: string): string => {
   } else if (digits.length === 10) {
     return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6, 10)}`
   }
-
   return ''
 }
 
 export const isValidDate = (date: string): boolean => {
   const [year, month, day] = date.split('-').map(Number)
-
   if (!year || !month || !day) return false
 
   const meetupDate: Date = new Date(year, month - 1, day)
   if (isNaN(meetupDate.getTime())) return false
-
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
   return meetupDate >= today
 }
+
+export const capitalizeFirstLetter = (str: string): string =>
+  str ? str[0].toUpperCase() + str.slice(1) : ''

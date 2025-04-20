@@ -6,6 +6,11 @@ import (
 	"marketplace-be/models"
 )
 
+type OrderProductCount struct {
+	OrderID string
+	Count   int
+}
+
 func GetOrderDetailsService(orderId, userUid string) (dtos.OrderDetailsResponse, error) {
 	var order models.Order
 	if err := database.DB.
@@ -18,7 +23,6 @@ func GetOrderDetailsService(orderId, userUid string) (dtos.OrderDetailsResponse,
 
 	productDetails := make([]dtos.OrderProductDetails, 0)
 	sellerMap := make(map[string]*dtos.OrderProductDetails)
-	totalCost := 0.0
 
 	// sellerMap -> userUid -> dtos.OrderProductDetails, to link products associated with seller
 	for _, product := range order.Products {
@@ -45,7 +49,6 @@ func GetOrderDetailsService(orderId, userUid string) (dtos.OrderDetailsResponse,
 			Quantity: quantity,
 			Price:    productCost,
 		})
-		totalCost += productCost
 	}
 
 	for _, sellerInfo := range sellerMap {
@@ -63,6 +66,50 @@ func GetOrderDetailsService(orderId, userUid string) (dtos.OrderDetailsResponse,
 		Notes:               order.AdditionalNotes,
 		OrderProductDetails: productDetails,
 		HandlingFee:         HandlingFee,
-		TotalCost:           totalCost,
+		TotalCost:           order.TotalCost,
 	}, nil
+}
+
+func GetUserOrderDetails(userUid string) ([]dtos.UserOrderResponse, error) {
+	var orders []models.Order
+	if err := database.DB.
+		Preload("Products").
+		Where("user_uid = ? ", userUid).
+		Find(&orders).Error; err != nil {
+		return []dtos.UserOrderResponse{}, ErrUserOrdersNotFound
+	}
+
+	orderIDs := make([]int, 0, len(orders))
+	for _, order := range orders {
+		orderIDs = append(orderIDs, order.ID)
+	}
+
+	var counts []OrderProductCount
+	if err := database.DB.
+		Table("order_products").
+		Select("order_id, COUNT(*) as count").
+		Where("order_id IN ?", orderIDs).
+		Group("order_id").
+		Scan(&counts).Error; err != nil {
+		return nil, err
+	}
+
+	totalItemsMap := make(map[string]int)
+	for _, c := range counts {
+		totalItemsMap[c.OrderID] = c.Count
+	}
+
+	var userOrderDetails []dtos.UserOrderResponse
+	for _, order := range orders {
+		userOrderDetails = append(userOrderDetails, dtos.UserOrderResponse{
+			OrderID:       order.OrderID,
+			OrderStatus:   order.OrderStatus,
+			DatePlaced:    order.CreatedAt,
+			PaymentMethod: order.PaymentMethod,
+			TotalItems:    totalItemsMap[order.OrderID],
+			TotalCost:     order.TotalCost,
+		})
+	}
+
+	return userOrderDetails, nil
 }

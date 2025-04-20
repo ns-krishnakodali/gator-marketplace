@@ -54,5 +54,6 @@ func SetupRoutes(router *gin.Engine) {
 
 		// Order endpoints
 		apiProtected.GET("/order/:oid", handlers.GetOrderDetails)
+		apiProtected.GET("/user-orders", handlers.GetUserOrders)
 	}
 }

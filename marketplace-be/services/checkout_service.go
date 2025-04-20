@@ -79,11 +79,13 @@ func CheckoutCartOrderService(input *dtos.CheckoutCartOrderInput, userUID string
 		return "", ErrEmptyCart
 	}
 
-	productQuantityMap := make(models.ProductQuantityMap)
 	var products []models.Product
+	totalCost := 0.0
+	productQuantityMap := make(models.ProductQuantityMap)
 	for _, cartProduct := range cartProducts {
 		products = append(products, cartProduct.Product)
 		productQuantityMap[cartProduct.ProductPID] = cartProduct.Quantity
+		totalCost += float64(cartProduct.Quantity) * cartProduct.Product.Price
 	}
 
 	orderID := uuid.New().String()
@@ -97,6 +99,7 @@ func CheckoutCartOrderService(input *dtos.CheckoutCartOrderInput, userUID string
 		PaymentMethod:      input.PaymentMethod,
 		OrderStatus:        models.OrderPlaced,
 		ProductQuantityMap: productQuantityMap,
+		TotalCost:          totalCost,
 	}
 
 	if err := database.DB.Create(&order).Error; err != nil {
@@ -140,6 +143,7 @@ func CheckoutCartProductService(input *dtos.CheckoutProductOrderInput, userUID s
 		PriceProposal:      *input.PriceProposal,
 		OrderStatus:        models.OrderPlaced,
 		ProductQuantityMap: productQuantityMap,
+		TotalCost:          float64(input.Quantity) * product.Price,
 	}
 
 	if err := database.DB.Create(&order).Error; err != nil {

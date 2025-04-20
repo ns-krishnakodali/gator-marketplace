@@ -19,6 +19,15 @@ type OrderDetailsResponse struct {
 	TotalCost           float64               `json:"totalCost"`
 }
 
+type UserOrderResponse struct {
+	OrderID       string               `json:"orderId"`
+	OrderStatus   models.OrderStatus   `json:"orderStatus"`
+	DatePlaced    time.Time            `json:"datePlaced"`
+	PaymentMethod models.PaymentMethod `json:"paymentMethod"`
+	TotalItems    int                  `json:"totalItems"`
+	TotalCost     float64              `json:"totalCost"`
+}
+
 type OrderProductDetails struct {
 	UserUid       string         `json:"userUid"`
 	DisplayName   string         `json:"displayName"`
