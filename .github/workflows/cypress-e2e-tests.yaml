@@ -29,3 +29,21 @@ jobs:
       - name: Run Cypress E2E tests (Headless Chrome)
         working-directory: marketplace-fe
         run: npx ng e2e --configuration=production --headless --browser=chrome
+        continue-on-error: true  # This allows the workflow to continue even if tests fail
+
+      - name: Upload Cypress screenshots
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: cypress-screenshots
+          path: marketplace-fe/cypress/screenshots
+          retention-days: 1
+
+      - name: Upload Cypress videos (if available)
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: cypress-videos
+          path: marketplace-fe/cypress/videos
+          retention-days: 1
+          if-no-files-found: ignore

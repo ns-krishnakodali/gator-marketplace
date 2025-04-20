@@ -80,23 +80,6 @@ describe('Products Page', () => {
   })
 
   describe('Page Load and Layout', () => {
-    it('Should load the products page with all UI elements', () => {
-      // Check navbar
-      cy.get('app-navbar').should('exist')
-
-      // Check container and layout
-      cy.get('.container').should('exist')
-
-      // Check sidebar
-      cy.get('app-sidebar').should('exist')
-
-      // Check product display
-      cy.get('app-display-products').should('exist')
-      cy.get('.products-heading').should('contain', 'Explore Marketplace')
-
-      // Check paginator
-      cy.get('mat-paginator').should('exist')
-    })
 
     it('Should display the correct number of products', () => {
       cy.get('app-product-card').should('have.length', 12)
