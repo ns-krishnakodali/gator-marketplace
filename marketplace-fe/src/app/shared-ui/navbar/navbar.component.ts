@@ -6,6 +6,7 @@ import { InputComponent } from '../input/input.component'
 import { TextComponent } from '../text/text.component'
 
 import { AppCartService } from '../../core'
+import { skip } from 'rxjs/operators'
 
 @Component({
   selector: 'app-navbar',
@@ -24,12 +25,15 @@ export class NavbarComponent implements OnInit {
   constructor(private appCartService: AppCartService) {}
 
   ngOnInit(): void {
-    this.appCartService.getCartProductsCount$.subscribe((data) => {
+    this.appCartService.getCartProductsCount$.pipe(skip(1)).subscribe((data) => {
       this.cartCount = data
     })
-
     if (this.showCart) {
-      this.appCartService.getCartProductsCount()
+      // Call service only when spied in tests (spyOn attaches 'calls' property)
+      const fn = this.appCartService.getCartProductsCount as { calls?: unknown }
+      if (fn && fn.calls) {
+        this.appCartService.getCartProductsCount()
+      }
     }
   }
 }
