@@ -5,12 +5,10 @@ import {
   setupProductDetailsIntercept,
 } from '../../support/intercepts'
 
-// Helper function to check price sorting
 const checkPriceSorting = () => {
   const prices: number[] = []
   cy.get('.product-price')
     .each(($el) => {
-      // Get the text content
       const priceText = $el.text()
       const cleanedPrice = priceText.replace(/[^\d.]/g, '')
       const price = parseFloat(cleanedPrice)
@@ -33,18 +31,15 @@ describe('Products Page', () => {
     setupProtectedIntercept()
     setupCartProductsCountIntercept()
 
-    // Login process
     cy.visit('/auth/login')
     cy.get('#email').type('test@ufl.edu')
     cy.get('#password').type('password123')
     cy.get('#login-button').click()
     cy.wait('@loginRequest')
 
-    // Visit the landing page first
     cy.visit('/')
     cy.wait('@apiProtected')
 
-    // Manually setup the products data intercept
     cy.intercept('GET', '/api/products**', {
       statusCode: 200,
       body: {
@@ -110,7 +105,6 @@ describe('Products Page', () => {
 
   describe('Category Filtering', () => {
     it('Should filter products by a single category', () => {
-      // Setup intercept for filtered products
       cy.intercept('GET', '/api/products**', (req) => {
         if (req.url.includes('categories=')) {
           req.reply({
@@ -135,18 +129,15 @@ describe('Products Page', () => {
         }
       }).as('filteredProductsRequest')
 
-      // Click a category checkbox (index 2 could be any category)
       cy.get('[type="checkbox"]').eq(2).click()
       cy.wait('@filteredProductsRequest')
 
-      // Verify filtered results
       cy.get('app-product-card').should('have.length', 6)
     })
   })
 
   describe('Sorting Functionality', () => {
     it('Should sort products by price (low to high)', () => {
-      // Setup intercept for price sorting
       cy.intercept('GET', '/api/products**', (req) => {
         if (req.url.includes('sort=price_asc')) {
           req.reply({
@@ -171,18 +162,15 @@ describe('Products Page', () => {
         }
       }).as('sortedProductsRequest')
 
-      // Select the third radio button (Price: Low to High)
       cy.get('[type="radio"]').eq(2).click()
       cy.wait('@sortedProductsRequest')
 
-      // Use the helper function to check price sorting
       checkPriceSorting()
     })
   })
 
   describe('Pagination', () => {
     it('Should navigate to next page', () => {
-      // Setup intercept for second page
       cy.intercept('GET', '/api/products**', (req) => {
         if (req.url.includes('page=2')) {
           req.reply({
@@ -207,7 +195,6 @@ describe('Products Page', () => {
         }
       }).as('page2Request')
 
-      // Click next page button
       cy.get('.mat-mdc-paginator-navigation-next').click()
       cy.wait('@page2Request')
       cy.get('.product-name').first().should('contain', 'Page 2')
@@ -216,10 +203,8 @@ describe('Products Page', () => {
 
   describe('Product Clickability', () => {
     it('Should navigate to product details when clicking on a product card', () => {
-      // Setup product details intercept
       setupProductDetailsIntercept()
 
-      // Click on the first product card
       cy.get('app-product-card').first().click()
       cy.wait('@productDetailsRequest')
 
@@ -229,7 +214,6 @@ describe('Products Page', () => {
 
   describe('Add to Cart Functionality', () => {
     it('Should add product to cart when Add to Cart button is clicked', () => {
-      // Setup cart intercept
       cy.intercept('POST', '/api/cart', {
         statusCode: 200,
         body: {
@@ -237,7 +221,6 @@ describe('Products Page', () => {
         },
       }).as('addToCartRequest')
 
-      // Click the Add to Cart button (stopping propagation)
       cy.get('app-product-card').first().find('button').click({ force: true })
       cy.wait('@addToCartRequest')
       cy.get('@addToCartRequest').its('response.statusCode').should('eq', 200)
@@ -246,7 +229,6 @@ describe('Products Page', () => {
 
   describe('Empty State Display', () => {
     it('Should show empty state when no products match filter', () => {
-      // Setup intercept for empty results
       cy.intercept('GET', '/api/products**', {
         statusCode: 200,
         body: {

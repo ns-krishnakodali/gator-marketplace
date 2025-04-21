@@ -47,7 +47,6 @@ describe('Products Page', () => {
 
   describe('Page Load and Layout', () => {
     it('Should load the products page with all UI elements', () => {
-      // Add longer wait time for GitHub Actions environment
       cy.wait(2000)
 
       cy.get('app-navbar', { timeout: 10000 }).should('exist')
@@ -123,14 +122,12 @@ describe('Products Page', () => {
       cy.contains('Categories').parent().find('[type="checkbox"]').eq(7).click()
       cy.wait('@sportsFilter')
 
-      // Verify filtered results
       cy.get('app-product-card').should('have.length', 12)
     })
   })
 
   describe('Sorting Functionality', () => {
     it('Should sort products by price (low to high)', () => {
-      // Setup intercept for price sorting with fixed price values
       cy.intercept('GET', '/api/products**', (req) => {
         if (req.url.includes('sort=price_asc')) {
           const sortedProducts = Array(12)
@@ -160,9 +157,6 @@ describe('Products Page', () => {
       // Click the Price: Low to High radio button (index 2 based on screenshots)
       cy.get('[type="radio"]').eq(2).click()
       cy.wait('@priceSortAsc')
-
-      // Skip the price order check since there's a parsing issue
-      // Just verify the request was successful
       cy.get('@priceSortAsc').its('response.statusCode').should('eq', 200)
     })
   })

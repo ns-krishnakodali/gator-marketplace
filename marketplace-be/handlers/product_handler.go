@@ -106,7 +106,7 @@ func CreateProduct(c *gin.Context) {
 	files := form.File["files"]
 	userUid, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
 
-	err = services.CreateProduct(input, files, userUid)
+	err = services.CreateProductService(input, files, userUid)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
