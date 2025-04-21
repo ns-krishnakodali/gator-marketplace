@@ -1,6 +1,7 @@
 package dtos
 
 import "marketplace-be/models"
+import "errors"
 
 type CheckoutOrderDetailsResponse struct {
 	CheckoutProductDetails []CheckoutProductDetail `json:"orderProductDetails"`
@@ -32,4 +33,18 @@ type CheckoutProductOrderInput struct {
 	Quantity        int                  `json:"quantity"`
 	PaymentMethod   models.PaymentMethod `json:"paymentMethod"`
 	PriceProposal   *int                 `json:"priceProposal"`
+}
+
+
+func (in *CheckoutProductOrderInput) Validate() error {
+    if in.MeetupAddress == "" ||
+       in.MeetupDate == "" ||
+       in.MeetupTime == "" ||
+       in.ProductId == "" ||
+       in.Quantity <= 0 ||
+       in.PaymentMethod == "" ||
+       in.PriceProposal == nil {
+        return errors.New("Invalid input format")
+    }
+    return nil
 }

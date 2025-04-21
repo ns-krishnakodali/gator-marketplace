@@ -1,12 +1,14 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"marketplace-be/database"
 	"marketplace-be/dtos"
 	"marketplace-be/models"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 func GetCheckoutCartDetailsService(userUID string) (dtos.CheckoutOrderDetailsResponse, error) {
@@ -121,8 +123,12 @@ func CheckoutCartOrderService(input *dtos.CheckoutCartOrderInput, userUID string
 
 func CheckoutCartProductService(input *dtos.CheckoutProductOrderInput, userUID string) (string, error) {
 	var product models.Product
-	if err := database.DB.Where("pid = ?", input.ProductId).Find(&product).Error; err != nil {
+	res := database.DB.Where("pid = ?", input.ProductId).First(&product)
+	if errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		return "", ErrProductNotFound
+	}
+	if res.Error != nil {
+		return "", res.Error
 	}
 
 	if product.Quantity < input.Quantity {
