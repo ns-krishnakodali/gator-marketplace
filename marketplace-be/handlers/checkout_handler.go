@@ -57,6 +57,15 @@ func CheckoutCartOrder(c *gin.Context) {
 		return
 	}
 
+	// 2) Validate required fields
+	if input.MeetupAddress == "" ||
+		input.MeetupDate == "" ||
+		input.MeetupTime == "" ||
+		input.PaymentMethod == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid input format"})
+		return
+	}
+
 	userUid, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
 
 	orderId, err := services.CheckoutCartOrderService(&input, userUid)
@@ -76,6 +85,12 @@ func CheckoutCartProduct(c *gin.Context) {
 	var input dtos.CheckoutProductOrderInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid input format"})
+		return
+	}
+
+	// run our centralized validation
+	if err := input.Validate(); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
