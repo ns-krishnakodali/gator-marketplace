@@ -117,3 +117,37 @@ export const setupAddToCartIntercept = () => {
     },
   }).as('addToCartRequest')
 }
+
+export const setupOrderDetailsIntercept = (delay = 0) => {
+  cy.intercept('GET', '**/api/order/*', {
+    statusCode: 200,
+    delay,
+    body: {
+      orderId: '4b8eecdc-af01-42da-9897-1d14378bc971',
+      orderStatus: 'Placed',
+      datePlaced: '2025-04-21T17:26:45.58712-04:00',
+      paymentMethod: 'cash',
+      location: '1233 SW 5th Ave, Gainesville, FL 32601, USA',
+      date: '2025-04-26',
+      time: '23:30',
+      notes: 'Make sure its in good condition.',
+      orderProductDetails: [
+        {
+          userUid: 'e5d97918-a2f4-4395-9c9c-1a230c5fbfd3',
+          displayName: 'GatorUsere5d979',
+          contact: '289-128-9342',
+          orderProducts: [
+            {
+              pid: 'a530bb56-b8ec-4cfe-b2a6-deffb8fd5bee',
+              name: 'Furniture-product 67',
+              quantity: 1,
+              price: 10.68,
+            },
+          ],
+        },
+      ],
+      handlingFee: 1,
+      totalCost: 10.68,
+    },
+  }).as('orderDetailsRequest')
+}

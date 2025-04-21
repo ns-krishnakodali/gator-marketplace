@@ -331,7 +331,6 @@ func TestCheckoutCartProductService(t *testing.T) {
 		require.NoError(t, err)
 		require.NotEmpty(t, orderID)
 
-		// Verify order created in DB
 		var order models.Order
 		result := db.Where("order_uid = ?", orderID).First(&order)
 		require.NoError(t, result.Error)
@@ -344,7 +343,6 @@ func TestCheckoutCartProductService(t *testing.T) {
 		require.Equal(t, *input.PriceProposal, order.PriceProposal) // Fixed: Use int type instead of float64
 		require.Equal(t, models.OrderPlaced, order.OrderStatus)
 
-		// Verify products associated with order
 		var products []models.Product
 		db.Model(&order).Association("Products").Find(&products)
 		require.Len(t, products, 1)

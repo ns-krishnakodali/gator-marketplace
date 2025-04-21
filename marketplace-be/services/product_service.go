@@ -130,8 +130,8 @@ func GetProductByPIDService(productPID string) (dtos.ProductResponse, error) {
 	}, nil
 }
 
-// CreateProduct creates a product (and optional images) in the database.
-func CreateProduct(input dtos.ProductInput, files []*multipart.FileHeader, userUid string) error {
+// CreateProductService creates a product (and optional images) in the database.
+func CreateProductService(input dtos.ProductInput, files []*multipart.FileHeader, userUid string) error {
 	newPID := uuid.NewString()
 	product := models.Product{
 		Pid:             newPID,

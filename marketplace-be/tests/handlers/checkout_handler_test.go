@@ -260,7 +260,6 @@ func TestCheckoutCartOrder(t *testing.T) {
 	})
 
 	t.Run("Successful Order", func(t *testing.T) {
-		// Add item to cart
 		cartItem := &models.CartProduct{
 			UserUID:    user.Uid,
 			ProductPID: product.Pid,
@@ -288,7 +287,6 @@ func TestCheckoutCartOrder(t *testing.T) {
 		err := json.Unmarshal(w.Body.Bytes(), &response)
 		require.NoError(t, err)
 
-		// Verify order ID is returned
 		require.NotEmpty(t, response["orderId"])
 	})
 }
