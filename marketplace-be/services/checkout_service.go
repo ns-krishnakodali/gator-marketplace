@@ -88,9 +88,9 @@ func CheckoutCartOrderService(input *dtos.CheckoutCartOrderInput, userUID string
 		totalCost += float64(cartProduct.Quantity) * cartProduct.Product.Price
 	}
 
-	orderID := uuid.New().String()
+	orderUID := uuid.New().String()
 	order := models.Order{
-		OrderID:            orderID,
+		OrderUID:           orderUID,
 		UserUID:            userUID,
 		MeetupLocation:     input.MeetupAddress,
 		MeetupDate:         input.MeetupDate,
@@ -107,7 +107,7 @@ func CheckoutCartOrderService(input *dtos.CheckoutCartOrderInput, userUID string
 	}
 
 	if err := database.DB.Model(&order).Association("Products").Append(products); err != nil {
-		_ = database.DB.Delete(&models.Order{}, "order_id = ?", orderID)
+		_ = database.DB.Delete(&models.Order{}, "order_uid = ?", orderUID)
 		return "", fmt.Errorf("failed to associate products with order: %v", err)
 	}
 
@@ -115,7 +115,7 @@ func CheckoutCartOrderService(input *dtos.CheckoutCartOrderInput, userUID string
 		return "", err
 	}
 
-	return orderID, nil
+	return orderUID, nil
 }
 
 func CheckoutCartProductService(input *dtos.CheckoutProductOrderInput, userUID string) (string, error) {
@@ -131,9 +131,9 @@ func CheckoutCartProductService(input *dtos.CheckoutProductOrderInput, userUID s
 	productQuantityMap := make(models.ProductQuantityMap)
 	productQuantityMap[product.Pid] = input.Quantity
 
-	orderID := uuid.New().String()
+	orderUID := uuid.New().String()
 	order := models.Order{
-		OrderID:            orderID,
+		OrderUID:           orderUID,
 		UserUID:            userUID,
 		MeetupLocation:     input.MeetupAddress,
 		MeetupDate:         input.MeetupDate,
@@ -152,11 +152,11 @@ func CheckoutCartProductService(input *dtos.CheckoutProductOrderInput, userUID s
 
 	products := []models.Product{product}
 	if err := database.DB.Model(&order).Association("Products").Append(products); err != nil {
-		if delErr := database.DB.Delete(&models.Order{}, "order_id = ?", orderID).Error; delErr != nil {
+		if delErr := database.DB.Delete(&models.Order{}, "order_uid = ?", orderUID).Error; delErr != nil {
 			return "", fmt.Errorf("failed to associate products with order: %v; additionally failed to remove order: %v", err, delErr)
 		}
 		return "", fmt.Errorf("failed to associate products with order: %v", err)
 	}
 
-	return orderID, nil
+	return orderUID, nil
 }

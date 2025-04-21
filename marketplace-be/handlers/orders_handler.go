@@ -30,7 +30,7 @@ func GetOrderDetails(c *gin.Context) {
 func GetUserOrders(c *gin.Context) {
 	userUid, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
 
-	orderDetails, err := services.GetUserOrderDetails(userUid)
+	orderDetails, err := services.GetUserOrdersService(userUid)
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrOrderNotFound):

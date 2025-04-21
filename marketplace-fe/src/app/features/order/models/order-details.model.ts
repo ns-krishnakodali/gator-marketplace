@@ -1,6 +1,5 @@
-import { OrderItem } from '../models'
-
-export type OrderStatus = 'Placed' | 'Completed' | 'Cancelled'
+import type { OrderItem } from '../models'
+import type { OrderStatus } from '../../../shared-ui'
 
 export interface OrderDetails {
   orderSummary: OrderSummary

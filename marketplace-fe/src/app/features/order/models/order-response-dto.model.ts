@@ -1,4 +1,4 @@
-import { OrderStatus } from './order-details.model'
+import type { OrderStatus } from '../../../shared-ui'
 
 export interface OrderDetailsResponseDTO {
   orderId: string

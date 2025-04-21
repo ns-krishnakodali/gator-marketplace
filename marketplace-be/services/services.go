@@ -10,6 +10,8 @@ var DpPrefix = "GatorUser"
 
 var HandlingFee = 1.00
 
+var OrdersLimit = 50
+
 var ErrUserNotFound = errors.New("user not found")
 var ErrInvalidCredentials = errors.New("invalid credentials")
 var ErrTokenGeneration = errors.New("token generation error")

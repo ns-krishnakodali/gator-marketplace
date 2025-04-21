@@ -1,8 +1,8 @@
 <nav class="navbar">
-  <div class="gator-marketplace" [routerLink]="'/'" tabindex="0">
+  <a class="gator-marketplace" [routerLink]="'/'" tabindex="0">
     <img src="assets/gator.png" alt="Gator Logo" class="gator-logo" width="80" height="60" />
     <h2 id="marketplace">Marketplace</h2>
-  </div>
+  </a>
   @if (showSearchBar) {
     <div class="search-bar">
       <app-input id="search-bar" type="text" placeholder="Enter product name or category..." />

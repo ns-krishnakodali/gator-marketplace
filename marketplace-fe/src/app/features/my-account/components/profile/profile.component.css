@@ -16,10 +16,10 @@
 }
 
 .profile-heading {
-  margin: var(--spacing-half) 0 var(--spacing-1-5);
+  text-align: center;
   font-size: 1.25rem;
   letter-spacing: 0.5px;
-  text-align: center;
+  margin: var(--spacing-half) 0 var(--spacing-1-5);
 }
 
 .profile-picture-container {

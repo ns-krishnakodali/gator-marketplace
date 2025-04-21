@@ -2,11 +2,11 @@ import { CommonModule, DatePipe } from '@angular/common'
 import { Component, Input } from '@angular/core'
 
 import type { OrderSummary } from '../../models'
-import { TextComponent } from '../../../../shared-ui'
+import { OrderStatusComponent, TextComponent } from '../../../../shared-ui'
 
 @Component({
   selector: 'app-order-summary',
-  imports: [CommonModule, DatePipe, TextComponent],
+  imports: [CommonModule, DatePipe, TextComponent, OrderStatusComponent],
   templateUrl: './order-summary.component.html',
   styleUrl: './order-summary.component.css',
 })

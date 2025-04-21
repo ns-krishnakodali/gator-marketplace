@@ -19,7 +19,12 @@ type OrderDetailsResponse struct {
 	TotalCost           float64               `json:"totalCost"`
 }
 
-type UserOrderResponse struct {
+type UserOrdersResponse struct {
+	UserOrders  []UserOrderDetails `json:"userOrders"`
+	TotalOrders int64              `json:"totalOrders"`
+}
+
+type UserOrderDetails struct {
 	OrderID       string               `json:"orderId"`
 	OrderStatus   models.OrderStatus   `json:"orderStatus"`
 	DatePlaced    time.Time            `json:"datePlaced"`

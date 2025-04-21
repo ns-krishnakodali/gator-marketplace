@@ -1,9 +1,7 @@
 <div class="order-summary-container">
   <div class="order-summary-heading">
     <h3 id="order-summary">Order Summary</h3>
-    <p [ngClass]="['order-status', 'order-' + orderSummary.orderStatus.toLowerCase()]">
-      Status: {{ orderSummary.orderStatus }}
-    </p>
+    <app-order-status [orderStatus]="orderSummary.orderStatus" [includeStatus]="true" />
   </div>
   <div class="order-details">
     <app-text id="order-id" class="order-detail">

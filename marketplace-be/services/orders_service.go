@@ -7,7 +7,7 @@ import (
 )
 
 type OrderProductCount struct {
-	OrderID string
+	OrderID int
 	Count   int
 }
 
@@ -16,7 +16,7 @@ func GetOrderDetailsService(orderId, userUid string) (dtos.OrderDetailsResponse,
 	if err := database.DB.
 		Preload("Products").
 		Preload("Products.PostedBy").
-		Where("user_uid = ? AND order_id = ?", userUid, orderId).
+		Where("user_uid = ? AND order_uid = ?", userUid, orderId).
 		First(&order).Error; err != nil {
 		return dtos.OrderDetailsResponse{}, ErrOrderNotFound
 	}
@@ -56,7 +56,7 @@ func GetOrderDetailsService(orderId, userUid string) (dtos.OrderDetailsResponse,
 	}
 
 	return dtos.OrderDetailsResponse{
-		OrderID:             order.OrderID,
+		OrderID:             order.OrderUID,
 		OrderStatus:         order.OrderStatus,
 		DatePlaced:          order.CreatedAt,
 		PaymentMethod:       order.PaymentMethod,
@@ -70,13 +70,23 @@ func GetOrderDetailsService(orderId, userUid string) (dtos.OrderDetailsResponse,
 	}, nil
 }
 
-func GetUserOrderDetails(userUid string) ([]dtos.UserOrderResponse, error) {
+func GetUserOrdersService(userUid string) (dtos.UserOrdersResponse, error) {
 	var orders []models.Order
 	if err := database.DB.
 		Preload("Products").
 		Where("user_uid = ? ", userUid).
+		Order("created_at DESC").
+		Limit(OrdersLimit).
 		Find(&orders).Error; err != nil {
-		return []dtos.UserOrderResponse{}, ErrUserOrdersNotFound
+		return dtos.UserOrdersResponse{}, ErrUserOrdersNotFound
+	}
+
+	var totalOrders int64
+	if err := database.DB.
+		Model(&models.Order{}).
+		Where("user_uid = ?", userUid).
+		Count(&totalOrders).Error; err != nil {
+		return dtos.UserOrdersResponse{}, ErrUserOrdersNotFound
 	}
 
 	orderIDs := make([]int, 0, len(orders))
@@ -84,32 +94,35 @@ func GetUserOrderDetails(userUid string) ([]dtos.UserOrderResponse, error) {
 		orderIDs = append(orderIDs, order.ID)
 	}
 
-	var counts []OrderProductCount
+	var orderProductCounts []OrderProductCount
 	if err := database.DB.
 		Table("order_products").
 		Select("order_id, COUNT(*) as count").
 		Where("order_id IN ?", orderIDs).
 		Group("order_id").
-		Scan(&counts).Error; err != nil {
-		return nil, err
+		Scan(&orderProductCounts).Error; err != nil {
+		return dtos.UserOrdersResponse{}, err
 	}
 
-	totalItemsMap := make(map[string]int)
-	for _, c := range counts {
-		totalItemsMap[c.OrderID] = c.Count
+	totalItemsMap := make(map[int]int)
+	for _, opc := range orderProductCounts {
+		totalItemsMap[opc.OrderID] = opc.Count
 	}
 
-	var userOrderDetails []dtos.UserOrderResponse
+	var userOrderDetails []dtos.UserOrderDetails
 	for _, order := range orders {
-		userOrderDetails = append(userOrderDetails, dtos.UserOrderResponse{
-			OrderID:       order.OrderID,
+		userOrderDetails = append(userOrderDetails, dtos.UserOrderDetails{
+			OrderID:       order.OrderUID,
 			OrderStatus:   order.OrderStatus,
 			DatePlaced:    order.CreatedAt,
 			PaymentMethod: order.PaymentMethod,
-			TotalItems:    totalItemsMap[order.OrderID],
+			TotalItems:    totalItemsMap[order.ID],
 			TotalCost:     order.TotalCost,
 		})
 	}
 
-	return userOrderDetails, nil
+	return dtos.UserOrdersResponse{
+		UserOrders:  userOrderDetails,
+		TotalOrders: totalOrders,
+	}, nil
 }

@@ -1,1 +1,57 @@
-<p>orders works!</p>
+<div class="orders-container">
+  <h2 class="orders-heading">My Orders</h2>
+  <div class="orders-filter-container">
+    <mat-button-toggle-group
+      name="fontStyle"
+      aria-label="Font Style"
+      [hideMultipleSelectionIndicator]="false"
+      [(ngModel)]="selectedStatus"
+      (change)="onStatusChange($event)"
+    >
+      <mat-button-toggle value="all">All</mat-button-toggle>
+      <mat-button-toggle value="placed" class="order-filter-placed">Placed</mat-button-toggle>
+      <mat-button-toggle value="completed" class="order-filter-completed">
+        Completed
+      </mat-button-toggle>
+      <mat-button-toggle value="cancelled" class="order-filter-cancelled">
+        Cancelled
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+  <div class="my-orders-container">
+    @for (orderDetails of displayOrderDetails; track $index) {
+      <div
+        class="order-card"
+        (click)="openOrderDetails(orderDetails.orderId)"
+        (keydown.enter)="openOrderDetails(orderDetails.orderId)"
+        tabindex="0"
+      >
+        <div class="order-card-section section-1">
+          <app-text id="order-id"
+            ><b>Order: </b>#{{ orderIdPrefix(orderDetails.orderId) }}</app-text
+          >
+          <app-text id="date-placed" size="small">{{
+            orderDetails.datePlaced | date: 'MMMM d'
+          }}</app-text>
+        </div>
+        <div class="order-card-section section-2">
+          <app-text id="payment-method">{{ orderDetails.paymentMethod }}</app-text>
+        </div>
+        <div class="order-card-section section-3">
+          <app-text id="order-status">
+            <app-order-status [orderStatus]="orderDetails.orderStatus" />
+          </app-text>
+        </div>
+        <div class="order-card-section section-4">
+          <app-text id="total-cost">
+            <b>{{ orderDetails.totalCost | currency: 'USD' : 'symbol' : '1.2-2' }}</b>
+          </app-text>
+          <app-text id="total-items" size="small">{{
+            orderItemsText(orderDetails.totalItems)
+          }}</app-text>
+        </div>
+        <mat-icon class="right-icon">chevron_right</mat-icon>
+      </div>
+    }
+  </div>
+</div>

@@ -27,9 +27,10 @@
     </div>
     <div>
       <app-text id="price" size="normal">
-        Price:<span class="currency">{{
-          cartProduct.price | currency: 'USD' : 'symbol' : '1.2-2'
-        }}</span>
+        Price:
+        <span class="currency">
+          {{ cartProduct.price | currency: 'USD' : 'symbol' : '1.2-2' }}
+        </span>
       </app-text>
     </div>
   }

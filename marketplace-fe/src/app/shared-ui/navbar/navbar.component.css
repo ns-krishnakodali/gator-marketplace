@@ -15,6 +15,7 @@
   display: flex;
   align-items: center;
   margin-left: var(--spacing-2-5);
+  color: var(--color-white);
   font-weight: bold;
   text-decoration: none;
 }

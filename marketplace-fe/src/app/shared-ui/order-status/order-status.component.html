@@ -1,0 +1,6 @@
+<p [id]="id" [ngClass]="['order-status', 'order-' + orderStatus.toLowerCase()]">
+  @if (includeStatus) {
+    Status:
+  }
+  {{ orderStatus }}
+</p>

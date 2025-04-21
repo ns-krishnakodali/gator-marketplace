@@ -33,3 +33,11 @@ export const isValidDate = (date: string): boolean => {
 
 export const capitalizeFirstLetter = (str: string): string =>
   str ? str[0].toUpperCase() + str.slice(1) : ''
+
+export const getUUIDPrefix = (uuid: string): string => {
+  const dashIndex: number = uuid.indexOf('-')
+  if (dashIndex !== -1 && dashIndex < 8) {
+    return uuid.slice(0, dashIndex)
+  }
+  return uuid.slice(0, 8)
+}

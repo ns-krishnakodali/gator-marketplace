@@ -16,29 +16,6 @@
   width: 40vw;
 }
 
-.order-status {
-  font-weight: 600;
-  margin: 0;
-  border-radius: 6px;
-  letter-spacing: 0.2px;
-  padding: var(--spacing-1) var(--spacing-1-5);
-}
-
-.order-placed {
-  color: var(--color-order-placed);
-  background: var(--color-order-placed-background);
-}
-
-.order-completed {
-  color: var(--color-order-completed);
-  background: var(--color-order-completed-background);
-}
-
-.order-cancelled {
-  color: var(--color-order-cancelled);
-  background: var(--color-order-cancelled-background);
-}
-
 .order-details {
   display: flex;
   flex-direction: column;

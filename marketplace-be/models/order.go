@@ -27,7 +27,7 @@ type ProductQuantityMap map[string]int
 
 type Order struct {
 	ID                 int                `gorm:"primaryKey;autoIncrement"`
-	OrderID            string             `gorm:"type:uuid;unique;not null"`
+	OrderUID           string             `gorm:"type:uuid;unique;not null"`
 	UserUID            string             `gorm:"type:uuid;index;not null"`
 	MeetupLocation     string             `gorm:"type:text;"`
 	MeetupDate         string             `gorm:"type:text;"`

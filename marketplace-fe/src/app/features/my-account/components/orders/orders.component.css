@@ -1,0 +1,83 @@
+.orders-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.orders-heading {
+  text-align: center;
+  font-size: 1.5rem;
+  letter-spacing: 0.5px;
+  margin: var(--spacing-half) 0 var(--spacing-2);
+}
+
+.orders-filter-container {
+  margin-bottom: var(--spacing-3);
+}
+
+.order-filter-placed {
+  color: var(--color-order-placed);
+}
+
+.order-filter-completed {
+  color: var(--color-order-completed);
+}
+
+.order-filter-cancelled {
+  color: var(--color-order-cancelled);
+}
+
+.my-orders-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.order-card {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-2-5) var(--spacing-4);
+  border: 1px solid var(--color-border-2);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  gap: 2rem;
+  cursor: pointer;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.order-card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.order-card-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.section-1 {
+  width: 9rem;
+}
+
+.section-2 {
+  width: 5.5rem;
+  align-items: center;
+}
+
+.section-3 {
+  width: 5.5rem;
+  align-items: center;
+}
+
+.section-4 {
+  width: 6rem;
+  align-items: center;
+}
+
+.right-icon {
+  color: var(--color-blue);
+}
