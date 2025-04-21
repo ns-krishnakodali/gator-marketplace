@@ -1,21 +1,29 @@
 <nav class="navbar">
-  <a class="gator-marketplace" routerLink="/" attr.routerLink="/" tabindex="0">
+  <a class="gator-marketplace" routerLink="/" [attr.routerLink]="'/'" tabindex="0">
     <img src="assets/gator.png" alt="Gator Logo" class="gator-logo" width="80" height="60" />
     <h2 id="marketplace">Marketplace</h2>
   </a>
-  <div *ngIf="showSearchBar" class="search-bar">
-    <app-input id="search-bar" type="text" placeholder="Enter product name or category..." />
-    <img src="assets/svg-icons/search-icon.svg" alt="Search Icon" class="search-icon" />
-  </div>
+  @if (showSearchBar) {
+    <div class="search-bar">
+      <app-input id="search-bar" type="text" placeholder="Enter product name or category..." />
+      <img src="assets/svg-icons/search-icon.svg" alt="Search Icon" class="search-icon" />
+    </div>
+  }
   <div class="navbar-links">
-    <a *ngIf="showAccount" class="navbar-link" routerLink="/my-account" attr.routerLink="/my-account">
-      <img src="assets/svg-icons/account-icon.svg" alt="Account Icon" class="navbar-icon" />
-      <app-text id="my-account">My Account</app-text>
-    </a>
-    <a *ngIf="showCart" class="navbar-link" routerLink="/cart" attr.routerLink="/cart">
-      <img src="assets/svg-icons/cart-icon.svg" alt="Account Icon" class="navbar-icon" />
-      <app-text id="cart" class="router-link">Cart</app-text>
-      <span *ngIf="cartCount !== '0'" id="cart-items" class="x-small">({{ cartCount }})</span>
-    </a>
+    @if (showAccount) {
+      <a class="navbar-link" routerLink="/my-account" [attr.routerLink]="'/my-account'">
+        <img src="assets/svg-icons/account-icon.svg" alt="Account Icon" class="navbar-icon" />
+        <app-text id="my-account">My Account</app-text>
+      </a>
+    }
+    @if (showCart) {
+      <a class="navbar-link" routerLink="/cart" [attr.routerLink]="'/cart'">
+        <img src="assets/svg-icons/cart-icon.svg" alt="Account Icon" class="navbar-icon" />
+        <app-text id="cart" class="router-link">Cart</app-text>
+        @if (cartCount && cartCount !== '0') {
+          <app-text id="cart-items" size="x-small">({{ cartCount }})</app-text>
+        }
+      </a>
+    }
   </div>
 </nav>
