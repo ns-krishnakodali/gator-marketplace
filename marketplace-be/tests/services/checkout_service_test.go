@@ -161,9 +161,8 @@ func TestCheckoutCartOrderService(t *testing.T) {
 	})
 
 	t.Run("Successful Order Creation", func(t *testing.T) {
-		// Create a test user
 		user := &models.User{
-			Uid:          "order-test-user",
+			Uid:          "order-user-uid",
 			Email:        "order@test.com",
 			DisplayName:  "Order Tester",
 			Name:         "Order Test User",
@@ -174,14 +173,13 @@ func TestCheckoutCartOrderService(t *testing.T) {
 		// Create a test product
 		product := &models.Product{
 			Pid:      "order-test-product",
-			UserUID:  "seller-uid",
+			UserUID:  "seller-user-uid",
 			Name:     "Order Test Product",
 			Price:    75.50,
 			Quantity: 20,
 		}
 		db.Create(product)
 
-		// Add product to cart
 		cartItem := &models.CartProduct{
 			UserUID:    user.Uid,
 			ProductPID: product.Pid,
@@ -204,7 +202,7 @@ func TestCheckoutCartOrderService(t *testing.T) {
 
 		// Verify order created in DB
 		var order models.Order
-		result := db.Where("order_id = ?", orderID).First(&order)
+		result := db.Where("order_uid = ?", orderID).First(&order)
 		require.NoError(t, result.Error)
 		require.Equal(t, user.Uid, order.UserUID)
 		require.Equal(t, input.MeetupAddress, order.MeetupLocation)
@@ -240,12 +238,11 @@ func TestCheckoutCartOrderService(t *testing.T) {
 
 		// Close DB connection to force error
 		sqlDB, _ := database.DB.DB()
-		sqlDB.Close()
+		_ = sqlDB.Close()
 
 		_, err := services.CheckoutCartOrderService(input, "any-user")
 		require.Error(t, err)
 
-		// Reconnect database for further tests
 		tests.SetupTestDB(t)
 	})
 }
@@ -253,7 +250,7 @@ func TestCheckoutCartOrderService(t *testing.T) {
 func TestCheckoutCartProductService(t *testing.T) {
 	db := tests.SetupTestDB(t)
 
-	t.Run("Product Not Found", func(t *testing.T) {
+	t.Run("Product not found", func(t *testing.T) {
 		priceProposal := 90
 		input := &dtos.CheckoutProductOrderInput{
 			MeetupAddress:   "Test Address",
@@ -271,7 +268,7 @@ func TestCheckoutCartProductService(t *testing.T) {
 		require.Equal(t, services.ErrProductNotFound, err)
 	})
 
-	t.Run("Insufficient Product Quantity", func(t *testing.T) {
+	t.Run("Insufficient product quantity", func(t *testing.T) {
 		// Create a test product with limited stock
 		product := &models.Product{
 			Pid:      "limited-item",
@@ -298,8 +295,7 @@ func TestCheckoutCartProductService(t *testing.T) {
 		require.Equal(t, services.ErrInsufficientProductQuantity, err)
 	})
 
-	t.Run("Successful Direct Product Order", func(t *testing.T) {
-		// Create a test user
+	t.Run("Successfully place product order", func(t *testing.T) {
 		user := &models.User{
 			Uid:          "direct-order-user",
 			Email:        "direct@test.com",
@@ -327,7 +323,7 @@ func TestCheckoutCartProductService(t *testing.T) {
 			AdditionalNotes: "Meet at the front entrance",
 			ProductId:       product.Pid,
 			Quantity:        1,
-			PaymentMethod:   models.Venmo,
+			PaymentMethod:   models.Cash,
 			PriceProposal:   &priceProposal,
 		}
 
@@ -337,7 +333,7 @@ func TestCheckoutCartProductService(t *testing.T) {
 
 		// Verify order created in DB
 		var order models.Order
-		result := db.Where("order_id = ?", orderID).First(&order)
+		result := db.Where("order_uid = ?", orderID).First(&order)
 		require.NoError(t, result.Error)
 		require.Equal(t, user.Uid, order.UserUID)
 		require.Equal(t, input.MeetupAddress, order.MeetupLocation)

@@ -153,6 +153,7 @@ func CheckoutCartProductService(input *dtos.CheckoutProductOrderInput, userUID s
 	}
 
 	if err := database.DB.Create(&order).Error; err != nil {
+		fmt.Printf("error when creating order: %v", err)
 		return "", ErrFailedToCreateOrder
 	}
 

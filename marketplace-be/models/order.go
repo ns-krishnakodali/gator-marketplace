@@ -46,7 +46,7 @@ type Order struct {
 	Products           []Product          `gorm:"many2many:order_products;joinForeignKey:OrderID;joinReferences:Pid"`
 }
 
-func (p *ProductQuantityMap) Value() (driver.Value, error) {
+func (p ProductQuantityMap) Value() (driver.Value, error) {
 	if p == nil {
 		return nil, nil
 	}

@@ -57,22 +57,13 @@ func CheckoutCartOrder(c *gin.Context) {
 		return
 	}
 
-	// 2) Validate required fields
-	if input.MeetupAddress == "" ||
-		input.MeetupDate == "" ||
-		input.MeetupTime == "" ||
-		input.PaymentMethod == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid input format"})
-		return
-	}
-
 	userUid, _ := auth.ExtractUserID(c.GetHeader("Authorization"))
 
 	orderId, err := services.CheckoutCartOrderService(&input, userUid)
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrEmptyCart):
-			c.JSON(http.StatusBadRequest, gin.H{"message": "Your cart is empty, add products to place an order."})
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Your cart is empty, add products to place an order"})
 		default:
 			c.JSON(http.StatusInternalServerError, gin.H{"message": "Couldn't place the order, please retry"})
 		}
@@ -88,9 +79,8 @@ func CheckoutCartProduct(c *gin.Context) {
 		return
 	}
 
-	// run our centralized validation
-	if err := input.Validate(); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+	if input.ProductId == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Product ID is required"})
 		return
 	}
 
