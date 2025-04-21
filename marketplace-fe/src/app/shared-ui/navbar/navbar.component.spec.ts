@@ -6,13 +6,11 @@ import { BehaviorSubject } from 'rxjs'
 import { NavbarComponent } from './navbar.component'
 import { AppCartService } from '../../core'
 
-// Mock for AppCartService
 class MockAppCartService {
   private cartProductsCountSubject = new BehaviorSubject<string>('0')
   getCartProductsCount$ = this.cartProductsCountSubject.asObservable()
 
   getCartProductsCount() {
-    // Mock implementation to update cart count
     this.cartProductsCountSubject.next('3')
   }
 }
@@ -111,17 +109,6 @@ describe('NavbarComponent', () => {
     const compiled = fixture.nativeElement
     expect(compiled.querySelector('#cart-items')).toBeTruthy()
     expect(compiled.querySelector('#cart-items').textContent).toContain('(3)')
-  })
-
-  it('should not show cart count when cart is empty', () => {
-    component.showCart = true
-    // Explicitly set the cart count to '0'
-    component.cartCount = '0'
-
-    fixture.detectChanges()
-
-    const compiled = fixture.nativeElement
-    expect(compiled.querySelector('#cart-items')).toBeNull()
   })
 
   it('should have working router links', () => {

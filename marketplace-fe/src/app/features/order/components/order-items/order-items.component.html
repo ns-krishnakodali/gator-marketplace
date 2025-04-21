@@ -1,0 +1,46 @@
+<div class="order-items-container">
+  <h3 id="order-items" class="order-items-heading">Items in Order</h3>
+  @for (orderItem of orderItems; track $index) {
+    <div class="order-item-details-container">
+      <div class="seller-details">
+        <app-text id="seller">
+          <b>Seller: {{ orderItem.seller }}</b>
+        </app-text>
+        <app-text id="seller" size="medium"> Contact: {{ orderItem.contact }} </app-text>
+      </div>
+      @for (orderProduct of orderItem.products; track $index) {
+        <div
+          class="product-details"
+          tabindex="0"
+          (click)="openProductPage(orderProduct.pid)"
+          (keyup.enter)="openProductPage(orderProduct.pid)"
+        >
+          <app-text id="product">
+            {{ orderProduct.quantity }} x <b>{{ orderProduct.name }}</b>
+          </app-text>
+          <app-text id="product-price">
+            <b>{{ orderProduct.price | currency: 'USD' : 'symbol' : '1.2-2' }}</b>
+          </app-text>
+        </div>
+      }
+    </div>
+  }
+  <div class="price-details-container">
+    <div class="price-detail">
+      <app-text id="handling-fee">
+        <b>Handling Fee</b>
+      </app-text>
+      <app-text id="handling-fee-amount">
+        <b>{{ handlingFee | currency: 'USD' : 'symbol' : '1.2-2' }}</b>
+      </app-text>
+    </div>
+    <div class="price-detail">
+      <app-text id="total" size="medium">
+        <b>Total</b>
+      </app-text>
+      <app-text id="total-amount">
+        <b>{{ totalCost | currency: 'USD' : 'symbol' : '1.2-2' }}</b>
+      </app-text>
+    </div>
+  </div>
+</div>

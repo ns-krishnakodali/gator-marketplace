@@ -1,0 +1,16 @@
+<app-navbar [showAccount]="true" [showCart]="true" />
+@if (isLoading$ | async; as isLoading) {
+  <div class="loader">
+    <mat-spinner diameter="50" />
+  </div>
+} @else {
+  <div class="order-container">
+    <app-heading id="order" heading="Order Details" />
+    <app-order-summary [orderSummary]="orderDetails.orderSummary" />
+    <app-order-items
+      [orderItems]="orderDetails.orderItems"
+      [handlingFee]="orderDetails.handlingFee"
+      [totalCost]="orderDetails.total"
+    />
+  </div>
+}

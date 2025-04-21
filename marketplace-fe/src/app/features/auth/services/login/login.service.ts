@@ -52,7 +52,9 @@ export class LoginService {
           const tokenResponse = response as { token: string }
           if (tokenResponse?.token) {
             setAuthToken(tokenResponse.token)
-            this.router.navigate([returnUrl], { replaceUrl: true })
+            this.router.navigate([returnUrl], { replaceUrl: true }).catch(() => {
+              this.router.navigate(['/dashboard'], { replaceUrl: true })
+            })
             this.isLoadingSubject.next(true)
           } else {
             this.notificationsService.addNotification({

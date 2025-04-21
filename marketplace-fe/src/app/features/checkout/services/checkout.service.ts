@@ -16,10 +16,12 @@ import {
   INVALID_DATE,
   INVALID_PRICE_PROPOSAL,
   INVALID_PRODUCT_QUANTITY,
-  isValidDate,
+  ORDER_DETAILS_FETCH_ERROR,
   PROVIDE_MEETUP_DETAILS,
   SELECT_PAYMENT_METHOD,
+  isValidDate,
 } from '../../../utils'
+import { Router } from '@angular/router'
 
 @Injectable({ providedIn: 'root' })
 export class CheckoutService {
@@ -35,7 +37,8 @@ export class CheckoutService {
 
   constructor(
     private apiService: APIService,
-    private notificationsService: NotificationsService
+    private notificationsService: NotificationsService,
+    private router: Router
   ) {}
 
   getCheckoutCartDetails = (): void => {
@@ -151,7 +154,14 @@ export class CheckoutService {
     this.apiService.post(url, body).subscribe({
       next: (response: unknown) => {
         const { orderId } = response as { orderId: string }
-        console.log(orderId)
+        this.router.navigate(['/order', orderId]).then((success) => {
+          if (!success) {
+            this.notificationsService.addNotification({
+              message: ORDER_DETAILS_FETCH_ERROR,
+              type: 'error',
+            })
+          }
+        })
       },
       error: (error) => {
         this.notificationsService.addNotification({

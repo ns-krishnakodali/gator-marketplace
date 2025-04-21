@@ -1,0 +1,26 @@
+<div class="order-summary-container">
+  <div class="order-summary-heading">
+    <h3 id="order-summary">Order Summary</h3>
+    <app-order-status [orderStatus]="orderSummary.orderStatus" [includeStatus]="true" />
+  </div>
+  <div class="order-details">
+    <app-text id="order-id" class="order-detail">
+      <b>Order ID:</b> {{ orderSummary.orderId }}
+    </app-text>
+    <app-text id="date-placed" class="order-detail">
+      <b>Date Placed:</b> {{ orderSummary.datePlaced | date: 'MMMM d, y, h:mm a' }}
+    </app-text>
+    <app-text id="payment-method" class="order-detail">
+      <b>Payment Method:</b> {{ orderSummary.paymentMethod }}
+    </app-text>
+  </div>
+  <div class="order-details">
+    <h3 class="order-meetup-heading">Meetup Details</h3>
+    <app-text id="location" class="order-detail">
+      <b>Location:</b> {{ orderSummary.location }}
+    </app-text>
+    <app-text id="date" class="order-detail"> <b>Date:</b> {{ orderSummary.date }} </app-text>
+    <app-text id="time" class="order-detail"> <b>Time:</b> {{ orderSummary.time }} </app-text>
+    <app-text id="notes" class="order-detail"> <b>Notes:</b> {{ orderSummary.notes }} </app-text>
+  </div>
+</div>

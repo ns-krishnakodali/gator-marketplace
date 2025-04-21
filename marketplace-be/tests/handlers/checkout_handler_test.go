@@ -238,7 +238,7 @@ func TestCheckoutCartOrder(t *testing.T) {
 
 		handlers.CheckoutCartOrder(c)
 		require.Equal(t, http.StatusBadRequest, w.Code)
-		require.Contains(t, w.Body.String(), "Invalid input format")
+		require.Contains(t, w.Body.String(), "Your cart is empty, add products to place an order")
 	})
 
 	t.Run("Empty Cart", func(t *testing.T) {
@@ -330,13 +330,13 @@ func TestCheckoutCartProduct(t *testing.T) {
 	meetupTime := "14:00"
 	priceProposal := 90
 
-	t.Run("Invalid Input Format", func(t *testing.T) {
+	t.Run("Invalidate Input Format", func(t *testing.T) {
 		c, w := tests.CreateTestContext("POST", "/api/checkout/product", []byte(`{"invalid":"json"}`))
 		c.Request.Header.Set("Authorization", token)
 
 		handlers.CheckoutCartProduct(c)
 		require.Equal(t, http.StatusBadRequest, w.Code)
-		require.Contains(t, w.Body.String(), "Invalid input format")
+		require.Contains(t, w.Body.String(), "Product ID is required")
 	})
 
 	t.Run("Product Not Found", func(t *testing.T) {

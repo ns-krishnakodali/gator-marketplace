@@ -1,10 +1,12 @@
 // Error Messages
-export const DEFAULT_ERROR_MESSAGE = 'Unexpected error occurred. Please try again later.'
-export const IMAGE_UPLOAD_ERROR_MESSAGE = 'Error uploading image. Please try again later.'
+export const DEFAULT_ERROR_MESSAGE = 'Unexpected error occurred. Please try again later'
+export const IMAGE_UPLOAD_ERROR_MESSAGE = 'Error uploading image. Please try again later'
+export const PRODUCT_DETAILS_FETCH_ERROR = 'Unable to fetch product details. Please try again later'
+export const ORDER_DETAILS_FETCH_ERROR = 'Unable to fetch order details. Please try again later'
 
 // Authentication
-export const FILL_ALL_FORM_FIELDS = 'Please fill in all fields.'
-export const INVALID_EMAIL_ADDRESS = 'Invalid email address.'
+export const FILL_ALL_FORM_FIELDS = 'Please fill in all fields'
+export const INVALID_EMAIL_ADDRESS = 'Invalid email address'
 export const INVALID_UFL_EMAIL = 'Please provide a valid UFL email (ufl.edu)'
 export const INVALID_MOBILE_NUMBER = 'Invalid mobile number'
 export const PASSWORDS_DO_NOT_MATCH = 'Passwords do not match'

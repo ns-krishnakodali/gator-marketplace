@@ -20,7 +20,7 @@ func AddToCartService(userUID, productPID string, requestedQty int) error {
 	}
 
 	var existingCartProduct models.CartProduct
-	if err := database.DB.Where("user_uid = ? AND product_p_id = ?", userUID, productPID).
+	if err := database.DB.Where("user_uid = ? AND product_p_id = ? AND is_delete = ?", userUID, productPID, false).
 		First(&existingCartProduct).Error; err == nil {
 		return ErrProductAlreadyAdded
 	}

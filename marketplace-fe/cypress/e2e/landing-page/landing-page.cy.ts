@@ -2,47 +2,37 @@ import {
   setupLoginIntercept,
   setupProtectedIntercept,
   setupCartProductsCountIntercept,
-  setupProductsDataIntercept,
+  setupProductsDetailsIntercept,
 } from '../../support/intercepts'
 
 describe('Landing Page Tests', () => {
   beforeEach(() => {
-    // Setup all intercepts before visiting any pages
     setupLoginIntercept()
     setupProtectedIntercept()
     setupCartProductsCountIntercept()
-    setupProductsDataIntercept()
+    setupProductsDetailsIntercept()
 
-    // Login process
     cy.visit('/auth/login')
     cy.get('#email').type('test@ufl.edu')
     cy.get('#password').type('password123')
     cy.get('#login-button').click()
     cy.wait('@loginRequest')
 
-    // Visit the landing page
     cy.visit('/')
     cy.wait('@apiProtected')
   })
 
   it('Should display loading spinner while data is loading', () => {
-    // Setup intercept with delay to simulate loading
-    setupProtectedIntercept(500) // 500ms delay
+    setupProtectedIntercept(500)
 
-    // Reload page to see loading spinner
     cy.visit('/')
 
-    // Check for loading spinner
     cy.get('body').then(($body) => {
       if ($body.find('mat-spinner').length > 0) {
         cy.get('mat-spinner').should('exist')
       }
     })
-
-    // Wait for the protected endpoint to be called
     cy.wait('@apiProtected')
-
-    // Spinner should be gone after data loads
     cy.get('mat-spinner').should('not.exist')
   })
 
@@ -55,7 +45,6 @@ describe('Landing Page Tests', () => {
   })
 
   it('Should display correct content in cards', () => {
-    // Explore Marketplace card
     cy.get('app-landing-page-card')
       .eq(0)
       .within(() => {
@@ -71,7 +60,6 @@ describe('Landing Page Tests', () => {
         )
       })
 
-    // List Products card
     cy.get('app-landing-page-card')
       .eq(1)
       .within(() => {
@@ -85,17 +73,14 @@ describe('Landing Page Tests', () => {
   })
 
   it('Should navigate to products page when Explore Marketplace card is clicked', () => {
-    // Setup additional intercepts for products page
     cy.intercept('GET', '/api/products**').as('productsRequest')
 
-    // Force app to stay on same domain to avoid auth redirect
     cy.window().then((win) => {
       cy.stub(win, 'open').as('windowOpen')
     })
 
     cy.get('app-landing-page-card').eq(0).click()
 
-    // Verify navigation by checking URL contains products
     cy.url().then((url) => {
       if (!url.includes('/products')) {
         cy.log('Direct navigation failed, checking if window.open was called')
@@ -107,14 +92,12 @@ describe('Landing Page Tests', () => {
   })
 
   it('Should navigate to list-product page when List Products card is clicked', () => {
-    // Force app to stay on same domain to avoid auth redirect
     cy.window().then((win) => {
       cy.stub(win, 'open').as('windowOpen')
     })
 
     cy.get('app-landing-page-card').eq(1).click()
 
-    // Verify navigation
     cy.url().then((url) => {
       if (!url.includes('/list-product')) {
         cy.log('Direct navigation failed, checking if window.open was called')
