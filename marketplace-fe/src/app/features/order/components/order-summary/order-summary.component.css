@@ -1,0 +1,39 @@
+.order-summary-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 2.5rem;
+  border: 1px solid var(--color-border-2);
+  border-radius: 12px;
+  box-shadow: var(--box-shadow-form);
+  max-width: 45vw;
+}
+
+.order-summary-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 40vw;
+}
+
+.order-details {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.order-detail {
+  font-weight: 500;
+  margin: 0 0 var(--spacing-1-5);
+}
+
+.order-meetup-details {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.order-meetup-heading {
+  margin: var(--spacing-2) 0 var(--spacing-1);
+  width: 100%;
+}

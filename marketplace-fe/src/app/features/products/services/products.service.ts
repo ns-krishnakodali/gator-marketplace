@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core'
 import { Router } from '@angular/router'
 import { BehaviorSubject } from 'rxjs'
 
+import type { ProductData } from '../models'
+
 import { APIService } from '../../../core'
 import { NotificationsService } from '../../../shared-ui'
-import { ProductData } from '../models'
-import { stringifyArray } from '../../../utils'
+import { PRODUCT_DETAILS_FETCH_ERROR, stringifyArray } from '../../../utils'
 
 @Injectable({
   providedIn: 'root',
@@ -67,7 +68,7 @@ export class ProductsService {
     this.router.navigate(['/product', productId]).then((success) => {
       if (!success) {
         this.notificationsService.addNotification({
-          message: 'Failed to navigate to product details',
+          message: PRODUCT_DETAILS_FETCH_ERROR,
           type: 'error',
         })
       }

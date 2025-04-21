@@ -10,6 +10,7 @@ import { ListProductComponent } from './features/list-product/list-product.compo
 import { MyAccountComponent } from './features/my-account/my-account.component'
 import { ProductComponent } from './features/product/product.component'
 import { ProductsComponent } from './features/products/products.component'
+import { OrderComponent } from './features/order/order.component'
 
 export const routes: Routes = [
   { path: 'auth/login', component: LoginComponent, canActivate: [noAuthenticationGuard] },
@@ -22,6 +23,7 @@ export const routes: Routes = [
   },
   { path: 'list-product', component: ListProductComponent, canActivate: [authenticationGuard] },
   { path: 'my-account', component: MyAccountComponent, canActivate: [authenticationGuard] },
+  { path: 'order/:orderId', component: OrderComponent, canActivate: [authenticationGuard] },
   { path: 'products', component: ProductsComponent, canActivate: [authenticationGuard] },
   { path: 'product/:productId', component: ProductComponent, canActivate: [authenticationGuard] },
   { path: '', component: LandingPageComponent, canActivate: [authenticationGuard] },

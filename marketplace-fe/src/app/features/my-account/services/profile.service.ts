@@ -172,7 +172,6 @@ export class ProfileService {
     if (!data) {
       return this.DEFAULT_ACCOUNT_DETAILS
     }
-
     return {
       displayPictureSrc: data?.['displayImageUrl'] || this.DEFAULT_DP_SRC,
       name: data?.['name'],

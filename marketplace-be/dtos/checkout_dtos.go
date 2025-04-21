@@ -1,19 +1,14 @@
 package dtos
 
-import "marketplace-be/models"
-import "errors"
+import (
+	"marketplace-be/models"
+)
 
 type CheckoutOrderDetailsResponse struct {
 	CheckoutProductDetails []CheckoutProductDetail `json:"orderProductDetails"`
 	ProductsTotal          float64                 `json:"productsTotal"`
 	HandlingFee            float64                 `json:"handlingFee"`
 	TotalCost              float64                 `json:"totalCost"`
-}
-
-type CheckoutProductDetail struct {
-	ProductName       string  `json:"productName"`
-	Quantity          int     `json:"quantity"`
-	ProductTotalPrice float64 `json:"productTotalPrice"`
 }
 
 type CheckoutCartOrderInput struct {
@@ -35,16 +30,8 @@ type CheckoutProductOrderInput struct {
 	PriceProposal   *int                 `json:"priceProposal"`
 }
 
-
-func (in *CheckoutProductOrderInput) Validate() error {
-    if in.MeetupAddress == "" ||
-       in.MeetupDate == "" ||
-       in.MeetupTime == "" ||
-       in.ProductId == "" ||
-       in.Quantity <= 0 ||
-       in.PaymentMethod == "" ||
-       in.PriceProposal == nil {
-        return errors.New("Invalid input format")
-    }
-    return nil
+type CheckoutProductDetail struct {
+	ProductName       string  `json:"productName"`
+	Quantity          int     `json:"quantity"`
+	ProductTotalPrice float64 `json:"productTotalPrice"`
 }

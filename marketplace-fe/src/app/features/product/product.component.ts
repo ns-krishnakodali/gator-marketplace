@@ -31,8 +31,8 @@ export class ProductComponent implements OnInit {
   productDetails!: ProductDetails
 
   constructor(
-    private route: ActivatedRoute,
-    private productService: ProductService
+    private productService: ProductService,
+    private route: ActivatedRoute
   ) {
     this.isLoading$ = this.productService.isLoading$
   }

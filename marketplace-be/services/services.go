@@ -10,6 +10,8 @@ var DpPrefix = "GatorUser"
 
 var HandlingFee = 1.00
 
+var OrdersLimit = 50
+
 var ErrUserNotFound = errors.New("user not found")
 var ErrInvalidCredentials = errors.New("invalid credentials")
 var ErrTokenGeneration = errors.New("token generation error")
@@ -35,6 +37,9 @@ var ErrImageUploadFailed = errors.New("issue with uploading image to cloud")
 
 var ErrFailedToCreateOrder = errors.New("failed to create order")
 var ErrEmptyCart = errors.New("cart is empty")
+
+var ErrOrderNotFound = errors.New("order not found")
+var ErrUserOrdersNotFound = errors.New("users orders not found")
 
 func validateUFLEmail(email string) bool {
 	re := regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@ufl.edu$`)

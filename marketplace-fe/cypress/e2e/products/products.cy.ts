@@ -8,20 +8,17 @@ import {
 
 describe('Products Page', () => {
   beforeEach(() => {
-    // Setup all intercepts before visiting any pages
     setupLoginIntercept()
     setupProtectedIntercept()
     setupCartProductsCountIntercept()
     setupAddToCartIntercept()
 
-    // Login process
     cy.visit('/auth/login')
     cy.get('#email').type('test@ufl.edu')
     cy.get('#password').type('password123')
     cy.get('#login-button').click()
     cy.wait('@loginRequest')
 
-    // Setup products intercept
     cy.intercept('GET', '/api/products**', {
       statusCode: 200,
       body: {
@@ -42,7 +39,6 @@ describe('Products Page', () => {
       },
     }).as('productsDataRequest')
 
-    // Visit the products page directly
     cy.visit('/products')
     cy.wait('@apiProtected')
     cy.wait('@productsDataRequest', { timeout: 10000 })
@@ -54,42 +50,26 @@ describe('Products Page', () => {
       // Add longer wait time for GitHub Actions environment
       cy.wait(2000)
 
-      // Check navbar
       cy.get('app-navbar', { timeout: 10000 }).should('exist')
-
-      // Check container and layout
       cy.get('.container', { timeout: 10000 }).should('exist')
-
-      // Check sidebar
       cy.get('app-sidebar', { timeout: 10000 }).should('exist')
 
-      // Check product display
       cy.get('app-display-products', { timeout: 10000 }).should('exist')
-
-      // Look for heading in multiple ways
       cy.get('body', { timeout: 10000 }).then(($body) => {
-        // First check if products-heading exists directly
         if ($body.find('.products-heading').length > 0) {
           cy.get('.products-heading', { timeout: 10000 }).should('contain', 'Explore Marketplace')
-        }
-        // Then check if it's inside app-display-products
-        else if ($body.find('app-display-products .products-heading').length > 0) {
+        } else if ($body.find('app-display-products .products-heading').length > 0) {
           cy.get('app-display-products .products-heading', { timeout: 10000 }).should(
             'contain',
             'Explore Marketplace'
           )
-        }
-        // Then look for any h1 element containing the text
-        else if ($body.find('h1:contains("Explore Marketplace")').length > 0) {
+        } else if ($body.find('h1:contains("Explore Marketplace")').length > 0) {
           cy.get('h1:contains("Explore Marketplace")', { timeout: 10000 }).should('exist')
-        }
-        // Finally, just look for the text anywhere
-        else {
+        } else {
           cy.contains('Explore Marketplace', { timeout: 10000 }).should('exist')
         }
       })
 
-      // Check paginator
       cy.get('mat-paginator', { timeout: 10000 }).should('exist')
     })
 
@@ -114,7 +94,6 @@ describe('Products Page', () => {
 
   describe('Category Filtering', () => {
     it('Should filter products by category', () => {
-      // Setup intercept for filtered products
       cy.intercept('GET', '/api/products**', (req) => {
         if (req.url.includes('categories=Sports')) {
           req.reply({
@@ -141,11 +120,7 @@ describe('Products Page', () => {
       }).as('sportsFilter')
 
       // Click Sports category checkbox based on the screenshot
-      cy.contains('Categories')
-        .parent()
-        .find('[type="checkbox"]')
-        .eq(7) // Index for Furniture based on your screenshot
-        .click() // Index based on the screenshots
+      cy.contains('Categories').parent().find('[type="checkbox"]').eq(7).click()
       cy.wait('@sportsFilter')
 
       // Verify filtered results
@@ -158,14 +133,13 @@ describe('Products Page', () => {
       // Setup intercept for price sorting with fixed price values
       cy.intercept('GET', '/api/products**', (req) => {
         if (req.url.includes('sort=price_asc')) {
-          // Create products with clear ascending prices
           const sortedProducts = Array(12)
             .fill(null)
             .map((_, i) => ({
               pid: `sorted-pid-${i}`,
               userUID: `user-uid-${i}`,
               name: `Product ${i}`,
-              price: 10 + i * 5, // Clear price progression: 10, 15, 20, 25...
+              price: 10 + i * 5,
               postedAt: new Date().toISOString(),
               imageSrc: 'https://cdn.dummyjson.com/products/images/electronics/product1.png',
             }))
@@ -195,7 +169,6 @@ describe('Products Page', () => {
 
   describe('Pagination', () => {
     it('Should navigate to next page', () => {
-      // Setup intercept for second page
       cy.intercept('GET', '/api/products**', (req) => {
         if (req.url.includes('page=2')) {
           req.reply({
@@ -220,38 +193,28 @@ describe('Products Page', () => {
         }
       }).as('page2Request')
 
-      // Click next page button
       cy.get('.mat-mdc-paginator-navigation-next').click()
       cy.wait('@page2Request')
-
-      // Verify we're on page 2
       cy.get('.product-name').first().should('contain', 'Page 2')
     })
   })
 
   describe('Product Clickability', () => {
     it('Should navigate to product details when clicking on a product card', () => {
-      // Setup product details intercept
       setupProductDetailsIntercept()
 
-      // Click on the first product card
       cy.get('app-product-card').first().click()
       cy.wait('@productDetailsRequest')
-
-      // Verify URL changed to product details
       cy.url().should('include', '/product/')
     })
   })
 
   describe('Add to Cart Functionality', () => {
     it('Should add product to cart when Add to Cart button is clicked', () => {
-      // Click the Add to Cart button (stopping propagation)
       cy.get('app-product-card').first().find('button').click({ force: true })
 
-      // Wait for add to cart request to complete
       cy.wait('@addToCartRequest')
 
-      // Skip waiting for cart count update and just check the add to cart request
       cy.get('@addToCartRequest').its('response.statusCode').should('eq', 200)
     })
   })
