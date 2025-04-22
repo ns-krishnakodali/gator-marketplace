@@ -1,21 +1,20 @@
-
 # Gator Marketplace
 
-Gator Marketplace is a full-stack web application built with Angular for the frontend and Gin (Go) for the backend. It facilitates a streamlined marketplace experience for users at the University of Florida.
+**Gator Marketplace** is an online platform that connects buyers and sellers within the UF community. Users can post listings, browse products, and securely complete transactions, all in one convenient app.
 
 ---
 
-##  Project Structure
+## Project Structure
 
 ```plaintext
 gator-marketplace/
-├── gator-marketplace-frontend/   # Angular frontend
-├── gator-marketplace-backend/    # Gin backend
+├── marketplace-fe/   # Angular frontend
+├── marketplace-be/   # Gin backend
 ```
 
 ---
 
-##  Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -25,20 +24,22 @@ Ensure the following tools are installed:
 - **Angular CLI** (v19.1.4+)
 - **Go** (v1.18+)
 - **PostgreSQL**
+- **AWS S3**
+- **Google Maps API**
 - (Optional) **Docker & Docker Compose**
 
----
+> Carefully read the `README.md` files in both `marketplace-fe/` and `marketplace-be/` for detailed setup instructions specific
 
-##  Frontend (Angular)
+## Frontend (Angular)
 
-###  Installing Dependencies
+### Installing Dependencies
 
 ```bash
-cd gator-marketplace-frontend
+cd marketplace-fe
 npm install
 ```
 
-###  Running the Development Server
+### Running the Development Server
 
 ```bash
 ng serve
@@ -46,20 +47,20 @@ ng serve
 
 Visit `http://localhost:4200/` to see the app running. It will auto-reload on source changes.
 
-### 🏗️ Building the Project
+### Building the Project
 
 ```bash
 ng build         # Dev build
 ng build --prod  # Production build
 ```
 
-###  Running Unit Tests
+### Running Unit Tests
 
 ```bash
 ng test
 ```
 
-###  Running E2E Tests (with Cypress)
+### Running E2E Tests (with Cypress)
 
 Ensure Cypress is installed and configured. Then:
 
@@ -75,22 +76,22 @@ npx cypress run
 
 ---
 
-##  Backend (Gin + PostgreSQL)
+## Backend (Gin + PostgreSQL)
 
-###  Clone & Navigate
+### Clone & Navigate
 
 ```bash
 git clone <repository-url>
-cd gator-marketplace-backend
+cd marketplace-be
 ```
 
-###  Install Go Modules
+### Install Go Modules
 
 ```bash
 go mod tidy
 ```
 
-###  Setup PostgreSQL
+### Setup PostgreSQL
 
 #### Option 1: Manual Setup
 
@@ -110,11 +111,12 @@ docker-compose up -d
 ```
 
 > Creates:
+>
 > - User: `gator`
 > - DB: `marketplace`
 > - Password: from `.env` file
 
-###  Environment Variables
+### Environment Variables
 
 Create a `.env` file in the root of the backend directory:
 
@@ -130,7 +132,7 @@ openssl rand -base64 32
 
 Update the database URL, JWT secret, and other values as needed.
 
-###  Running the Server
+### Running the Server
 
 ```bash
 go run main.go
@@ -140,7 +142,7 @@ Backend starts on the port defined in `.env` (default: `5000`).
 
 ---
 
-##  Linting & Code Quality
+## Linting & Code Quality
 
 ### Angular
 
@@ -154,15 +156,9 @@ Use `golangci-lint` or `go fmt` for linting and formatting.
 
 ---
 
-##  Additional Resources
+## Additional Resources
 
 - [Angular CLI Documentation](https://angular.dev/tools/cli)
 - [Gin Framework Docs](https://gin-gonic.com/docs/)
 - [PostgreSQL Docs](https://www.postgresql.org/docs/)
 - [Cypress Testing](https://docs.cypress.io/)
-
-## Contributors
-- Krishna Kodali
-- Harshak Parmar
-- Bhanu Prasad
-- Anshita Rao
