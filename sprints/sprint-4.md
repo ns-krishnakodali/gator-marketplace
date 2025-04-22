@@ -18,47 +18,49 @@
 
 - Sprint 4 [Board](https://github.com/users/ns-krishnakodali/projects/4/views/8)
 - Conducted sprint planning and distributed tasks among participants.
-- This sprint focuses on:
-  - Developing List Products page.
-  - Developing Checkout features from cart and product.
-  - Developing User Orders and Order details pages.
-  - Developing the corresponding APIs and integrating with FE.
-  - Implementing unit tests for both backend and frontend.
-  - Writiing end-to-end (E2E) tests using Cypress to ensure application reliability and functionality.
-- Each task is prefixed with **FE** (Frontend), **BE** (Backend), or **App** (Application).
-  - **FE**: Frontend
-  - **BE**: Backend
-  - **App**: Application
-- Tasks are labeled as:
-  - **Enhancement**: Significant application development
-  - **Configuration**: Related to configuration changes only
-- All **PRs** (Pull Requests) are linked to tasks upon moving to the **In Review** phase.
-- Workflow stages for tasks:
-  1. **Todo**
-  2. **In Progress**
-  3. **In Review**
-  4. **Done**
+- The primary objectives for this sprint included:
+  - Building out the **List Products** interface to allow users to publish new items with detailed attributes.
+  - Implementing **Checkout** functionality from both the shopping cart and individual product views.
+  - Creating user-focused pages like **Order History** and **Order Details** to enhance post-purchase visibility.
+  - Developing all necessary **backend APIs** and seamlessly integrating them into the frontend.
+  - Writing **unit tests** across both frontend components and backend services to ensure functional correctness.
+  - Crafting comprehensive **end-to-end (E2E) tests** using **Cypress** to simulate and validate real user interactions.
+- All tasks are systematically tagged using one of the following prefixes: **FE**, **BE**, or **App**.
+  - **FE**: Tasks pertaining to frontend development
+  - **BE**: Backend services and APIs
+  - **App**: Integration-level tasks or cross-cutting functionality
+- Task types are classified as:
+  - **Enhancement**: Feature additions, UI development, or service expansion
+  - **Configuration**: DevOps, CI/CD setup, environment or tooling changes
+- Every **PR (Pull Request)** is associated with a corresponding task once it reaches the **In Review** stage.
+- Defined workflow pipeline for task progression:
+  1. **Todo** – Task is planned and ready for implementation
+  2. **In Progress** – Task is actively being developed
+  3. **In Review** – Task is under code review and validation
+  4. **Done** – Task has been reviewed, tested, and merged
+
 
 ## Development
 
 ### FE (Frontend)
 
-- Implemented a fully functional **List Product** page to list products with specifications.
-- Developed the **Checkout** feature from the cart and allowed direct purchase from the product page.
-- Implemented an **Order Details** page to show the summary of a user's order.
-- Implemented a **My Orders** page to view all orders made by the user.
-- Integrated **APIs** for the above-mentioned features.
-- Wrote extensive **unit tests** for both frontend components and backend services, ensuring high code coverage.
-- Improved user experience with a responsive design and loading indicators across all pages.
+- Built a complete and interactive **List Product** page that allows users to add items along with detailed specifications.
+- Implemented a comprehensive **Checkout** workflow, supporting purchases both from the **cart** and directly through individual **product** views.
+- Developed an **Order Details** component to display itemized order summaries, including product, date, cost, and meetup info.
+- Added a **My Orders** section enabling users to browse their entire order history in a structured format.
+- Seamlessly integrated all associated **APIs** into the frontend, ensuring smooth data flow and error handling.
+- Authored a wide set of **unit tests** for core frontend logic and UI components, contributing to increased test coverage and reliability.
+- Enhanced overall user experience by incorporating **responsive design**, meaningful UI feedback, and **loading indicators** across key pages.
 
 ### BE (Backend)
 
-- Modified the **List Product API** to support form data for listing product details.
-- Integrated **AWS S3** for securely storing static product images.
-- Developed **Checkout APIs** for checking out from the cart and directly buying a product, along with fetching checkout order details.
-- Implemented **Order APIs** to fetch order details and all orders for a user.
-- Added **unit tests** for all the developed handlers and services.
-- Refactored the backend architecture for better maintainability.
+- Updated the **List Product API** to accept and process multipart **form data**, enabling support for detailed product entries with images.
+- Configured **AWS S3** to act as the storage backend for handling static image uploads with proper access permissions.
+- Created and exposed **Checkout-related APIs** for both cart-based and direct purchases, along with endpoints to retrieve checkout details.
+- Implemented **Order management APIs** that return order-specific data as well as aggregate order history for users.
+- Wrote extensive **unit tests** validating all new API handlers and business services, including edge cases and error scenarios.
+- Performed structural improvements and **backend refactoring** to improve service modularity and long-term maintainability.
+
 
 ### App (Application)
 
