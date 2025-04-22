@@ -1,4 +1,4 @@
-# Sprint 3 Restrospective
+# Sprint 4 Restrospective
 
 ## Table of Contents
 
